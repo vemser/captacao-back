@@ -79,11 +79,6 @@ public class CandidatoEntity {
                 inverseJoinColumns = @JoinColumn(name = "ID_LINGUAGEM"))
         private Set<LinguagemEntity> linguagens;
 
-        @JsonIgnore
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "id_trilha", referencedColumnName = "id_trilha")
-        private TrilhaEntity trilha;
-
         @OneToOne(mappedBy = "candidatoEntity")
         private EntrevistaEntity entrevistaEntity;
 
