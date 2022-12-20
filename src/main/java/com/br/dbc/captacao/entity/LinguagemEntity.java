@@ -1,12 +1,13 @@
 package com.br.dbc.captacao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -15,6 +16,7 @@ import java.util.Set;
 @Setter
 @Entity(name = "LINGUAGEM")
 public class LinguagemEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LINGUAGEM_SEQUENCIA")
     @SequenceGenerator(name = "LINGUAGEM_SEQUENCIA", sequenceName = "SEQ_ID_LINGUAGEM", allocationSize = 1)

@@ -3,12 +3,13 @@ package com.br.dbc.captacao.entity;
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.enums.Parecer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
