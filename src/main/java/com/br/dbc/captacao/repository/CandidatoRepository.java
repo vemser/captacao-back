@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.repository;
 
+import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,19 +18,19 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     Optional<CandidatoEntity> findByEmail(String email);
 
-//    @Query(" select new br.com.vemser.facetoface.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO(" +
-//            " c.idCandidato," +
-//            " c.nomeCompleto," +
-//            " c.email," +
-//            " c.notaProva," +
-//            " t.nome," +
-//            " c.edicao.nome)" +
-//            "  from CANDIDATO c " +
-//            " left join c.trilha t" +
-//            " where (:nomeCompleto is null or UPPER(c.nomeCompleto) LIKE  upper(concat('%',:nomeCompleto,'%')))" +
-//            " and (:nomeEdicao is null or c.edicao.nome = :nomeEdicao)" +
-//            " and (:nomeTrilha is null or c.trilha.nome = :nomeTrilha)")
-//    Page<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, String nomeTrilha, String nomeEdicao, Pageable pageable);
+    @Query(" select new com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO(" +
+            " c.idCandidato," +
+            " c.nome," +
+            " c.email," +
+            " c.notaProva," +
+            " t.nome," +
+            " c.edicao.nome)" +
+            "  from CANDIDATO c " +
+            " left join c.trilha t" +
+            " where (:nomeCompleto is null or UPPER(c.nome) LIKE  upper(concat('%',:nomeCompleto,'%')))" +
+            " and (:nomeEdicao is null or c.edicao.nome = :nomeEdicao)" +
+            " and (:nomeTrilha is null or c.trilha.nome = :nomeTrilha)")
+    Page<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, String nomeTrilha, String nomeEdicao, Pageable pageable);
 
 
 }
