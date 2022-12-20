@@ -2,9 +2,19 @@ package com.br.dbc.captacao.entity;
 
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.enums.TipoTurno;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity(name = "FORMULARIO")
 public class FormularioEntity {
 
     private Integer idFormulario;
