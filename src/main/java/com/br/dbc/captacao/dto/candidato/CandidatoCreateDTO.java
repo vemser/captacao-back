@@ -1,4 +1,4 @@
-package com.br.dbc.captacao.dto;
+package com.br.dbc.captacao.dto.candidato;
 
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.LinguagemEntity;

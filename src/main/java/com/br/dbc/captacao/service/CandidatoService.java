@@ -1,11 +1,5 @@
 package com.br.dbc.captacao.service;
 
-import com.br.dbc.captacao.dto.CandidatoCreateDTO;
-import com.br.dbc.captacao.dto.CandidatoDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
-import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.repository.CandidatoRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

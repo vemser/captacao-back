@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrilhaDTO {
-    
-    private String nome;
+public class TrilhaDTO extends TrilhaCreateDTO{
+
+    private Integer idTrilha;
 }
