@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,13 +25,12 @@ public class TrilhaService {
     public TrilhaDTO create(TrilhaCreateDTO trilhaCreateDTO){
         TrilhaEntity trilha = objectMapper.convertValue(trilhaCreateDTO, TrilhaEntity.class);
         trilhaRepository.save(trilha);
-        TrilhaDTO trilhaDTO = convertToDTO(trilha);
-        return trilhaDTO;
+        return convertToDTO(trilha);
     }
 
     public List<TrilhaDTO> list() {
         return trilhaRepository.findAll().stream()
-                .map(inscricaoEntity -> convertToDTO(inscricaoEntity))
+                .map(this::convertToDTO)
                 .toList();
     }
 
@@ -50,7 +50,7 @@ public class TrilhaService {
         for (Integer id : idTrilhas) {
             trilhaEntities.add(findById(id));
         }
-        return trilhaEntities.stream().collect(Collectors.toSet());
+        return new HashSet<>(trilhaEntities);
     }
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
@@ -59,13 +59,12 @@ public class TrilhaService {
     }
 
     public Set<TrilhaEntity> convertToEntity(Set<TrilhaDTO> trilhas) {
-        Set<TrilhaEntity> trilhaEntities = trilhas.stream().map(trilhaDtos -> objectMapper.convertValue(trilhaDtos, TrilhaEntity.class))
+        return trilhas.stream()
+                .map(trilhaDtos -> objectMapper.convertValue(trilhaDtos, TrilhaEntity.class))
                 .collect(Collectors.toSet());
-        return trilhaEntities;
     }
 
     private TrilhaDTO convertToDTO(TrilhaEntity trilhaEntity) {
-        TrilhaDTO trilhaDTO = objectMapper.convertValue(trilhaEntity, TrilhaDTO.class);
-        return trilhaDTO;
+        return objectMapper.convertValue(trilhaEntity, TrilhaDTO.class);
     }
 }
