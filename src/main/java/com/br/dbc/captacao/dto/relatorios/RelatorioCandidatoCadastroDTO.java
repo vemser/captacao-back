@@ -20,7 +20,7 @@ public class RelatorioCandidatoCadastroDTO {
     private Double notaProva;
     private String trilha;
     private String edicao;
-    private Genero genero;
+//    private Genero genero;
     private char ativo;
     private String estado;
     private String cidade;

@@ -163,7 +163,7 @@ public class CandidatoService {
         candidatoRepository.save(candidatoEntity);
     }
 
-    public CandidatoDTO update(Integer id, CandidatoCreateDTO candidatoCreateDTO, Genero genero) throws RegraDeNegocioException {
+    public CandidatoDTO update(Integer id, CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
         findById(id);
         if (candidatoCreateDTO.getEmail().isEmpty() || candidatoCreateDTO.getEmail().isBlank()) {
