@@ -25,25 +25,25 @@ public class ImagemService {
                 .orElseThrow(() -> new RegraDeNegocioException("Imagem não encontrada!"));
     }
 
-    public void arquivarCandidato(MultipartFile file, String email) throws RegraDeNegocioException, IOException {
-        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
-        Optional<ImagemEntity> imagemBD = findByCandidato(candidatoEntity);
-        String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
-        if (imagemBD.isPresent()) {
-            imagemBD.get().setNome(nomeArquivo);
-            imagemBD.get().setTipo(file.getContentType());
-            imagemBD.get().setData(file.getBytes());
-            imagemBD.get().setCandidato(candidatoEntity);
-            imagemRepository.save(imagemBD.get());
-        } else {
-            ImagemEntity novaImagemBD = new ImagemEntity();
-            novaImagemBD.setNome(nomeArquivo);
-            novaImagemBD.setTipo(file.getContentType());
-            novaImagemBD.setData(file.getBytes());
-            novaImagemBD.setCandidato(candidatoEntity);
-            imagemRepository.save(novaImagemBD);
-        }
-    }
+//    public void arquivarCandidato(MultipartFile file, String email) throws RegraDeNegocioException, IOException {
+//        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
+//        Optional<ImagemEntity> imagemBD = findByCandidato(candidatoEntity);
+//        String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
+//        if (imagemBD.isPresent()) {
+//            imagemBD.get().setNome(nomeArquivo);
+//            imagemBD.get().setTipo(file.getContentType());
+//            imagemBD.get().setData(file.getBytes());
+//            imagemBD.get().setCandidato(candidatoEntity);
+//            imagemRepository.save(imagemBD.get());
+//        } else {
+//            ImagemEntity novaImagemBD = new ImagemEntity();
+//            novaImagemBD.setNome(nomeArquivo);
+//            novaImagemBD.setTipo(file.getContentType());
+//            novaImagemBD.setData(file.getBytes());
+//            novaImagemBD.setCandidato(candidatoEntity);
+//            imagemRepository.save(novaImagemBD);
+//        }
+//    }
 
     private Optional<ImagemEntity> findByCandidato(CandidatoEntity candidatoEntity) {
         return imagemRepository.findByCandidato(candidatoEntity);
