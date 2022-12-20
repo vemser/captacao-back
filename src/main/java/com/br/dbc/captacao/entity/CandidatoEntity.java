@@ -3,10 +3,7 @@ package com.br.dbc.captacao.entity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -92,4 +89,10 @@ public class CandidatoEntity {
 
         @OneToOne(mappedBy = "candidato")
         private ImagemEntity imageEntity;
+
+        @JsonIgnore
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "ID_EDICAO", referencedColumnName = "ID_EDICAO")
+        @ToString.Exclude
+        private EdicaoEntity edicao;
 }

@@ -24,92 +24,92 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InscricaoService {
 
-    private static final int DESCENDING = 1;
-    private final InscricaoRepository inscricaoRepository;
-    private final CandidatoService candidatoService;
-
-    private final EmailService emailService;
-    private final ObjectMapper objectMapper;
-
-    public InscricaoDTO create(InscricaoCreateDTO inscricaoCreateDTO) throws RegraDeNegocioException {
-        if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(inscricaoCreateDTO.getIdCandidato()).isEmpty()) {
-            throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
-        }
-        InscricaoEntity inscricaoEntity = convertToEntity(inscricaoCreateDTO);
-        inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
-        inscricaoEntity.setDataInscricao(LocalDate.now());
-        inscricaoEntity.setAvaliado(TipoMarcacao.F);
-        inscricaoRepository.save(inscricaoEntity);
-        InscricaoDTO inscricaoDto = converterParaDTO(inscricaoEntity);
-        SendEmailDTO sendEmailDTO = new SendEmailDTO();
-        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
-        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
-        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
-        return inscricaoDto;
-    }
-
-    public InscricaoEntity setAvaliado(Integer idInscricao) throws RegraDeNegocioException {
-        InscricaoEntity inscricaoEntity = findById(idInscricao);
-        inscricaoEntity.setAvaliado(TipoMarcacao.T);
-        InscricaoEntity inscricao = inscricaoRepository.save(inscricaoEntity);
-        return inscricao;
-    }
-
-    public List<InscricaoDTO> findInscricaoPorEmail(String email) {
-        List<InscricaoEntity> lista = inscricaoRepository.findInscricaoEntitiesByCandidato_Email(email);
-        return lista.stream().map(inscricaoEntity -> converterParaDTO(inscricaoEntity))
-                .toList();
-    }
-
-    public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) {
-        Sort ordenacao = Sort.by(sort).ascending();
-        if (order == DESCENDING) {
-            ordenacao = Sort.by(sort).descending();
-        }
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-        Page<InscricaoEntity> paginaInscricaoEntities = inscricaoRepository.findAll(pageRequest);
-
-        List<InscricaoDTO> inscricaoDtos = paginaInscricaoEntities.getContent().stream()
-                .map(inscricaoEntity -> converterParaDTO(inscricaoEntity)).toList();
-
-        return new PageDTO<>(paginaInscricaoEntities.getTotalElements(),
-                paginaInscricaoEntities.getTotalPages(),
-                pagina,
-                tamanho,
-                inscricaoDtos);
-    }
-
-    public InscricaoDTO findDtoByid(Integer idInscricao) throws RegraDeNegocioException {
-        InscricaoDTO inscricaoDto = converterParaDTO(findById(idInscricao));
-        return inscricaoDto;
-    }
-
-    public void delete(Integer id) throws RegraDeNegocioException {
-        findById(id);
-        inscricaoRepository.deleteById(id);
-    }
-
-
-    private InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
-        return inscricaoRepository.findById(idInscricao)
-                .orElseThrow(() -> new RegraDeNegocioException("ID_Inscrição inválido"));
-
-    }
-
-    public InscricaoDTO converterParaDTO(InscricaoEntity inscricaoEntity) {
-        InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-        inscricaoDto.setCandidato(candidatoService.convertToDto(inscricaoEntity.getCandidato()));
-        return inscricaoDto;
-    }
-
-    private InscricaoEntity convertToEntity(InscricaoCreateDTO inscricaoCreateDTO) {
-        InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoCreateDTO, InscricaoEntity.class);
-        return inscricaoEntity;
-    }
-
-    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) {
-        InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoDTO, InscricaoEntity.class);
-        inscricaoEntity.setCandidato(candidatoService.convertToEntity(inscricaoDTO.getCandidato()));
-        return inscricaoEntity;
-    }
+//    private static final int DESCENDING = 1;
+//    private final InscricaoRepository inscricaoRepository;
+//    private final CandidatoService candidatoService;
+//
+//    private final EmailService emailService;
+//    private final ObjectMapper objectMapper;
+//
+//    public InscricaoDTO create(InscricaoCreateDTO inscricaoCreateDTO) throws RegraDeNegocioException {
+//        if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(inscricaoCreateDTO.getIdCandidato()).isEmpty()) {
+//            throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
+//        }
+//        InscricaoEntity inscricaoEntity = convertToEntity(inscricaoCreateDTO);
+//        inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
+//        inscricaoEntity.setDataInscricao(LocalDate.now());
+//        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+//        inscricaoRepository.save(inscricaoEntity);
+//        InscricaoDTO inscricaoDto = converterParaDTO(inscricaoEntity);
+//        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+//        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
+//        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
+//        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
+//        return inscricaoDto;
+//    }
+//
+//    public InscricaoEntity setAvaliado(Integer idInscricao) throws RegraDeNegocioException {
+//        InscricaoEntity inscricaoEntity = findById(idInscricao);
+//        inscricaoEntity.setAvaliado(TipoMarcacao.T);
+//        InscricaoEntity inscricao = inscricaoRepository.save(inscricaoEntity);
+//        return inscricao;
+//    }
+//
+//    public List<InscricaoDTO> findInscricaoPorEmail(String email) {
+//        List<InscricaoEntity> lista = inscricaoRepository.findInscricaoEntitiesByCandidato_Email(email);
+//        return lista.stream().map(inscricaoEntity -> converterParaDTO(inscricaoEntity))
+//                .toList();
+//    }
+//
+//    public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) {
+//        Sort ordenacao = Sort.by(sort).ascending();
+//        if (order == DESCENDING) {
+//            ordenacao = Sort.by(sort).descending();
+//        }
+//        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+//        Page<InscricaoEntity> paginaInscricaoEntities = inscricaoRepository.findAll(pageRequest);
+//
+//        List<InscricaoDTO> inscricaoDtos = paginaInscricaoEntities.getContent().stream()
+//                .map(inscricaoEntity -> converterParaDTO(inscricaoEntity)).toList();
+//
+//        return new PageDTO<>(paginaInscricaoEntities.getTotalElements(),
+//                paginaInscricaoEntities.getTotalPages(),
+//                pagina,
+//                tamanho,
+//                inscricaoDtos);
+//    }
+//
+//    public InscricaoDTO findDtoByid(Integer idInscricao) throws RegraDeNegocioException {
+//        InscricaoDTO inscricaoDto = converterParaDTO(findById(idInscricao));
+//        return inscricaoDto;
+//    }
+//
+//    public void delete(Integer id) throws RegraDeNegocioException {
+//        findById(id);
+//        inscricaoRepository.deleteById(id);
+//    }
+//
+//
+//    private InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
+//        return inscricaoRepository.findById(idInscricao)
+//                .orElseThrow(() -> new RegraDeNegocioException("ID_Inscrição inválido"));
+//
+//    }
+//
+//    public InscricaoDTO converterParaDTO(InscricaoEntity inscricaoEntity) {
+//        InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
+//        inscricaoDto.setCandidato(candidatoService.convertToDto(inscricaoEntity.getCandidato()));
+//        return inscricaoDto;
+//    }
+//
+//    private InscricaoEntity convertToEntity(InscricaoCreateDTO inscricaoCreateDTO) {
+//        InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoCreateDTO, InscricaoEntity.class);
+//        return inscricaoEntity;
+//    }
+//
+//    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) {
+//        InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoDTO, InscricaoEntity.class);
+//        inscricaoEntity.setCandidato(candidatoService.convertToEntity(inscricaoDTO.getCandidato()));
+//        return inscricaoEntity;
+//    }
 }
