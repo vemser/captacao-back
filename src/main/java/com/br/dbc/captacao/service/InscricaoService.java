@@ -36,7 +36,7 @@ public class InscricaoService {
             throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
         }
         InscricaoEntity inscricaoEntity = convertToEntity(inscricaoCreateDTO);
-        inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
+        inscricaoEntity.setCandidato(candidatoService.converterEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
         inscricaoEntity.setDataInscricao(LocalDate.now());
         inscricaoEntity.setAvaliado(TipoMarcacao.F);
         inscricaoRepository.save(inscricaoEntity);
@@ -98,7 +98,7 @@ public class InscricaoService {
 
     public InscricaoDTO converterParaDTO(InscricaoEntity inscricaoEntity) {
         InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-        inscricaoDto.setCandidato(candidatoService.convertToDto(inscricaoEntity.getCandidato()));
+        inscricaoDto.setCandidato(candidatoService.converterEmDTO(inscricaoEntity.getCandidato()));
         return inscricaoDto;
     }
 

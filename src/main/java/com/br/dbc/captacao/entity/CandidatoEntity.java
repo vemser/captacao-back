@@ -95,4 +95,9 @@ public class CandidatoEntity {
         @JoinColumn(name = "ID_EDICAO", referencedColumnName = "ID_EDICAO")
         @ToString.Exclude
         private EdicaoEntity edicao;
+
+        @JsonIgnore
+        @OneToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "ID_FORMULARIO", referencedColumnName = "ID_FORMULARIO")
+        private FormularioEntity formularioEntity;
 }

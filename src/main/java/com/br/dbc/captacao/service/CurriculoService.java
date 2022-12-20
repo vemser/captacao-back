@@ -26,47 +26,47 @@ public class CurriculoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Currículo não encontrado!"));
     }
 
-//    public void arquivarCurriculo(MultipartFile file, String email) throws IOException, RegraDeNegocioException {
-//        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
-//        Optional<CurriculoEntity> curriculoEntityOptional = findByCandidato(candidatoEntity);
-//        String nomeArquivo = StringUtils.cleanPath(file.getOriginalFilename());
-//        if (!nomeArquivo.endsWith(".pdf")) {
-//            throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir pdf");
-//        } else {
-//            if (curriculoEntityOptional.isPresent()) {
-//                curriculoEntityOptional.get().setNome(nomeArquivo);
-//                curriculoEntityOptional.get().setTipo(file.getContentType());
-//                curriculoEntityOptional.get().setDado(file.getBytes());
-//                curriculoEntityOptional.get().setCandidato(candidatoEntity);
-//                curriculoRepository.save(curriculoEntityOptional.get());
-//            } else {
-//                CurriculoEntity curriculo = new CurriculoEntity();
-//                curriculo.setNome(nomeArquivo);
-//                curriculo.setTipo(file.getContentType());
-//                curriculo.setDado(file.getBytes());
-//                curriculo.setCandidato(candidatoEntity);
-//                curriculoRepository.save(curriculo);
-//            }
-//        }
-//    }
+    public void arquivarCurriculo(MultipartFile file, String email) throws IOException, RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
+        Optional<CurriculoEntity> curriculoEntityOptional = findByCandidato(candidatoEntity);
+        String nomeArquivo = StringUtils.cleanPath(file.getOriginalFilename());
+        if (!nomeArquivo.endsWith(".pdf")) {
+            throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir pdf");
+        } else {
+            if (curriculoEntityOptional.isPresent()) {
+                curriculoEntityOptional.get().setNome(nomeArquivo);
+                curriculoEntityOptional.get().setTipo(file.getContentType());
+                curriculoEntityOptional.get().setData(file.getBytes());
+                curriculoEntityOptional.get().setFormularioEntity(candidatoEntity.getFormularioEntity());
+                curriculoRepository.save(curriculoEntityOptional.get());
+            } else {
+                CurriculoEntity curriculo = new CurriculoEntity();
+                curriculo.setNome(nomeArquivo);
+                curriculo.setTipo(file.getContentType());
+                curriculo.setData(file.getBytes());
+                curriculo.setFormularioEntity(candidatoEntity.getFormularioEntity());
+                curriculoRepository.save(curriculo);
+            }
+        }
+    }
 
-//    public String pegarCurriculoCandidato(String email) throws RegraDeNegocioException {
-//        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
-//        Optional<CurriculoEntity> curriculo = curriculoRepository.findByCandidato(candidatoEntity);
-//        if (curriculo.isEmpty()) {
-//            throw new RegraDeNegocioException("Usuário não possui currículo cadastrado.");
-//        }
-//        return Base64Utils.encodeToString(curriculo.get().getDado());
-//    }
-//
-//    private Optional<CurriculoEntity> findByCandidato(CandidatoEntity candidatoEntity) {
-//        return curriculoRepository.findByCandidato(candidatoEntity);
-//    }
-//
-//    public void deleteFisico(Integer id) throws RegraDeNegocioException {
-//        CandidatoEntity candidatoEntity = candidatoService.findById(id);
-//        Optional<CurriculoEntity> curriculo = findByCandidato(candidatoEntity);
-//        Integer idCurriculo = curriculo.get().getIdCurriculo();;
-//        curriculoRepository.deleteById(idCurriculo);
-//    }
+    public String pegarCurriculoCandidato(String email) throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
+        Optional<CurriculoEntity> curriculo = curriculoRepository.findByCandidato(candidatoEntity);
+        if (curriculo.isEmpty()) {
+            throw new RegraDeNegocioException("Usuário não possui currículo cadastrado.");
+        }
+        return Base64Utils.encodeToString(curriculo.get().getData());
+    }
+
+    private Optional<CurriculoEntity> findByCandidato(CandidatoEntity candidatoEntity) {
+        return curriculoRepository.findByCandidato(candidatoEntity);
+    }
+
+    public void deleteFisico(Integer id) throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = candidatoService.findById(id);
+        Optional<CurriculoEntity> curriculo = findByCandidato(candidatoEntity);
+        Integer idCurriculo = curriculo.get().getIdCurriculo();;
+        curriculoRepository.deleteById(idCurriculo);
+    }
 }

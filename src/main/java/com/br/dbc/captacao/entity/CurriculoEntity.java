@@ -31,5 +31,6 @@ public class CurriculoEntity {
     @Lob
     private byte[] data;
 
-
+    @OneToOne(mappedBy = "curriculoEntity")
+    private FormularioEntity formularioEntity;
 }

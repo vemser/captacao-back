@@ -116,4 +116,9 @@ public class FormularioEntity {
             inverseJoinColumns = @JoinColumn(name = "id_trilha")
     )
     private Set<TrilhaEntity> trilhaEntitySet;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_CURRICULO", referencedColumnName = "ID_CURRICULO")
+    private CurriculoEntity curriculoEntity;
 }
