@@ -7,7 +7,6 @@ import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoCadastroDTO;
 import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
-import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.LinguagemEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
@@ -134,10 +133,10 @@ public class CandidatoService {
         if (candidatoCreateDTO.getEmail().isEmpty() || candidatoCreateDTO.getEmail().isBlank()) {
             throw new RegraDeNegocioException("E-mail inválido! Deve ser inserido um endereço de email válido!");
         }
+
         linguagemList = getLinguagensCandidato(candidatoCreateDTO, linguagemList);
         CandidatoEntity candidatoEntity = converterEntity(candidatoCreateDTO);
         candidatoEntity.setNome(candidatoEntity.getNome().trim());
-        candidatoEntity.setTrilha(trilhaService.findByNome(candidatoCreateDTO.getTrilha().getNome()));
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
@@ -173,7 +172,6 @@ public class CandidatoService {
         candidatoEntity.setIdCandidato(id);
         candidatoEntity.setEmail(candidatoCreateDTO.getEmail());
         candidatoEntity.setNome(candidatoEntity.getNome().trim());
-        candidatoEntity.setTrilha(trilhaService.findByNome(candidatoCreateDTO.getTrilha().getNome()));
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
@@ -271,7 +269,6 @@ public class CandidatoService {
     public CandidatoDTO converterEmDTO(CandidatoEntity candidatoEntity) {
         CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
         candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
-        candidatoDTO.setTrilha(objectMapper.convertValue(candidatoEntity.getTrilha(), TrilhaDTO.class));
         candidatoDTO.setLinguagens(candidatoEntity.getLinguagens()
                 .stream()
                 .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class))

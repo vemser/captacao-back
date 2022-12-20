@@ -59,8 +59,6 @@ public class CandidatoCreateDTO {
 
     private Set<LinguagemDTO> linguagens;
 
-    private TrilhaDTO trilha;
-
     private EntrevistaDTO entrevistaEntity;
 
     private EdicaoDTO edicao;
