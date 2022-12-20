@@ -1,4 +1,4 @@
-package com.br.dbc.captacao.dto;
+package com.br.dbc.captacao.dto.paginacao;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

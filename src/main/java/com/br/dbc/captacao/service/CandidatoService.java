@@ -1,5 +1,7 @@
 package com.br.dbc.captacao.service;
 
+import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.entity.CandidatoEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

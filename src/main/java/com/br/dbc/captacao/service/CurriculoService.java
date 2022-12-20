@@ -58,15 +58,15 @@ public class CurriculoService {
 //        }
 //        return Base64Utils.encodeToString(curriculo.get().getDado());
 //    }
-
-    private Optional<CurriculoEntity> findByCandidato(CandidatoEntity candidatoEntity) {
-        return curriculoRepository.findByCandidato(candidatoEntity);
-    }
-
-    public void deleteFisico(Integer id) throws RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = candidatoService.findById(id);
-        Optional<CurriculoEntity> curriculo = findByCandidato(candidatoEntity);
-        Integer idCurriculo = curriculo.get().getIdCurriculo();;
-        curriculoRepository.deleteById(idCurriculo);
-    }
+//
+//    private Optional<CurriculoEntity> findByCandidato(CandidatoEntity candidatoEntity) {
+//        return curriculoRepository.findByCandidato(candidatoEntity);
+//    }
+//
+//    public void deleteFisico(Integer id) throws RegraDeNegocioException {
+//        CandidatoEntity candidatoEntity = candidatoService.findById(id);
+//        Optional<CurriculoEntity> curriculo = findByCandidato(candidatoEntity);
+//        Integer idCurriculo = curriculo.get().getIdCurriculo();;
+//        curriculoRepository.deleteById(idCurriculo);
+//    }
 }
