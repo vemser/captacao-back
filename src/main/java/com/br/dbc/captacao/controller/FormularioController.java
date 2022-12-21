@@ -1,8 +1,8 @@
 package com.br.dbc.captacao.controller;
 
 import com.br.dbc.captacao.controller.documentationinterface.FormularioControllerInterface;
-import com.br.dbc.captacao.dto.formulario.FormularioCreateDto;
-import com.br.dbc.captacao.dto.formulario.FormularioDto;
+import com.br.dbc.captacao.dto.formulario.FormularioCreateDTO;
+import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.FormularioService;
@@ -23,15 +23,15 @@ public class FormularioController implements FormularioControllerInterface {
     private final FormularioService formularioService;
 
     @PostMapping("/cadastro")
-    public ResponseEntity<FormularioDto> create(@RequestBody FormularioCreateDto formularioCreateDto) throws RegraDeNegocioException {
+    public ResponseEntity<FormularioDTO> create(@RequestBody FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
         log.info("Criando formulario...");
-        FormularioDto formularioDto = formularioService.create(formularioCreateDto);
+        FormularioDTO formularioDto = formularioService.create(formularioCreateDto);
         log.info("Formulario criado, id:" + formularioDto.getIdFormulario());
         return new ResponseEntity<>(formularioDto, HttpStatus.OK);
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<PageDTO<FormularioDto>> listAll(@RequestParam(defaultValue = "0", required = false) Integer pagina,
+    public ResponseEntity<PageDTO<FormularioDTO>> listAll(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                           @RequestParam(defaultValue = "10", required = false) Integer tamanho,
                                                           @RequestParam(defaultValue = "idFormulario", required = false) String sort,
                                                           @RequestParam(defaultValue = "0", required = false) int order) {
@@ -40,9 +40,9 @@ public class FormularioController implements FormularioControllerInterface {
     }
 
     @PutMapping
-    public ResponseEntity<FormularioDto> updateFormulario(@RequestParam Integer idFormulario,
-                                                          @RequestBody @Valid FormularioCreateDto formularioCreateDto) throws RegraDeNegocioException {
-        FormularioDto formularioDto = formularioService.update(idFormulario, formularioCreateDto);
+    public ResponseEntity<FormularioDTO> updateFormulario(@RequestParam Integer idFormulario,
+                                                          @RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
+        FormularioDTO formularioDto = formularioService.update(idFormulario, formularioCreateDto);
         log.info("Atualizando Formulario ID: " + idFormulario);
         return new ResponseEntity<>(formularioDto, HttpStatus.OK);
     }

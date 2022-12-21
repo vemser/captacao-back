@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FormularioCreateDto {
+public class FormularioCreateDTO {
 
     @Schema(example = "true", description = "T(true) or F(false)")
     private boolean matriculadoBoolean;
