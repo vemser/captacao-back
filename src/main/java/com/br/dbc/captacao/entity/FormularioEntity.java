@@ -103,9 +103,6 @@ public class FormularioEntity {
     @Column(name = "IMPORTANCIA_TI")
     private String importancia;
 
-    @Column(name = "INSPIRACAO")
-    private String inspiracao;
-
     @OneToOne(mappedBy = "formulario", fetch = FetchType.LAZY)
     private CandidatoEntity candidato;
 
