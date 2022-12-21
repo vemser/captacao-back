@@ -10,7 +10,7 @@ import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.GestorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.converters.models.Sort;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -46,21 +46,21 @@ public class GestorService {
 //        return convertoToDTO(gestorRepository.save(gestorEntity));
 //    }
 
-//    public PageDTO<GestorDTO> listar(Integer pagina, Integer tamanho, String sort, int order) {
-//        Sort ordenacao = Sort.by(sort).ascending();
-//        if (order == DESCENDING) {
-//            ordenacao = Sort.by(sort).descending();
-//        }
-//        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-//        Page<GestorEntity> paginaGestorEntities = gestorRepository.findAll(pageRequest);
-//        List<GestorDTO> gestorDTOS = paginaGestorEntities.getContent().stream()
-//                .map(gestorEntity -> convertoToDTO(gestorEntity)).toList();
-//        return new PageDTO<>(paginaGestorEntities.getTotalElements(),
-//                paginaGestorEntities.getTotalPages(),
-//                pagina,
-//                tamanho,
-//                gestorDTOS);
-//    }
+    public PageDTO<GestorDTO> listar(Integer pagina, Integer tamanho, String sort, int order) {
+        Sort ordenacao = Sort.by(sort).ascending();
+        if (order == DESCENDING) {
+            ordenacao = Sort.by(sort).descending();
+        }
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+        Page<GestorEntity> paginaGestorEntities = gestorRepository.findAll(pageRequest);
+        List<GestorDTO> gestorDTOS = paginaGestorEntities.getContent().stream()
+                .map(gestorEntity -> convertoToDTO(gestorEntity)).toList();
+        return new PageDTO<>(paginaGestorEntities.getTotalElements(),
+                paginaGestorEntities.getTotalPages(),
+                pagina,
+                tamanho,
+                gestorDTOS);
+    }
 
     public GestorDTO findDtoById(Integer idGestor) throws RegraDeNegocioException {
         GestorEntity gestorEntity = findById(idGestor);
@@ -168,9 +168,9 @@ public class GestorService {
         return gestorEntity;
     }
 
-//    public GestorEntity convertToEntity(GestorDTO  gestorDTO) {
-//        GestorEntity gestorEntity = objectMapper.convertValue(gestorDTO, GestorEntity.class);
-//        gestorEntity.setCargoEntity(cargoService.convertToEntity(gestorDTO.getCargoDto()));
-//        return gestorEntity;
-//    }
+    public GestorEntity convertToEntity(GestorDTO  gestorDTO) {
+        GestorEntity gestorEntity = objectMapper.convertValue(gestorDTO, GestorEntity.class);
+        gestorEntity.setCargoEntity(cargoService.convertToEntity(gestorDTO.getCargoDto()));
+        return gestorEntity;
+    }
 }
