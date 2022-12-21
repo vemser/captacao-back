@@ -1,0 +1,109 @@
+package com.br.dbc.captacao.service;
+
+import com.br.dbc.captacao.dto.formulario.FormularioCreateDto;
+import com.br.dbc.captacao.dto.formulario.FormularioDto;
+import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
+import com.br.dbc.captacao.entity.FormularioEntity;
+import com.br.dbc.captacao.entity.TrilhaEntity;
+import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.exception.RegraDeNegocioException;
+import com.br.dbc.captacao.repository.FormularioRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class FormularioService {
+    private static final int DESCENDING = 1;
+    private final FormularioRepository formularioRepository;
+    private final TrilhaService trilhaService;
+    private final ObjectMapper objectMapper;
+
+    public FormularioDto create(FormularioCreateDto formularioCreateDto) throws RegraDeNegocioException {
+        if (!formularioCreateDto.isMatriculadoBoolean()) {
+            throw new RegraDeNegocioException("Precisa estar matriculado!");
+        }
+        FormularioEntity formulario = convertToEntity(formularioCreateDto);
+        FormularioEntity formularioRetornoBanco = formularioRepository.save(formulario);
+        return convertToDto(formularioRetornoBanco);
+    }
+
+    public PageDTO<FormularioDto> listAllPaginado(Integer pagina, Integer tamanho, String sort, int order) {
+        Sort ordenacao = Sort.by(sort).ascending();
+        if (order == DESCENDING) {
+            ordenacao = Sort.by(sort).descending();
+        }
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+        Page<FormularioEntity> paginaFormularioEntity = formularioRepository.findAll(pageRequest);
+        List<FormularioDto> formularioDtos = paginaFormularioEntity.getContent().stream()
+                .map(this::convertToDto)
+                .toList();
+        return new PageDTO<>(paginaFormularioEntity.getTotalElements(),
+                paginaFormularioEntity.getTotalPages(),
+                pagina,
+                tamanho,
+                formularioDtos);
+    }
+
+    public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocioException {
+        return formularioRepository.findById(idFormulario)
+                .orElseThrow(() -> new RegraDeNegocioException("Erro ao buscar Formulario"));
+    }
+
+    public FormularioDto findDtoById(Integer idFormulario) throws RegraDeNegocioException {
+        FormularioEntity formulario = findById(idFormulario);
+        return convertToDto(formulario);
+    }
+
+    public void deleteById(Integer idFormulario) throws RegraDeNegocioException {
+        findById(idFormulario);
+        formularioRepository.deleteById(idFormulario);
+    }
+
+    public FormularioDto update(Integer idFormulario, FormularioCreateDto formularioCreateDto) throws RegraDeNegocioException {
+        findById(idFormulario);
+        FormularioEntity formulario1 = convertToEntity(formularioCreateDto);
+        formulario1.setIdFormulario(idFormulario);
+        FormularioEntity formularioEntity = formularioRepository.save(formulario1);
+        return convertToDto(formularioEntity);
+    }
+
+    public FormularioDto convertToDto(FormularioEntity formulario) {
+        FormularioDto formularioDto = objectMapper.convertValue(formulario, FormularioDto.class);
+        formularioDto.setTrilhas(formulario.getTrilhaEntitySet().stream()
+                .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
+                .collect(Collectors.toSet()));
+        return formularioDto;
+    }
+
+    private FormularioEntity convertToEntity(FormularioCreateDto formularioCreateDto) throws RegraDeNegocioException {
+        FormularioEntity formularioEntity = objectMapper.convertValue(formularioCreateDto, FormularioEntity.class);
+        formularioEntity.setMatriculado(formularioCreateDto.isMatriculadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setDesafios(formularioCreateDto.isDesafiosBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setProblema(formularioCreateDto.isProblemaBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setReconhecimento(formularioCreateDto.isReconhecimentoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setAltruismo(formularioCreateDto.isAltruismoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setLgpd(formularioCreateDto.isLgpdBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setProva(formularioCreateDto.isProvaBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setEfetivacao(formularioCreateDto.isEfetivacaoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formularioEntity.setDisponibilidade(formularioCreateDto.isDisponibilidadeBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        Set<TrilhaEntity> trilhas = trilhaService.findListaTrilhas(formularioCreateDto.getTrilhas());
+        formularioEntity.setTrilhaEntitySet(trilhas);
+        return formularioEntity;
+    }
+
+    public FormularioEntity convertToEntity(FormularioDto formularioDto) {
+        FormularioEntity formulario = objectMapper.convertValue(formularioDto, FormularioEntity.class);
+        formulario.setTrilhaEntitySet(trilhaService.convertToEntity(formularioDto.getTrilhas()));
+        return formulario;
+    }
+}
