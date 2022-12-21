@@ -7,6 +7,7 @@ import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.ImagemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,6 +65,24 @@ public class ImagemService {
             novaImagemBD.setGestorEntity(gestorEntity);
             imagemRepository.save(novaImagemBD);
         }
+    }
+
+    public String pegarImagemCandidato(String email) throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
+        Optional<ImagemEntity> imagemBD = findByCandidato(candidatoEntity);
+        if (imagemBD.isEmpty()) {
+            throw new RegraDeNegocioException("Candidato não possui imagem cadastrada.");
+        }
+        return Base64Utils.encodeToString(imagemBD.get().getData());
+    }
+
+    public String pegarImagemUsuario(String email) throws RegraDeNegocioException {
+        GestorEntity usuarioEntity = gestorService.findByEmail(email);
+        Optional<ImagemEntity> imagemBD = findByGestor(usuarioEntity);
+        if (imagemBD.isEmpty()) {
+            throw new RegraDeNegocioException("Usuário não possui imagem cadastrada.");
+        }
+        return Base64Utils.encodeToString(imagemBD.get().getData());
     }
 
     private Optional<ImagemEntity> findByCandidato(CandidatoEntity candidatoEntity) {
