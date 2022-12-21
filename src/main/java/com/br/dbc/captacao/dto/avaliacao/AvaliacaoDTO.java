@@ -15,7 +15,7 @@ public class AvaliacaoDTO {
 
     private Integer idAvaliacao;
 
-//    private GestorDTO avaliador;
+    private GestorDTO avaliador;
 
     private TipoMarcacao aprovado;
 

@@ -27,7 +27,6 @@ public class InscricaoService {
     private static final int DESCENDING = 1;
     private final InscricaoRepository inscricaoRepository;
     private final CandidatoService candidatoService;
-
     private final EmailService emailService;
     private final ObjectMapper objectMapper;
 
@@ -36,7 +35,7 @@ public class InscricaoService {
             throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
         }
         InscricaoEntity inscricaoEntity = convertToEntity(inscricaoCreateDTO);
-        inscricaoEntity.setCandidato(candidatoService.converterEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
+        inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
         inscricaoEntity.setDataInscricao(LocalDate.now());
         inscricaoEntity.setAvaliado(TipoMarcacao.F);
         inscricaoRepository.save(inscricaoEntity);

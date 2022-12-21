@@ -18,6 +18,8 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     Optional<CandidatoEntity> findByEmail(String email);
 
+    List<CandidatoEntity> findCandidatoEntitiesByEmail(String email);
+
     @Query(" select new com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO(" +
             " c.idCandidato," +
             " c.nome," +

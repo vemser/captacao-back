@@ -25,8 +25,8 @@ public class RelatorioCandidatoCadastroDTO {
     private String estado;
     private String cidade;
     private String observacoes;
-//    @Lob
-//    private byte[] dado;
+    @Lob
+    private byte[] dado;
     private List<String> linguagemList;
 
 }

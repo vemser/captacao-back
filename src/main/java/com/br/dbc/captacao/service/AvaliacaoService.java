@@ -3,7 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
-import com.br.dbc.captacao.dto.paginacaodto.PageDTO;
+import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.AvaliacaoEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.enums.TipoEmail;
@@ -27,7 +27,7 @@ public class AvaliacaoService {
     private final ObjectMapper objectMapper;
     private final AvaliacaoRepository avaliacaoRepository;
     private final InscricaoService inscricaoService;
-//    private final GestorService gestorService;
+    private final GestorService gestorService;
     private final EmailService emailService;
 
 
@@ -37,7 +37,7 @@ public class AvaliacaoService {
         }
         AvaliacaoEntity avaliacaoEntity = convertToEntity(avaliacaoCreateDTO);
         AvaliacaoDTO avaliacaoDto = convertToDTO(avaliacaoRepository.save(avaliacaoEntity));
-        avaliacaoDto.setAvaliador(gestorService.convertToDto(avaliacaoEntity.getAvaliador()));
+        avaliacaoDto.setAvaliador(gestorService.convertoToDTO(avaliacaoEntity.getAvaliador()));
         SendEmailDTO sendEmailDTO = new SendEmailDTO();
         sendEmailDTO.setNome(avaliacaoDto.getInscricao().getCandidato().getNome());
         sendEmailDTO.setEmail(avaliacaoDto.getInscricao().getCandidato().getEmail());
@@ -102,12 +102,12 @@ public class AvaliacaoService {
         AvaliacaoDTO avaliacaoDTO = new AvaliacaoDTO();
         avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
         avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
-        avaliacaoDTO.setAvaliador(gestorService.convertToDto(avaliacaoEntity.getAvaliador()));
+        avaliacaoDTO.setAvaliador(gestorService.convertoToDTO(avaliacaoEntity.getAvaliador()));
         avaliacaoDTO.setInscricao(inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao()));
         return avaliacaoDTO;
     }
 
-    private AvaliacaoEntity convertToEntity(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException {
+    public AvaliacaoEntity convertToEntity(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException {
         AvaliacaoEntity avaliacaoEntity = objectMapper.convertValue(avaliacaoCreateDTO, AvaliacaoEntity.class);
         InscricaoEntity inscricaoEntity = inscricaoService.convertToEntity(inscricaoService.findDtoByid(avaliacaoCreateDTO.getIdInscricao()));
         avaliacaoEntity.setInscricao(inscricaoEntity);
