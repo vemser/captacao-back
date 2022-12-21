@@ -63,7 +63,7 @@ public class EmailService {
         dados.put("msg2", base);
         dados.put("msg3", MESSAGE_DUVIDA);
 
-        Template template = fmConfiguration.getTemplate("email-template-universal.ftl");
+        Template template = fmConfiguration.getTemplate("templates/email-template-universal.ftl");
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
         return html;
     }
