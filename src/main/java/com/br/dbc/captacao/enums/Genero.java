@@ -1,9 +1,9 @@
 package com.br.dbc.captacao.enums;
 
 public enum Genero {
-    MASCULINO(0),
-    FEMININO(1),
-    OUTRO(2);
+    M(0),
+    F(1),
+    O(2);
 
     private Integer genero;
 

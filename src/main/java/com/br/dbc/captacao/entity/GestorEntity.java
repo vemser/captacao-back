@@ -22,7 +22,7 @@ public class GestorEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GESTOR")
     @SequenceGenerator(name = "SEQ_GESTOR", sequenceName = "SEQ_GESTOR", allocationSize = 1)
     @Column(name = "ID_GESTOR")
-    private Integer idCurriculo;
+    private Integer idGestor;
 
     @Column(name = "nome")
     private String nome;

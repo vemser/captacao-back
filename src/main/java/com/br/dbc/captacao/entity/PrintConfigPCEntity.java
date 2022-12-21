@@ -32,6 +32,6 @@ public class PrintConfigPCEntity {
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_USUARIO", referencedColumnName = "ID_USUARIO")
+    @JoinColumn(name = "ID_FORMULARIO", referencedColumnName = "ID_FORMULARIO")
     private FormularioEntity formulario;
 }

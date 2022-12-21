@@ -23,7 +23,7 @@ public class TrilhaEntity {
     @Column(name = "id_trilha")
     private Integer idTrilha;
 
-    @Column(name = "nome")
+    @Column(name = "descricao")
     private String nome;
 
     @JsonIgnore

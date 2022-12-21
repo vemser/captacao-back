@@ -11,5 +11,5 @@ public interface ImagemRepository  extends JpaRepository<ImagemEntity, Integer> 
 
     Optional<ImagemEntity> findByCandidato(CandidatoEntity candidatoEntity);
 
-    Optional<ImagemEntity> findByGestor(GestorEntity gestorEntity);
+    Optional<ImagemEntity> findByGestorEntity(GestorEntity gestorEntity);
 }

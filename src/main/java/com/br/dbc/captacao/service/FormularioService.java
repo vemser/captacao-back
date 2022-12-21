@@ -106,4 +106,9 @@ public class FormularioService {
         formulario.setTrilhaEntitySet(trilhaService.convertToEntity(formularioDto.getTrilhas()));
         return formulario;
     }
+
+    public FormularioEntity findByEmail(String candidatoEmail) throws RegraDeNegocioException {
+        return formularioRepository.findByCandidatoEmail(candidatoEmail)
+                .orElseThrow(() -> new RegraDeNegocioException("Candidato não encontrado"));
+    }
 }

@@ -2,8 +2,10 @@ package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.CurriculoEntity;
+import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CurriculoRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
@@ -20,6 +22,10 @@ public class CurriculoService {
     private final CurriculoRepository curriculoRepository;
 
     private final CandidatoService candidatoService;
+
+    private final FormularioService formularioService;
+
+    private final ObjectMapper objectMapper;
 
     public CurriculoEntity findById(Integer idCurriculo) throws RegraDeNegocioException {
         return curriculoRepository.findById(idCurriculo)
@@ -51,16 +57,17 @@ public class CurriculoService {
     }
 
     public String pegarCurriculoCandidato(String email) throws RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
-        Optional<CurriculoEntity> curriculo = curriculoRepository.findByCandidato(candidatoEntity);
+        FormularioEntity formularioEntity = formularioService.findByEmail(email);
+        Optional<CurriculoEntity> curriculo = objectMapper.convertValue(formularioEntity.getCurriculoEntity(),Optional.class);
         if (curriculo.isEmpty()) {
             throw new RegraDeNegocioException("Usuário não possui currículo cadastrado.");
         }
         return Base64Utils.encodeToString(curriculo.get().getData());
     }
 
-    private Optional<CurriculoEntity> findByCandidato(CandidatoEntity candidatoEntity) {
-        return curriculoRepository.findByCandidato(candidatoEntity);
+    private Optional<CurriculoEntity> findByCandidato(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
+        FormularioEntity formularioEntity = formularioService.findByEmail(candidatoEntity.getEmail());
+        return objectMapper.convertValue(formularioEntity.getCurriculoEntity(),Optional.class);
     }
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {

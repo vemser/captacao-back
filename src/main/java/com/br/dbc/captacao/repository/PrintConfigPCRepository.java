@@ -10,7 +10,5 @@ import java.util.Optional;
 
 public interface PrintConfigPCRepository  extends JpaRepository<PrintConfigPCEntity, Integer> {
 
-    Optional<PrintConfigPCEntity> findByCandidato(CandidatoEntity candidatoEntity);
-
     Optional<PrintConfigPCEntity> findByFormulario(FormularioEntity formulario);
 }

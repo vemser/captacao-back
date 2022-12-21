@@ -103,12 +103,12 @@ public class FormularioEntity {
     @Column(name = "IMPORTANCIA_TI")
     private String importancia;
 
-    @OneToOne(mappedBy = "formulario", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "formularioEntity", fetch = FetchType.LAZY)
     private CandidatoEntity candidato;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "TRILHA",
+    @JoinTable(name = "TRILHA_FORM",
             joinColumns = @JoinColumn(name = "id_formulario"),
             inverseJoinColumns = @JoinColumn(name = "id_trilha")
     )

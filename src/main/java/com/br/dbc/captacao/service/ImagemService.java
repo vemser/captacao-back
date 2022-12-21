@@ -90,7 +90,7 @@ public class ImagemService {
     }
 
     private Optional<ImagemEntity> findByGestor(GestorEntity gestorEntity) {
-        return imagemRepository.findByGestor(gestorEntity);
+        return imagemRepository.findByGestorEntity(gestorEntity);
     }
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
