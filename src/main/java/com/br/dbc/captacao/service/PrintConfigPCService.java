@@ -1,6 +1,7 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.entity.CandidatoEntity;
+import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.ImagemEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -24,35 +25,39 @@ public class PrintConfigPCService {
 
     private final ObjectMapper objectMapper;
 
-//    private final FormularioService formularioService;
+    private final FormularioService formularioService;
 
     public PrintConfigPCEntity findById(Integer id) throws RegraDeNegocioException {
         return printConfigPCRepository.findById(id)
                 .orElseThrow(() -> new RegraDeNegocioException("Configurações do computador não encontrada!"));
     }
 
-//    public void arquivarCandidato(MultipartFile file, String email) throws RegraDeNegocioException, IOException {
-//        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
-//        Optional<PrintConfigPCEntity> printConfigPCEntity = findByCandidato(candidatoEntity);
-//        String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
-//        if (printConfigPCEntity.isPresent()) {
-//            printConfigPCEntity.get().setNome(nomeArquivo);
-//            printConfigPCEntity.get().setTipo(file.getContentType());
-//            printConfigPCEntity.get().setData(file.getBytes());
-//            printConfigPCEntity.get().setFormulario(candidatoEntity);
-//            printConfigPCRepository.save(printConfigPCEntity.get());
-//        } else {
-//            PrintConfigPCEntity novaImagemBD = new PrintConfigPCEntity();
-//            novaImagemBD.setNome(nomeArquivo);
-//            novaImagemBD.setTipo(file.getContentType());
-//            novaImagemBD.setData(file.getBytes());
-//            novaImagemBD.setFormulario(candidatoEntity);
-//            printConfigPCRepository.save(novaImagemBD);
-//        }
-//    }
+    public void arquivarCandidato(MultipartFile file, String email) throws RegraDeNegocioException, IOException {
+        FormularioEntity formulario = formularioService.findByEmail(email);
+        Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
+        String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
+        if (printConfigPCEntity.isPresent()) {
+            printConfigPCEntity.get().setNome(nomeArquivo);
+            printConfigPCEntity.get().setTipo(file.getContentType());
+            printConfigPCEntity.get().setData(file.getBytes());
+            printConfigPCEntity.get().setFormulario(formulario);
+            printConfigPCRepository.save(printConfigPCEntity.get());
+        } else {
+            PrintConfigPCEntity novaImagemBD = new PrintConfigPCEntity();
+            novaImagemBD.setNome(nomeArquivo);
+            novaImagemBD.setTipo(file.getContentType());
+            novaImagemBD.setData(file.getBytes());
+            novaImagemBD.setFormulario(formulario);
+            printConfigPCRepository.save(novaImagemBD);
+        }
+    }
 
     private Optional<PrintConfigPCEntity> findByCandidato(CandidatoEntity candidatoEntity) {
         return printConfigPCRepository.findByCandidato(candidatoEntity);
+    }
+
+    private Optional<PrintConfigPCEntity> findByFormulario(FormularioEntity formulario) {
+        return printConfigPCRepository.findByFormulario(formulario);
     }
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
