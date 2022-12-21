@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,9 +45,12 @@ public class GestorEntity {
     private TipoMarcacao ativo;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_cargo")
-    private CargoEntity cargoEntity;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "GESTOR_CARGO",
+            joinColumns = @JoinColumn(name = "id_gestor"),
+            inverseJoinColumns = @JoinColumn(name = "id_cargo")
+    )
+    private Set<CargoEntity> cargoEntity;
 
     @Column(name = "genero")
     @Enumerated(EnumType.STRING)

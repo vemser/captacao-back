@@ -17,7 +17,7 @@ public class OpenApiConfig {
     public OpenAPI springShopOpenAPI() {
         String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-                .info(new Info().title("DBC Captacao")
+                .info(new Info().title("DBCCaptacao")
                         .description("DBC Captacao API documentacao.")
                         .version("v1.0.0")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")))
