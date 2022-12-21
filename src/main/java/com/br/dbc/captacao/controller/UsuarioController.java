@@ -8,14 +8,18 @@ import com.br.dbc.captacao.dto.gestor.GestorSenhaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.GestorService;
+import com.br.dbc.captacao.service.ImagemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,6 +30,8 @@ import java.util.List;
 public class UsuarioController implements UsuarioControllerInterface {
 
     private final GestorService gestorService;
+
+    private final ImagemService imagemService;
 
     public ResponseEntity<PageDTO<GestorDTO>> listar(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                      @RequestParam(defaultValue = "10", required = false) Integer tamanho,
@@ -101,5 +107,12 @@ public class UsuarioController implements UsuarioControllerInterface {
 //        log.info("Buscando gestor logado.");
 //        return new ResponseEntity<>(gestorService.getLoggedUser(), HttpStatus.OK);
 //    }
+
+    @PutMapping(value = "/upload-imagem", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> uploadImagem(@RequestPart("file") MultipartFile file,
+                                                @RequestParam("email") String email) throws RegraDeNegocioException, IOException {
+        imagemService.arquivarGestor(file, email);
+        return ResponseEntity.ok().build();
+    }
 
 }

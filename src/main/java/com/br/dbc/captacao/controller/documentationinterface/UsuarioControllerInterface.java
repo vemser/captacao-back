@@ -10,9 +10,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UsuarioControllerInterface {
@@ -132,4 +135,14 @@ public interface UsuarioControllerInterface {
 //    )
 //    @GetMapping("/gestor-logado")
 //    public ResponseEntity<GestorDTO> pegarUserLogado() throws RegraDeNegocioException;
+
+    @Operation(summary = "Inserir imagem para o cadastro de Usuario", description = "Inserir imagem do Usuario no Sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Imagem inserida com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @PutMapping(value = "/upload-imagem", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> uploadImagem(@RequestPart("file") MultipartFile file,
+                                             @RequestParam("email") String email) throws RegraDeNegocioException, IOException;
 }
