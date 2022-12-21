@@ -33,22 +33,22 @@ public class PrintConfigPCService {
     }
 
     public void arquivarCandidato(MultipartFile file, String email) throws RegraDeNegocioException, IOException {
-                FormularioEntity formulario = formularioService.findByEmail(email);
-                Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
-                String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
-                if (printConfigPCEntity.isPresent()) {
-                    printConfigPCEntity.get().setNome(nomeArquivo);
-                    printConfigPCEntity.get().setTipo(file.getContentType());
-                    printConfigPCEntity.get().setData(file.getBytes());
-                    printConfigPCEntity.get().setFormulario(formulario);
-                    printConfigPCRepository.save(printConfigPCEntity.get());
-                } else {
-                    PrintConfigPCEntity novaImagemBD = new PrintConfigPCEntity();
-                    novaImagemBD.setNome(nomeArquivo);
-                    novaImagemBD.setTipo(file.getContentType());
-                    novaImagemBD.setData(file.getBytes());
-                    novaImagemBD.setFormulario(formulario);
-                    printConfigPCRepository.save(novaImagemBD);
+        FormularioEntity formulario = formularioService.findByEmail(email);
+        Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
+        String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
+        if (printConfigPCEntity.isPresent()) {
+            printConfigPCEntity.get().setNome(nomeArquivo);
+            printConfigPCEntity.get().setTipo(file.getContentType());
+            printConfigPCEntity.get().setData(file.getBytes());
+            printConfigPCEntity.get().setFormulario(formulario);
+            printConfigPCRepository.save(printConfigPCEntity.get());
+        } else {
+            PrintConfigPCEntity novaImagemBD = new PrintConfigPCEntity();
+            novaImagemBD.setNome(nomeArquivo);
+            novaImagemBD.setTipo(file.getContentType());
+            novaImagemBD.setData(file.getBytes());
+            novaImagemBD.setFormulario(formulario);
+            printConfigPCRepository.save(novaImagemBD);
         }
     }
 
