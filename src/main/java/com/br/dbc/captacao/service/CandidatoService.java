@@ -31,15 +31,15 @@ public class CandidatoService {
 
 //    private static final int DESCENDING = 1;
 //    private final CandidatoRepository candidatoRepository;
-////    private final FormularioService formularioService;
+//    private final FormularioService formularioService;
 //    private final ObjectMapper objectMapper;
 //
 //
 //    public CandidatoDTO cadastro(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
-////        if (!candidatoRepository.findCandidatoEntitiesByEmail(candidatoCreateDTO.getEmail()).isEmpty()) {
+//        if (!candidatoRepository.findCandidatoEntitiesByEmail(candidatoCreateDTO.getEmail()).isEmpty()) {
 //            throw new RegraDeNegocioException("Email já cadastrado");
-////        }
-////        if (!candidatoRepository.findCandidatoEntitiesByFormulario_IdFormulario(candidatoCreateDto.getIdFormulario()).isEmpty()) {
+//        }
+//        if (!candidatoRepository.findCandidatoEntitiesByFormulario_IdFormulario(candidatoCreateDto.getIdFormulario()).isEmpty()) {
 //            throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
 //        }
 //        CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
@@ -54,9 +54,9 @@ public class CandidatoService {
 //        candidatoRepository.deleteById(idCandidato);
 //    }
 //
-//    public CandidatoDto update(Integer idCandidato, CandidatoCreateDto candidatoCreateDto) throws RegraDeNegocioException {
+//    public CandidatoDTO update(Integer idCandidato, CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
 //        findById(idCandidato);
-//        CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDto);
+//        CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
 //        candidatoEntity.setIdCandidato(idCandidato);
 //        CandidatoEntity candidatoEntity1 = candidatoRepository.save(candidatoEntity);
 //        return convertToDto(candidatoEntity1);
@@ -99,18 +99,18 @@ public class CandidatoService {
 //    }
 //
 //
-//    public CandidatoDto convertToDto(CandidatoEntity candidatoEntity) {
-//        CandidatoDto candidatoDto = objectMapper.convertValue(candidatoEntity, CandidatoDto.class);
-//        candidatoDto.setFormulario(formularioService.convertToDto(candidatoEntity.getFormulario()));
-//        return candidatoDto;
+//    public CandidatoDTO convertToDTO(CandidatoEntity candidatoEntity) {
+//        CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
+//        candidatoDTO.setFormulario(formularioService.convertToDTO(candidatoEntity.getFormulario()));
+//        return candidatoDTO;
 //    }
 //
-//    private CandidatoEntity convertToEntity(CandidatoCreateDto candidatoCreateDto) throws RegraDeNegocioException {
-//        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDto, CandidatoEntity.class);
-//        candidatoEntity.setPcd(candidatoCreateDto.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
-//        candidatoEntity.setFormulario(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDto.getIdFormulario())));
-//        return candidatoEntity;
-//    }
+    public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
+        candidatoEntity.setPcd(candidatoCreateDTO.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario().getIdFormulario())));
+        return candidatoEntity;
+    }
 ////
 //    public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) {
 //        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDto, CandidatoEntity.class);

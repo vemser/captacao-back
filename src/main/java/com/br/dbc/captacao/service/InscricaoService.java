@@ -107,7 +107,7 @@ public class InscricaoService {
         return inscricaoEntity;
     }
 
-    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) {
+    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException {
         InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoDTO, InscricaoEntity.class);
         inscricaoEntity.setCandidato(candidatoService.convertToEntity(inscricaoDTO.getCandidato()));
         return inscricaoEntity;
