@@ -32,11 +32,10 @@ public class CandidatoService {
 
     private static final int DESCENDING = 1;
     private final CandidatoRepository candidatoRepository;
-//    private final FormularioService formularioService;
+    private final FormularioService formularioService;
     private final ObjectMapper objectMapper;
     private final LinguagemService linguagemService;
     private final EdicaoService edicaoService;
-    private final TrilhaService trilhaService;
 
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
@@ -53,7 +52,7 @@ public class CandidatoService {
         candidatoEntity.setNome(candidatoEntity.getNome().trim());
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
-        //        candidatoDTO.setFormulario(formularioService.converterEmDTO(candidatoEntity.getFormulario()));
+        candidatoEntity.setFormularioEntity(formularioService.convertToEntity(candidatoCreateDTO.getFormulario()));
 
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
@@ -169,7 +168,6 @@ public class CandidatoService {
                     .toList();
             candidato.setLinguagemList(linguagemList);
             candidato.setEdicao(candidatoEntity.getEdicao().getNome());
-//            candidato.setGenero(candidatoEntity.getGenero());
             candidato.setCidade(candidatoEntity.getCidade());
             candidato.setEstado(candidatoEntity.getEstado());
             candidato.setObservacoes(candidatoEntity.getObservacoes());
@@ -202,14 +200,14 @@ public class CandidatoService {
     public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
     CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
     candidatoEntity.setPcd(candidatoCreateDTO.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
-//    candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario().getIdFormulario())));
+    candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario().getIdFormulario())));
     return candidatoEntity;
     }
 
 
         public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDto, CandidatoEntity.class);
-//        candidatoEntity.setFormularioEntity(formularioService.convertToEntity(candidatoDto.getFormulario()));
+        candidatoEntity.setFormularioEntity(formularioService.convertToEntity(candidatoDto.getFormulario()));
         candidatoEntity.setEdicao(objectMapper.convertValue(candidatoDto.getEdicao(), EdicaoEntity.class));
         candidatoEntity.setLinguagens(candidatoDto.getLinguagens().stream()
                 .map(linguagemDTO -> objectMapper.convertValue(linguagemDTO,LinguagemEntity.class))

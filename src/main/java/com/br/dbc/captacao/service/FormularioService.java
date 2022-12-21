@@ -44,14 +44,14 @@ public class FormularioService {
         }
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
         Page<FormularioEntity> paginaFormularioEntity = formularioRepository.findAll(pageRequest);
-        List<FormularioDTO> formularioDTOS = paginaFormularioEntity.getContent().stream()
+        List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
                 .map(this::convertToDto)
                 .toList();
         return new PageDTO<>(paginaFormularioEntity.getTotalElements(),
                 paginaFormularioEntity.getTotalPages(),
                 pagina,
                 tamanho,
-                formularioDTOS);
+                formularioDtos);
     }
 
     public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocioException {
@@ -62,11 +62,6 @@ public class FormularioService {
     public FormularioDTO findDtoById(Integer idFormulario) throws RegraDeNegocioException {
         FormularioEntity formulario = findById(idFormulario);
         return convertToDto(formulario);
-    }
-
-    public FormularioEntity findByEmail(String candidatoEmail) throws RegraDeNegocioException {
-        return formularioRepository.findByCandidatoEmail(candidatoEmail)
-                .orElseThrow(() -> new RegraDeNegocioException("Candidato não encontrado"));
     }
 
     public void deleteById(Integer idFormulario) throws RegraDeNegocioException {

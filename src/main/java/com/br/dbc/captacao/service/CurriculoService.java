@@ -30,8 +30,8 @@ public class CurriculoService {
         CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
         Optional<CurriculoEntity> curriculoEntityOptional = findByCandidato(candidatoEntity);
         String nomeArquivo = StringUtils.cleanPath(file.getOriginalFilename());
-        if (!nomeArquivo.endsWith(".pdf")) {
-            throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir pdf");
+        if (!nomeArquivo.endsWith(".pdf") || !nomeArquivo.endsWith(".docx")) {
+            throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .pdf ou .docx");
         } else {
             if (curriculoEntityOptional.isPresent()) {
                 curriculoEntityOptional.get().setNome(nomeArquivo);

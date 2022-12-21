@@ -3,7 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
-import com.br.dbc.captacao.dto.paginacaodto.PageDTO;
+import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
