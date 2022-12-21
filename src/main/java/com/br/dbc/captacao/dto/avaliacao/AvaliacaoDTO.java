@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.dto.avaliacao;
 
+import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import lombok.AllArgsConstructor;
