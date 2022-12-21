@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.controller.documentationinterface;
 
-import com.br.dbc.captacao.dto.formulario.FormularioCreateDto;
-import com.br.dbc.captacao.dto.formulario.FormularioDto;
+import com.br.dbc.captacao.dto.formulario.FormularioCreateDTO;
+import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +21,7 @@ public interface FormularioControllerInterface {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    ResponseEntity<FormularioDto> create(@RequestBody FormularioCreateDto formularioCreateDto) throws RegraDeNegocioException;
+    ResponseEntity<FormularioDTO> create(@RequestBody FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException;
 
     @Operation(summary = "Listar todos formularios", description = "Listar todos formularios")
     @ApiResponses(
@@ -31,7 +31,7 @@ public interface FormularioControllerInterface {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    ResponseEntity<PageDTO<FormularioDto>> listAll(@RequestParam(defaultValue = "0", required = false) Integer pagina,
+    ResponseEntity<PageDTO<FormularioDTO>> listAll(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                    @RequestParam(defaultValue = "10", required = false) Integer tamanho,
                                                    @RequestParam(defaultValue = "idFormulario", required = false) String sort,
                                                    @RequestParam(defaultValue = "0", required = false) int order);
@@ -44,8 +44,8 @@ public interface FormularioControllerInterface {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    ResponseEntity<FormularioDto> updateFormulario(@RequestParam Integer idFormulario,
-                                                   @RequestBody @Valid FormularioCreateDto formularioCreateDto) throws RegraDeNegocioException;
+    ResponseEntity<FormularioDTO> updateFormulario(@RequestParam Integer idFormulario,
+                                                   @RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException;
 
     @Operation(summary = "Deletar Formulario", description = "Deletar formulario por ID")
     @ApiResponses(

@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormularioDto {
+public class FormularioDTO {
 
     private Integer idFormulario;
 
