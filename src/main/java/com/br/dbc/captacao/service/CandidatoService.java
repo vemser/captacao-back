@@ -79,6 +79,7 @@ public class CandidatoService {
         List<CandidatoDTO> candidatoDtos = paginaCandidatoEntity.getContent().stream()
                 .map(candidatoEntity -> {
                     CandidatoDTO candidatoDto = converterEmDTO(candidatoEntity);
+                    candidatoDto.setIdCandidato(candidatoEntity.getIdCandidato());
                     return candidatoDto;
                 }).toList();
 

@@ -19,7 +19,7 @@ public class InscricaoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "INSCRICAO_SEQ")
-    @SequenceGenerator(name = "INSCRICAO_SEQ", sequenceName = "SEQ_INSCRICAO", allocationSize = 1)
+    @SequenceGenerator(name = "SEQ_INSCRICAO", sequenceName = "SEQ_INSCRICAO", allocationSize = 1)
     @Column(name = "ID_INSCRICAO")
     private Integer idInscricao;
 

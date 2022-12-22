@@ -38,9 +38,9 @@ public class InscricaoController {
             }
     )
     @PostMapping("/cadastro")
-    public ResponseEntity<InscricaoDTO> create(@RequestBody @Valid InscricaoCreateDTO inscricaoCreateDTO) throws RegraDeNegocioException {
+    public ResponseEntity<InscricaoDTO> create(@RequestParam Integer idCandidato) throws RegraDeNegocioException {
         log.info("Criando inscrição");
-        InscricaoDTO inscricaoDTO = inscricaoService.create(inscricaoCreateDTO);
+        InscricaoDTO inscricaoDTO = inscricaoService.create(idCandidato);
         log.info("Inscrição criada");
         return new ResponseEntity<>(inscricaoDTO, HttpStatus.OK);
     }

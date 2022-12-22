@@ -30,21 +30,22 @@ public class InscricaoService {
     private final EmailService emailService;
     private final ObjectMapper objectMapper;
 
-    public InscricaoDTO create(InscricaoCreateDTO inscricaoCreateDTO) throws RegraDeNegocioException {
-        if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(inscricaoCreateDTO.getIdCandidato()).isEmpty()) {
-            throw new RegraDeNegocioException("Inscrição já realizada");
-        }
-        InscricaoEntity inscricaoEntity = convertToEntity(inscricaoCreateDTO);
-        inscricaoEntity.setIdInscricao(inscricaoCreateDTO.getIdCandidato());
-        inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
+    public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
+//        if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(inscricaoCreateDTO.getIdCandidato()).isEmpty()) {
+//            throw new RegraDeNegocioException("Inscrição já realizada");
+//        }
+
+        InscricaoEntity inscricaoEntity = new InscricaoEntity();
+        inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(idCandidato)));
         inscricaoEntity.setDataInscricao(LocalDate.now());
         inscricaoEntity.setAvaliado(TipoMarcacao.F);
-        inscricaoRepository.save(inscricaoEntity);
-        InscricaoDTO inscricaoDto = converterParaDTO(inscricaoEntity);
+        InscricaoEntity inscricaoRetorno = inscricaoRepository.save(inscricaoEntity);
+        InscricaoDTO inscricaoDto = converterParaDTO(inscricaoRetorno);
         SendEmailDTO sendEmailDTO = new SendEmailDTO();
         sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
         sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
         emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
+
         return inscricaoDto;
     }
 
