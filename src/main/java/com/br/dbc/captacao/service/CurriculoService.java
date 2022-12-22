@@ -32,33 +32,21 @@ public class CurriculoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Currículo não encontrado!"));
     }
 
-    public void arquivarCurriculo(MultipartFile file, String email) throws IOException, RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
-        Optional<CurriculoEntity> curriculoEntityOptional = findByCandidato(candidatoEntity);
+    public void arquivarCurriculo(MultipartFile file, Integer idFormulario) throws IOException, RegraDeNegocioException {
+        FormularioEntity formularioEntity = formularioService.findById(idFormulario);
+
+        CurriculoEntity curriculoEntity = findById(formularioEntity.getCurriculoEntity().getIdCurriculo());
+
         String nomeArquivo = StringUtils.cleanPath(file.getOriginalFilename());
-        if (!nomeArquivo.endsWith(".pdf") || !nomeArquivo.endsWith(".docx")) {
+        if (!nomeArquivo.endsWith(".pdf") && !nomeArquivo.endsWith(".docx")) {
             throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .pdf ou .docx");
-        } else {
-            if (curriculoEntityOptional.isPresent()) {
-                curriculoEntityOptional.get().setNome(nomeArquivo);
-                curriculoEntityOptional.get().setTipo(file.getContentType());
-                curriculoEntityOptional.get().setData(file.getBytes());
-                curriculoEntityOptional.get().setFormularioEntity(candidatoEntity.getFormularioEntity());
-                curriculoRepository.save(curriculoEntityOptional.get());
-            } else {
-                CurriculoEntity curriculo = new CurriculoEntity();
-                curriculo.setNome(nomeArquivo);
-                curriculo.setTipo(file.getContentType());
-                curriculo.setData(file.getBytes());
-                curriculo.setFormularioEntity(candidatoEntity.getFormularioEntity());
-                curriculoRepository.save(curriculo);
-            }
         }
+        curriculoRepository.save(curriculoEntity);
     }
 
     public String pegarCurriculoCandidato(String email) throws RegraDeNegocioException {
         FormularioEntity formularioEntity = formularioService.findByEmail(email);
-        Optional<CurriculoEntity> curriculo = objectMapper.convertValue(formularioEntity.getCurriculoEntity(),Optional.class);
+        Optional<CurriculoEntity> curriculo = objectMapper.convertValue(formularioEntity.getCurriculoEntity(), Optional.class);
         if (curriculo.isEmpty()) {
             throw new RegraDeNegocioException("Usuário não possui currículo cadastrado.");
         }
@@ -67,13 +55,15 @@ public class CurriculoService {
 
     private Optional<CurriculoEntity> findByCandidato(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
         FormularioEntity formularioEntity = formularioService.findByEmail(candidatoEntity.getEmail());
-        return objectMapper.convertValue(formularioEntity.getCurriculoEntity(),Optional.class);
+        return objectMapper.convertValue(formularioEntity.getCurriculoEntity(), Optional.class);
     }
+
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = candidatoService.findById(id);
         Optional<CurriculoEntity> curriculo = findByCandidato(candidatoEntity);
-        Integer idCurriculo = curriculo.get().getIdCurriculo();;
+        Integer idCurriculo = curriculo.get().getIdCurriculo();
+        ;
         curriculoRepository.deleteById(idCurriculo);
     }
 }

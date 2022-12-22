@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.entity;
 
+import com.br.dbc.captacao.enums.Parecer;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;

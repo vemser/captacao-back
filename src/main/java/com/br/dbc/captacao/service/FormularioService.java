@@ -4,11 +4,15 @@ import com.br.dbc.captacao.dto.formulario.FormularioCreateDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
+import com.br.dbc.captacao.entity.CurriculoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
+import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
+import com.br.dbc.captacao.repository.CurriculoRepository;
 import com.br.dbc.captacao.repository.FormularioRepository;
+import com.br.dbc.captacao.repository.PrintConfigPCRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,15 +32,45 @@ public class FormularioService {
     private static final int DESCENDING = 1;
     private final FormularioRepository formularioRepository;
     private final TrilhaService trilhaService;
+
+    private final PrintConfigPCRepository printConfigPCRepository;
     private final ObjectMapper objectMapper;
+
+    private final CurriculoRepository curriculoRepository;
 
     public FormularioDTO create(FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
         if (!formularioCreateDto.isMatriculadoBoolean()) {
             throw new RegraDeNegocioException("Precisa estar matriculado!");
         }
         FormularioEntity formulario = convertToEntity(formularioCreateDto);
+        CurriculoEntity curriculoEntity = new CurriculoEntity();
+        curriculoEntity.setNome(" ");
+        curriculoEntity.setTipo(" ");
+        curriculoEntity.setData(" ".getBytes());
+        CurriculoEntity curriculoRetorno = curriculoRepository.save(curriculoEntity);
+
+        List<TrilhaEntity> trilhas = new ArrayList<>();
+        trilhas = getTrilhasFormulario(formularioCreateDto, trilhas);
+        formulario.setCurriculoEntity(curriculoRetorno);
+        formulario.setTrilhaEntitySet(new HashSet<>(trilhas));
+
+        PrintConfigPCEntity printConfigPCEntity = new PrintConfigPCEntity();
+        printConfigPCEntity.setTipo(" ");
+        printConfigPCEntity.setNome(" ");
+        printConfigPCEntity.setData("dados".getBytes());
+        PrintConfigPCEntity print = printConfigPCRepository.save(printConfigPCEntity);
+
+        formulario.setImagemConfigPc(print);
         FormularioEntity formularioRetornoBanco = formularioRepository.save(formulario);
         return convertToDto(formularioRetornoBanco);
+    }
+
+    private List<TrilhaEntity> getTrilhasFormulario(FormularioCreateDTO formularioCreateDTO, List<TrilhaEntity> trilhas) throws RegraDeNegocioException {
+        for (Integer integer : formularioCreateDTO.getTrilhas()) {
+            TrilhaEntity trilhaEntity = trilhaService.findById(integer);
+            trilhas.add(trilhaEntity);
+        }
+        return trilhas;
     }
 
     public PageDTO<FormularioDTO> listAllPaginado(Integer pagina, Integer tamanho, String sort, int order) {

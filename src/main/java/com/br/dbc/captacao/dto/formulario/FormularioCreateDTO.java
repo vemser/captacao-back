@@ -84,4 +84,7 @@ public class FormularioCreateDTO {
 
     @Schema(example = "[ 1 ]", description = "Escolha sua(s) trilha(s) entre Frontend (1), Backend (2) e QA (3)")
     private List<Integer> trilhas;
+
+    @Schema(example = "importancia")
+    private String importancia;
 }

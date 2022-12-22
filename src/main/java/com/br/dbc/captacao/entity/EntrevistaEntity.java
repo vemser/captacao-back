@@ -2,6 +2,7 @@ package com.br.dbc.captacao.entity;
 
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.enums.Parecer;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,31 +31,21 @@ public class EntrevistaEntity {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id_gestor")
+    @JoinColumn(name = "id_gestor", referencedColumnName = "id_gestor")
     private GestorEntity gestorEntity;
 
-    @Column(name = "data_hora_entrevista")
+    @Column(name = "data_hora")
     private LocalDateTime dataEntrevista;
 
     @Column(name = "observacoes")
     private String observacoes;
 
-//    Essas colunas devem ser apagadas? Elas eram do Ftf e nao foram incluídas no novo script.
-//    @Column(name = "cidade")
-//    private String cidade;
-//
-//    @Column(name = "estado")
-//    private String estado;
 
     @Column(name = "legenda")
     @Enumerated(EnumType.STRING)
     private Legenda legenda;
 
-    @Column(name = "parecer_comp")
-    @Enumerated(EnumType.STRING)
-    private Parecer parecerComportamental;
-
-    @Column(name = "parecer_tecnico")
-    @Enumerated(EnumType.STRING)
-    private Parecer parecerTecnico;
+    @Column(name="avaliadoentrevista")
+    @Enumerated(EnumType.ORDINAL)
+    private TipoMarcacao avaliado;
 }

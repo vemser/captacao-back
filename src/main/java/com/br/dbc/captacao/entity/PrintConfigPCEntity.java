@@ -31,7 +31,6 @@ public class PrintConfigPCEntity {
     private byte[] data;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_FORMULARIO", referencedColumnName = "ID_FORMULARIO")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "imagemConfigPc")
     private FormularioEntity formulario;
 }

@@ -83,7 +83,10 @@ public class FormularioEntity {
     @Column(name = "CONFIG_PC")
     private String configuracoes;
 
-    @OneToOne(mappedBy = "formulario")
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PRINT_CONFIG_PC", referencedColumnName = "ID_PRINT_CONFIG_PC")
     private PrintConfigPCEntity imagemConfigPc;
 
     @Column(name = "EFETIVACAO")

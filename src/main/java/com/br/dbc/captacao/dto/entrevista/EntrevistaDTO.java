@@ -1,6 +1,7 @@
 package com.br.dbc.captacao.dto.entrevista;
 
 import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,5 @@ public class EntrevistaDTO extends EntrevistaCreateDTO {
 //    private UsuarioDTO usuarioDTO;
 
     private Legenda legenda;
+    private String avaliado;
 }

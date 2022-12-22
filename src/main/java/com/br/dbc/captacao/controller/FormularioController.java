@@ -5,14 +5,21 @@ import com.br.dbc.captacao.dto.formulario.FormularioCreateDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
+import com.br.dbc.captacao.service.CurriculoService;
 import com.br.dbc.captacao.service.FormularioService;
 import javax.validation.Valid;
+
+import com.br.dbc.captacao.service.PrintConfigPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -21,6 +28,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FormularioController implements FormularioControllerInterface {
     private final FormularioService formularioService;
+    private final CurriculoService curriculoService;
+
+    private final PrintConfigPCService printConfigPCService;
 
     @PostMapping("/cadastro")
     public ResponseEntity<FormularioDTO> create(@RequestBody FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
@@ -45,6 +55,24 @@ public class FormularioController implements FormularioControllerInterface {
         FormularioDTO formularioDto = formularioService.update(idFormulario, formularioCreateDto);
         log.info("Atualizando Formulario ID: " + idFormulario);
         return new ResponseEntity<>(formularioDto, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/upload-curriculo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
+                                                @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
+        curriculoService.arquivarCurriculo(file, idFormulario);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(value = "/upload-print-config-pc", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> uploadPrintConfigPc(@RequestPart("file") MultipartFile file,
+                                                @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
+        printConfigPCService.arquivarPrintConfigPc(file,idFormulario);
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/recuperar-curriculo")
+    public ResponseEntity<String> recuperarCurriculo(@RequestParam("email") String email) throws RegraDeNegocioException {
+        return new ResponseEntity<>(curriculoService.pegarCurriculoCandidato(email), HttpStatus.OK);
     }
 
     @DeleteMapping

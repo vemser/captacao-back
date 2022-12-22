@@ -30,7 +30,6 @@ import java.io.IOException;
 @RequestMapping("/candidato")
 public class CandidatoController {
     private final CandidatoService candidatoService;
-    private final CurriculoService curriculoService;
     private final ImagemService imagemService;
 
     @GetMapping
@@ -93,18 +92,6 @@ public class CandidatoController {
     @GetMapping("/recuperar-imagem")
     public ResponseEntity<String> recuperarImagem(@RequestParam("email") String email) throws RegraDeNegocioException {
         return new ResponseEntity<>(imagemService.pegarImagemCandidato(email), HttpStatus.OK);
-    }
-
-    @PutMapping(value = "/upload-curriculo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
-                                                @RequestParam("email") String email) throws RegraDeNegocioException, IOException {
-        curriculoService.arquivarCurriculo(file, email);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/recuperar-curriculo")
-    public ResponseEntity<String> recuperarCurriculo(@RequestParam("email") String email) throws RegraDeNegocioException {
-        return new ResponseEntity<>(curriculoService.pegarCurriculoCandidato(email), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-fisico/{idCandidato}")

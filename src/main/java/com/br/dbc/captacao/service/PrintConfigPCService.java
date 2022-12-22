@@ -2,7 +2,6 @@ package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.ImagemEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.PrintConfigPCRepository;
@@ -21,8 +20,6 @@ public class PrintConfigPCService {
 
     private final PrintConfigPCRepository printConfigPCRepository;
 
-    private final CandidatoService candidatoService;
-
     private final ObjectMapper objectMapper;
 
     private final FormularioService formularioService;
@@ -32,8 +29,9 @@ public class PrintConfigPCService {
                 .orElseThrow(() -> new RegraDeNegocioException("Configurações do computador não encontrada!"));
     }
 
-    public void arquivarCandidato(MultipartFile file, String email) throws RegraDeNegocioException, IOException {
-        FormularioEntity formulario = formularioService.findByEmail(email);
+    public void arquivarPrintConfigPc(MultipartFile file, Integer idFormulario) throws RegraDeNegocioException, IOException {
+        FormularioEntity formulario = formularioService.findById(idFormulario);
+
         Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
         if (printConfigPCEntity.isPresent()) {

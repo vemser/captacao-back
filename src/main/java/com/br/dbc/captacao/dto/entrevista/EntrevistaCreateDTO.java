@@ -1,7 +1,10 @@
 package com.br.dbc.captacao.dto.entrevista;
 
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,4 +40,8 @@ public class EntrevistaCreateDTO {
     @NotNull
     @Schema(description = "Observações referentes a entrevista.")
     private String observacoes;
+
+    @NotNull
+    @Schema(description = "Avaliado ou não", example = "T")
+    private String avaliado;
 }
