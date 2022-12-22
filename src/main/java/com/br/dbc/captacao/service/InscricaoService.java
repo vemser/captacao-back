@@ -5,6 +5,7 @@ import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoCreateDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.enums.TipoEmail;
 import com.br.dbc.captacao.enums.TipoMarcacao;
@@ -36,15 +37,15 @@ public class InscricaoService {
 //        }
 
         InscricaoEntity inscricaoEntity = new InscricaoEntity();
-        inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(idCandidato)));
+        inscricaoEntity.setCandidato(candidatoService.findById(idCandidato));
         inscricaoEntity.setDataInscricao(LocalDate.now());
         inscricaoEntity.setAvaliado(TipoMarcacao.F);
         InscricaoEntity inscricaoRetorno = inscricaoRepository.save(inscricaoEntity);
         InscricaoDTO inscricaoDto = converterParaDTO(inscricaoRetorno);
-        SendEmailDTO sendEmailDTO = new SendEmailDTO();
-        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
-        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
-        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
+//        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+//        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
+//        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
+//        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
 
         return inscricaoDto;
     }
@@ -91,7 +92,7 @@ public class InscricaoService {
     }
 
 
-    private InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
+    public InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
         return inscricaoRepository.findById(idInscricao)
                 .orElseThrow(() -> new RegraDeNegocioException("ID_Inscrição inválido"));
 

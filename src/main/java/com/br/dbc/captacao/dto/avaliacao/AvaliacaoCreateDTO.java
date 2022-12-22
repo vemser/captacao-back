@@ -12,8 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AvaliacaoCreateDTO {
 
-    private boolean aprovadoBoolean;
 
     @NotNull
+    private boolean aprovadoBoolean;
+    @NotNull
     private Integer idInscricao;
+
+    private String emailGestor;
 }

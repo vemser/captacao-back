@@ -6,6 +6,7 @@ import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.AvaliacaoEntity;
+import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.enums.TipoEmail;
 import com.br.dbc.captacao.enums.TipoMarcacao;
@@ -33,20 +34,28 @@ public class AvaliacaoService {
 
 
     public AvaliacaoDTO create(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException {
-        if (!avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao()).isEmpty()) {
-            throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
-        }
-        AvaliacaoEntity avaliacaoEntity = convertToEntity(avaliacaoCreateDTO);
-        AvaliacaoDTO avaliacaoDto = convertToDTO(avaliacaoRepository.save(avaliacaoEntity));
-        avaliacaoDto.setAvaliador(gestorService.convertoToDTO(avaliacaoEntity.getAvaliador()));
-        SendEmailDTO sendEmailDTO = new SendEmailDTO();
-        sendEmailDTO.setNome(avaliacaoDto.getInscricao().getCandidato().getNome());
-        sendEmailDTO.setEmail(avaliacaoDto.getInscricao().getCandidato().getEmail());
-        if (avaliacaoDto.getAprovado() == TipoMarcacao.T) {
-            emailService.sendEmail(sendEmailDTO, TipoEmail.APROVADO);
-        } else {
-            emailService.sendEmail(sendEmailDTO, TipoEmail.REPROVADO);
-        }
+//        if (!avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao()).isEmpty()) {
+//            throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
+//        }
+
+        AvaliacaoEntity avaliacaoEntity = new AvaliacaoEntity();
+        InscricaoEntity inscricao = inscricaoService.findById(avaliacaoCreateDTO.getIdInscricao());
+        avaliacaoEntity.setAprovado(avaliacaoCreateDTO.isAprovadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        avaliacaoEntity.setInscricao(inscricao);
+        GestorEntity gestor = gestorService.findByEmail(avaliacaoCreateDTO.getEmailGestor());
+        avaliacaoEntity.setAvaliador(gestor);
+        AvaliacaoEntity avaliacaoRetorno = avaliacaoRepository.save(avaliacaoEntity);
+        AvaliacaoDTO avaliacaoDto = convertToDTO(avaliacaoRetorno);
+        GestorDTO gestorDTO = objectMapper.convertValue(gestor, GestorDTO.class);
+        avaliacaoDto.setAvaliador(gestorDTO);
+//        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+//        sendEmailDTO.setNome(avaliacaoDto.getInscricao().getCandidato().getNome());
+//        sendEmailDTO.setEmail(avaliacaoDto.getInscricao().getCandidato().getEmail());
+//        if (avaliacaoDto.getAprovado() == TipoMarcacao.T) {
+//            emailService.sendEmail(sendEmailDTO, TipoEmail.APROVADO);
+//        } else {
+//            emailService.sendEmail(sendEmailDTO, TipoEmail.REPROVADO);
+//        }
         inscricaoService.setAvaliado(avaliacaoCreateDTO.getIdInscricao());
         return avaliacaoDto;
     }

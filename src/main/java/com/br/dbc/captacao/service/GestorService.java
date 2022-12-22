@@ -79,7 +79,7 @@ public class GestorService {
         return gestorDTO;
     }
 
-    private GestorEntity findById(Integer id) throws RegraDeNegocioException {
+    public GestorEntity findById(Integer id) throws RegraDeNegocioException {
         return gestorRepository.findById(id)
                 .orElseThrow(() -> new RegraDeNegocioException("Usuario não encontrado!"));
     }
