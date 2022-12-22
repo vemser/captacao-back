@@ -3,6 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
+import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.AvaliacaoEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
@@ -102,7 +103,7 @@ public class AvaliacaoService {
         AvaliacaoDTO avaliacaoDTO = new AvaliacaoDTO();
         avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
         avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
-        avaliacaoDTO.setAvaliador(gestorService.convertoToDTO(avaliacaoEntity.getAvaliador()));
+        avaliacaoDTO.setAvaliador(objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class));
         avaliacaoDTO.setInscricao(inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao()));
         return avaliacaoDTO;
     }

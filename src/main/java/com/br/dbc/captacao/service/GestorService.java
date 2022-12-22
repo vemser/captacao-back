@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.service;
 
+import com.br.dbc.captacao.dto.CargoDTO;
 import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.gestor.*;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +57,15 @@ public class GestorService {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
         Page<GestorEntity> paginaGestorEntities = gestorRepository.findAll(pageRequest);
         List<GestorDTO> gestorDTOS = paginaGestorEntities.getContent().stream()
-                .map(gestorEntity -> convertoToDTO(gestorEntity)).toList();
+                .map(gestorEntity -> {
+                    GestorDTO gestorDTO = new GestorDTO();
+                    gestorDTO.setIdGestor(gestorEntity.getIdGestor());
+                    gestorDTO.setNome(gestorEntity.getNome());
+                    gestorDTO.setEmail(gestorEntity.getEmail());
+                    gestorDTO.setAtivo(gestorEntity.getAtivo());
+                    gestorDTO.setCargoDto(objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class));
+                    return gestorDTO;
+                } ).toList();
         return new PageDTO<>(paginaGestorEntities.getTotalElements(),
                 paginaGestorEntities.getTotalPages(),
                 pagina,
@@ -107,7 +118,15 @@ public class GestorService {
         CargoEntity cargo = cargoService.findById(gestorEmailNomeCargoDTO.getCargo().getId());
         List<GestorEntity> lista = gestorRepository.findGestorEntitiesByCargoEntityAndNomeIgnoreCaseOrCargoEntityAndEmailIgnoreCase(cargo, gestorEmailNomeCargoDTO.getNome(), cargo, gestorEmailNomeCargoDTO.getEmail());
         return lista.stream()
-                .map(gestorEntity -> convertoToDTO(gestorEntity))
+                .map(gestorEntity -> {
+                    GestorDTO gestorDTO = new GestorDTO();
+                    gestorDTO.setIdGestor(gestorEntity.getIdGestor());
+                    gestorDTO.setNome(gestorEntity.getNome());
+                    gestorDTO.setEmail(gestorEntity.getEmail());
+                    gestorDTO.setAtivo(gestorEntity.getAtivo());
+                    gestorDTO.setCargoDto(objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class));
+                    return gestorDTO;
+                } )
                 .toList();
 
     }
@@ -150,27 +169,44 @@ public class GestorService {
         return convertoToDTO(usuarioEncontrado);
     }
 
-    public List<GestorDTO> contasInativas() {
+//    public List<GestorDTO> contasInativas() {
+//        return gestorRepository.findByAtivo(USUARIO_INATIVO).stream()
+//                .map(gestorEntity -> convertoToDTO(gestorEntity))
+//                .toList();
+//    }
+
+    public List<GestorDTO> contasInativas(){
         return gestorRepository.findByAtivo(USUARIO_INATIVO).stream()
-                .map(gestorEntity -> convertoToDTO(gestorEntity))
+                .map(gestorEntity -> {
+                    GestorDTO gestorDTO = new GestorDTO();
+                    gestorDTO.setIdGestor(gestorEntity.getIdGestor());
+                    gestorDTO.setNome(gestorEntity.getNome());
+                    gestorDTO.setEmail(gestorEntity.getEmail());
+                    gestorDTO.setAtivo(gestorEntity.getAtivo());
+                    gestorDTO.setCargoDto(objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class));
+                    return gestorDTO;
+                } )
                 .toList();
     }
 
-    public GestorDTO convertoToDTO(GestorEntity gestorEntity) {
+    public GestorDTO convertoToDTO(GestorEntity gestorEntity) throws RegraDeNegocioException {
         GestorDTO gestorDTO = objectMapper.convertValue(gestorEntity, GestorDTO.class);
-        gestorDTO.setCargoDto(cargoService.convertToDTO(gestorEntity.getCargoEntity()));
+        gestorDTO.setCargoDto(cargoService.convertToDTO(cargoService.findById(gestorDTO.getCargoDto().getId())));
         return gestorDTO;
     }
 
     private GestorEntity convertToEntity(GestorCreateDTO gestorCreateDTO) throws RegraDeNegocioException {
         GestorEntity gestorEntity = objectMapper.convertValue(gestorCreateDTO, GestorEntity.class);
-        gestorEntity.setCargoEntity(cargoService.findById(gestorCreateDTO.getTipoCargo()));
+        Set<CargoEntity> cargo = new HashSet<>();
+        cargo.add(cargoService.findById(gestorCreateDTO.getTipoCargo()));
+        gestorEntity.setCargoEntity(cargo);
         return gestorEntity;
     }
 
-    public GestorEntity convertToEntity(GestorDTO  gestorDTO) {
+    public GestorEntity convertToEntity(GestorDTO  gestorDTO) throws RegraDeNegocioException {
         GestorEntity gestorEntity = objectMapper.convertValue(gestorDTO, GestorEntity.class);
-        gestorEntity.setCargoEntity(cargoService.convertToEntity(gestorDTO.getCargoDto()));
+        Set<CargoEntity> cargo = new HashSet<>();
+        cargo.add(cargoService.findById(gestorDTO.getCargoDto().getId()));
         return gestorEntity;
     }
 }
