@@ -18,7 +18,7 @@ public class LinguagemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LINGUAGEM_SEQUENCIA")
-    @SequenceGenerator(name = "LINGUAGEM_SEQUENCIA", sequenceName = "SEQ_ID_LINGUAGEM", allocationSize = 1)
+    @SequenceGenerator(name = "LINGUAGEM_SEQUENCIA", sequenceName = "SEQ_LINGUAGEM", allocationSize = 1)
     @Column(name = "ID_LINGUAGEM")
     private Integer idLinguagem;
 

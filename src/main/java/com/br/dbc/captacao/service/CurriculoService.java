@@ -41,6 +41,9 @@ public class CurriculoService {
         if (!nomeArquivo.endsWith(".pdf") && !nomeArquivo.endsWith(".docx")) {
             throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .pdf ou .docx");
         }
+        curriculoEntity.setData(file.getBytes());
+        curriculoEntity.setNome(file.getName());
+        curriculoEntity.setTipo(file.getContentType());
         curriculoRepository.save(curriculoEntity);
     }
 

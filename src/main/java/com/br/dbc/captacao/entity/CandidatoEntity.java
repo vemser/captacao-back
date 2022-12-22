@@ -75,7 +75,7 @@ public class CandidatoEntity {
 
         @JsonIgnore
         @ManyToMany(fetch = FetchType.LAZY)
-        @JoinTable(name = "CANDIDATO_LINGUAGEM",
+        @JoinTable(name = "LINGUAGEM_CANDIDATO",
                 joinColumns = @JoinColumn(name = "ID_CANDIDATO"),
                 inverseJoinColumns = @JoinColumn(name = "ID_LINGUAGEM"))
         private Set<LinguagemEntity> linguagens;

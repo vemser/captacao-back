@@ -1,12 +1,18 @@
 package com.br.dbc.captacao.dto.inscricao;
 
 import javax.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class InscricaoCreateDTO {
 
-    @NotNull
+
+    @Schema(example = "5")
     private Integer idCandidato;
 
 }

@@ -32,9 +32,10 @@ public class InscricaoService {
 
     public InscricaoDTO create(InscricaoCreateDTO inscricaoCreateDTO) throws RegraDeNegocioException {
         if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(inscricaoCreateDTO.getIdCandidato()).isEmpty()) {
-            throw new RegraDeNegocioException("Formulario cadastrado para outro candidato");
+            throw new RegraDeNegocioException("Inscrição já realizada");
         }
         InscricaoEntity inscricaoEntity = convertToEntity(inscricaoCreateDTO);
+        inscricaoEntity.setIdInscricao(inscricaoCreateDTO.getIdCandidato());
         inscricaoEntity.setCandidato(candidatoService.convertToEntity(candidatoService.findDtoById(inscricaoCreateDTO.getIdCandidato())));
         inscricaoEntity.setDataInscricao(LocalDate.now());
         inscricaoEntity.setAvaliado(TipoMarcacao.F);

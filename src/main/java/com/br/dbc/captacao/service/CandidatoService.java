@@ -9,6 +9,7 @@ import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoCadastroDTO;
 import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EdicaoEntity;
+import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.LinguagemEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -33,6 +34,7 @@ public class CandidatoService {
     private static final int DESCENDING = 1;
     private final CandidatoRepository candidatoRepository;
     private final FormularioService formularioService;
+
     private final ObjectMapper objectMapper;
     private final LinguagemService linguagemService;
     private final EdicaoService edicaoService;
@@ -52,9 +54,17 @@ public class CandidatoService {
         candidatoEntity.setNome(candidatoEntity.getNome().trim());
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
-        candidatoEntity.setFormularioEntity(formularioService.convertToEntity(candidatoCreateDTO.getFormulario()));
+        candidatoEntity.setFormularioEntity(formularioService.findById(candidatoCreateDTO.getFormulario()));
 
-        return converterEmDTO(candidatoRepository.save(candidatoEntity));
+        EdicaoEntity edicao = edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome());
+
+        candidatoEntity.setEdicao(edicao);
+
+        CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
+        candidatoDTO.setFormulario(candidatoEntity.getFormularioEntity().getIdFormulario());
+        candidatoDTO.setIdCandidato(candidatoEntity.getIdCandidato());
+
+        return candidatoDTO;
     }
 
 
@@ -200,14 +210,14 @@ public class CandidatoService {
     public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
     CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
     candidatoEntity.setPcd(candidatoCreateDTO.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
-    candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario().getIdFormulario())));
+    candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario())));
     return candidatoEntity;
     }
 
 
-        public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) {
+        public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDto, CandidatoEntity.class);
-        candidatoEntity.setFormularioEntity(formularioService.convertToEntity(candidatoDto.getFormulario()));
+        candidatoEntity.setFormularioEntity(objectMapper.convertValue(formularioService.findById(candidatoDto.getFormulario()), FormularioEntity.class));
         candidatoEntity.setEdicao(objectMapper.convertValue(candidatoDto.getEdicao(), EdicaoEntity.class));
         candidatoEntity.setLinguagens(candidatoDto.getLinguagens().stream()
                 .map(linguagemDTO -> objectMapper.convertValue(linguagemDTO,LinguagemEntity.class))

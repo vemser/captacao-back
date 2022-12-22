@@ -5,6 +5,8 @@ import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,29 +39,17 @@ public class CandidatoCreateDTO {
 
     private boolean isPcdboolean;
 
-    private String observacoes;
-
-    private Double notaProva;
-
-    private Double notaEntrevistaComportamental;
-
-    private Double notaEntrevistaTecnica;
-
     private TipoMarcacao ativo;
 
-    private String parecerComportamental;
-
-    private String parecerTecnico;
-
+    @JsonIgnore
     private Double media;
 
     private Set<LinguagemDTO> linguagens;
 
-    private EntrevistaDTO entrevistaEntity;
-
+    @Schema(example = "1ª Edição")
     private EdicaoDTO edicao;
 
-    private FormularioDTO formulario;
+    private Integer formulario;
 
 
 }
