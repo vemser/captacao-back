@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.dto.relatorios;
 
 import com.br.dbc.captacao.enums.Genero;
-import jakarta.persistence.Lob;
+import javax.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

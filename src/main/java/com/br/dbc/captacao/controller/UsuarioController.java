@@ -9,7 +9,7 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.GestorService;
 import com.br.dbc.captacao.service.ImagemService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

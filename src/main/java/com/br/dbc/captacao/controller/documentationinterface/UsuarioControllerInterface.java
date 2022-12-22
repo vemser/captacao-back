@@ -1,15 +1,12 @@
 package com.br.dbc.captacao.controller.documentationinterface;
 
-import com.br.dbc.captacao.dto.gestor.GestorCreateDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.gestor.GestorEmailNomeCargoDTO;
-import com.br.dbc.captacao.dto.gestor.GestorSenhaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +27,9 @@ public interface UsuarioControllerInterface {
     )
     @GetMapping
     ResponseEntity<PageDTO<GestorDTO>> listar(@RequestParam(defaultValue = "0", required = false) Integer pagina,
-                                                     @RequestParam(defaultValue = "10", required = false) Integer tamanho,
-                                                     @RequestParam(defaultValue = "idGestor", required = false) String sort,
-                                                     @RequestParam(defaultValue = "0", required = false) int order);
+                                              @RequestParam(defaultValue = "10", required = false) Integer tamanho,
+                                              @RequestParam(defaultValue = "idGestor", required = false) String sort,
+                                              @RequestParam(defaultValue = "0", required = false) int order);
 
     @Operation(summary = "Listar Gestores por ID", description = "Retorna um Gestor por ID do banco de dados")
     @ApiResponses(

@@ -1,6 +1,5 @@
 package com.br.dbc.captacao.dto.candidato;
 
-import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
