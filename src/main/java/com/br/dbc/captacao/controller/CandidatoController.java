@@ -37,7 +37,7 @@ public class CandidatoController {
     }
 
     @GetMapping("/findbyemails/{email}")
-    public CandidatoDTO findByEmail(@PathVariable("email") String email) throws RegraDeNegocioException {
+    public CandidatoDTO findByEmail(@RequestParam ("email") String email) throws RegraDeNegocioException {
         return candidatoService.findByEmail(email);
     }
 
