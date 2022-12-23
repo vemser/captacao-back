@@ -31,7 +31,6 @@ public class PrintConfigPCService {
 
     public void arquivarPrintConfigPc(MultipartFile file, Integer idFormulario) throws RegraDeNegocioException, IOException {
         FormularioEntity formulario = formularioService.findById(idFormulario);
-
         Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
         if (printConfigPCEntity.isPresent()) {
