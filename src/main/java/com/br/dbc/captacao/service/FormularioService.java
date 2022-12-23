@@ -71,7 +71,7 @@ public class FormularioService {
             ordenacao = Sort.by(sort).descending();
         }
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-        Page<FormularioEntity> paginaFormularioEntity = formularioRepository.findAll(pageRequest);
+        Page<FormularioEntity> paginaFormularioEntity = formularioRepository.listarFormulariosSemVazios(pageRequest);
         List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
                 .map(formularioEntity -> {
                     FormularioDTO formularioDTO = convertToDto(formularioEntity);

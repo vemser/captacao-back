@@ -64,6 +64,6 @@ public class FormularioDTO {
 
     private Set<TrilhaDTO> trilhas;
 
-    private Integer idPrintConfig;
+    private Integer imagemConfigPc;
 
 }
