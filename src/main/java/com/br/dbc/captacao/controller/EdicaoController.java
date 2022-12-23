@@ -2,7 +2,6 @@ package com.br.dbc.captacao.controller;
 
 import com.br.dbc.captacao.controller.documentationinterface.EdicaoControllerInterface;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
-import com.br.dbc.captacao.entity.EdicaoEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.EdicaoService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class EdicaoController implements EdicaoControllerInterface {
     private final EdicaoService edicaoService;
 
     @DeleteMapping("/delete-fisico/{idEdicao}")
-    public ResponseEntity<EdicaoEntity> deleteFisico(@PathVariable("idEdicao") Integer id) throws RegraDeNegocioException {
+    public ResponseEntity<Void> deleteFisico(@PathVariable("idEdicao") Integer id) throws RegraDeNegocioException {
         edicaoService.deleteFisico(id);
         return ResponseEntity.noContent().build();
     }

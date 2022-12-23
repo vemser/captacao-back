@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.controller.documentationinterface;
 
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
-import com.br.dbc.captacao.entity.EdicaoEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +21,7 @@ public interface EdicaoControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @DeleteMapping
-    ResponseEntity<EdicaoEntity> deleteFisico(@PathVariable("idUsuario") Integer id) throws RegraDeNegocioException;
+    ResponseEntity<Void> deleteFisico(@PathVariable("idUsuario") Integer id) throws RegraDeNegocioException;
 
     @Operation(summary = "Criar cadastro de edição", description = "Cria edição no Sistema")
     @ApiResponses(value = {

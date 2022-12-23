@@ -1,6 +1,5 @@
 package com.br.dbc.captacao.controller.documentationinterface;
 
-import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,5 +16,5 @@ public interface LinguagemControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @DeleteMapping
-    ResponseEntity<GestorDTO> deleteFisico(@PathVariable("idUsuario") Integer id) throws RegraDeNegocioException;
+    ResponseEntity<Void> deleteFisico(@PathVariable("idUsuario") Integer id) throws RegraDeNegocioException;
 }
