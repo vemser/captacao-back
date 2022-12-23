@@ -1,15 +1,11 @@
 package com.br.dbc.captacao.controller;
 
 
-import com.br.dbc.captacao.controller.documentationinterface.CandidatoControllerInterface;
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoCadastroDTO;
-import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.CandidatoService;
-import com.br.dbc.captacao.service.CurriculoService;
 import com.br.dbc.captacao.service.ImagemService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -98,5 +94,12 @@ public class CandidatoController {
     public ResponseEntity<CandidatoDTO> deleteFisico(@PathVariable("idCandidato") Integer id) throws RegraDeNegocioException {
         candidatoService.deleteFisico(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/NotaProva/{idCandidato}")
+    public ResponseEntity<CandidatoDTO> updateNota(@PathVariable("idCandidato") Integer id,
+                                                   @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoCreateDTO);
+        return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
 }
