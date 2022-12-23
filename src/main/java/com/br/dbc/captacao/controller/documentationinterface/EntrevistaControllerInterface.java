@@ -55,7 +55,7 @@ public interface EntrevistaControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @DeleteMapping
-    ResponseEntity<EntrevistaDTO> deletarEntrevista(@PathVariable("idEntrevista") Integer id) throws RegraDeNegocioException;
+    ResponseEntity<Void> deletarEntrevista(@PathVariable("idEntrevista") Integer id) throws RegraDeNegocioException;
 
     @Operation(summary = "Listagem de entrevistas por usuarios no sistema", description = "Listagem das entrevistas de acordo com o mês no sistema")
     @ApiResponses(value = {

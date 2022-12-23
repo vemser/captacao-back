@@ -42,7 +42,7 @@ public class EntrevistaController implements EntrevistaControllerInterface {
     }
 
     @DeleteMapping("/{idEntrevista}")
-    public ResponseEntity<EntrevistaDTO> deletarEntrevista(@PathVariable("idEntrevista") Integer id) throws RegraDeNegocioException {
+    public ResponseEntity<Void> deletarEntrevista(@PathVariable("idEntrevista") Integer id) throws RegraDeNegocioException {
         entrevistaService.deletarEntrevista(id);
         return ResponseEntity.noContent().build();
     }

@@ -48,7 +48,7 @@ public class EntrevistaService {
         return entrevistaDTO;
     }
 
-    public PageDTO<EntrevistaDTO> list(Integer pagina, Integer tamanho) throws RegraDeNegocioException {
+    public PageDTO<EntrevistaDTO> list(Integer pagina, Integer tamanho) {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
         Page<EntrevistaEntity> entrevistaEntityPage = entrevistaRepository.findAll(pageRequest);
         List<EntrevistaDTO> entrevistaDTOList = entrevistaEntityPage.stream()

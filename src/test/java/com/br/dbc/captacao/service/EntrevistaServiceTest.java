@@ -176,8 +176,6 @@ public class EntrevistaServiceTest {
         EntrevistaDTO entrevistaDTO = entrevistaService.createEntrevista(entrevistaCreateDTO);
 
         assertEquals(idEsperado, entrevistaDTO.getIdEntrevista());
-        assertEquals("Santana", entrevistaDTO.getCidade());
-        assertEquals("AP", entrevistaDTO.getEstado());
     }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -352,8 +350,6 @@ public class EntrevistaServiceTest {
 
         assertEquals(1, entrevistaDTO.getIdEntrevista());
         assertEquals(Legenda.PENDENTE, entrevistaDTO.getLegenda());
-        assertEquals("Santana", entrevistaDTO.getCidade());
-        assertEquals("AP", entrevistaDTO.getEstado());
     }
 
     @Test

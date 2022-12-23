@@ -30,14 +30,6 @@ public class EntrevistaCreateDTO {
     private LocalDateTime dataEntrevista;
 
     @NotNull
-    @Schema(description = "Cidade em que o usuário irá realizar a entrevista")
-    private String cidade;
-
-    @NotNull
-    @Schema(description = "Estado em que o usuário irá realizar a entrevista")
-    private String estado;
-
-    @NotNull
     @Schema(description = "Observações referentes a entrevista.")
     private String observacoes;
 
