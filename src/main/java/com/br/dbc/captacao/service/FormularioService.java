@@ -10,7 +10,6 @@ import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.repository.CurriculoRepository;
 import com.br.dbc.captacao.repository.FormularioRepository;
 import com.br.dbc.captacao.repository.PrintConfigPCRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,26 +32,17 @@ public class FormularioService {
     private static final int DESCENDING = 1;
     private final FormularioRepository formularioRepository;
     private final TrilhaService trilhaService;
-
     private final PrintConfigPCRepository printConfigPCRepository;
     private final ObjectMapper objectMapper;
-
-    private final CurriculoRepository curriculoRepository;
 
     public FormularioDTO create(FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
         if (!formularioCreateDto.isMatriculadoBoolean()) {
             throw new RegraDeNegocioException("Precisa estar matriculado!");
         }
         FormularioEntity formulario = convertToEntity(formularioCreateDto);
-        CurriculoEntity curriculoEntity = new CurriculoEntity();
-        curriculoEntity.setNome(" ");
-        curriculoEntity.setTipo(" ");
-        curriculoEntity.setData(" ".getBytes());
-        CurriculoEntity curriculoRetorno = curriculoRepository.save(curriculoEntity);
 
         List<TrilhaEntity> trilhas = new ArrayList<>();
         trilhas = getTrilhasFormulario(formularioCreateDto, trilhas);
-        formulario.setCurriculoEntity(curriculoRetorno);
         formulario.setTrilhaEntitySet(new HashSet<>(trilhas));
 
         PrintConfigPCEntity printConfigPCEntity = new PrintConfigPCEntity();
@@ -59,6 +50,7 @@ public class FormularioService {
         printConfigPCEntity.setNome(" ");
         printConfigPCEntity.setData("dados".getBytes());
         PrintConfigPCEntity print = printConfigPCRepository.save(printConfigPCEntity);
+        CurriculoEntity curriculo = new CurriculoEntity();
 
         formulario.setImagemConfigPc(print);
         FormularioEntity formularioRetornoBanco = formularioRepository.save(formulario);
@@ -81,7 +73,13 @@ public class FormularioService {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
         Page<FormularioEntity> paginaFormularioEntity = formularioRepository.findAll(pageRequest);
         List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
-                .map(this::convertToDto)
+                .map(formularioEntity -> {
+                    FormularioDTO formularioDTO = convertToDto(formularioEntity);
+                    if (formularioEntity.getCurriculoEntity() != null) {
+                        formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
+                    }
+                    return formularioDTO;
+                })
                 .toList();
         return new PageDTO<>(paginaFormularioEntity.getTotalElements(),
                 paginaFormularioEntity.getTotalPages(),
@@ -143,8 +141,8 @@ public class FormularioService {
         return formulario;
     }
 
-    public FormularioEntity findByEmail(String candidatoEmail) throws RegraDeNegocioException {
-        return formularioRepository.findByCandidatoEmail(candidatoEmail)
-                .orElseThrow(() -> new RegraDeNegocioException("Candidato não encontrado"));
+    public void updateCurriculo(FormularioEntity formularioEntity, CurriculoEntity curriculoEntity) throws RegraDeNegocioException, IOException {
+        formularioEntity.setCurriculoEntity(curriculoEntity);
+        formularioRepository.save(formularioEntity);
     }
 }

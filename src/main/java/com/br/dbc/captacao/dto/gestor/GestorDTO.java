@@ -4,6 +4,8 @@ import com.br.dbc.captacao.dto.CargoDTO;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class GestorDTO {
 
@@ -13,7 +15,7 @@ public class GestorDTO {
 
     private String email;
 
-    private CargoDTO cargoDto;
+    private List<CargoDTO> cargosDto;
 
     private TipoMarcacao ativo;
 }

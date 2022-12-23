@@ -3,7 +3,6 @@ package com.br.dbc.captacao.dto.formulario;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.enums.TipoTurno;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +40,7 @@ public class FormularioDTO {
 
     private String resposta;
 
-    @JsonIgnore
-    private String curriculo;
+    private Integer curriculo;
 
     private TipoMarcacao lgpd;
 

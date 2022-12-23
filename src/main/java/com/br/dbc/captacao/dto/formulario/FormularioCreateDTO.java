@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.dto.formulario;
 
 import com.br.dbc.captacao.enums.TipoTurno;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,9 +47,6 @@ public class FormularioCreateDTO {
 
     @Schema(example = "Outro", description = "Motivo pelo qual se interessou pela área de Tecnologia")
     private String resposta;
-
-    @JsonIgnore
-    private byte[] curriculo;
 
     @Schema(example = "true", description = "T(TRUE) or F(FALSE)")
     private boolean lgpdBoolean;

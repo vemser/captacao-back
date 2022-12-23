@@ -7,8 +7,6 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.CurriculoService;
 import com.br.dbc.captacao.service.FormularioService;
-import javax.validation.Valid;
-
 import com.br.dbc.captacao.service.PrintConfigPCService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -60,7 +59,7 @@ public class FormularioController implements FormularioControllerInterface {
     @PutMapping(value = "/upload-curriculo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
                                                 @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
-        curriculoService.arquivarCurriculo(file, idFormulario);
+        curriculoService.arquivarCurriculo(file,idFormulario);
         return ResponseEntity.ok().build();
     }
 
@@ -71,8 +70,8 @@ public class FormularioController implements FormularioControllerInterface {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/recuperar-curriculo")
-    public ResponseEntity<String> recuperarCurriculo(@RequestParam("email") String email) throws RegraDeNegocioException {
-        return new ResponseEntity<>(curriculoService.pegarCurriculoCandidato(email), HttpStatus.OK);
+    public ResponseEntity<String> recuperarCurriculo(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException {
+        return new ResponseEntity<>(curriculoService.pegarCurriculoCandidato(idFormulario), HttpStatus.OK);
     }
 
     @DeleteMapping

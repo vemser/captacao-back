@@ -1,11 +1,12 @@
 package com.br.dbc.captacao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,8 +16,8 @@ import lombok.Setter;
 public class ImagemEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_FOTOS")
-    @SequenceGenerator(name = "SEQ_FOTOS", sequenceName = "SEQ_FOTOS", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IMAGEM")
+    @SequenceGenerator(name = "SEQ_IMAGEM", sequenceName = "SEQ_IMAGEM", allocationSize = 1)
     @Column(name = "ID_IMAGEM")
     private Integer idImagem;
 

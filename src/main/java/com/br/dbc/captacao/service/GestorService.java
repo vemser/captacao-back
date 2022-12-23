@@ -1,8 +1,9 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.CargoDTO;
-import com.br.dbc.captacao.dto.SendEmailDTO;
-import com.br.dbc.captacao.dto.gestor.*;
+import com.br.dbc.captacao.dto.gestor.GestorCreateDTO;
+import com.br.dbc.captacao.dto.gestor.GestorDTO;
+import com.br.dbc.captacao.dto.gestor.GestorEmailNomeCargoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CargoEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
@@ -11,15 +12,12 @@ import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.GestorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +61,14 @@ public class GestorService {
                     gestorDTO.setNome(gestorEntity.getNome());
                     gestorDTO.setEmail(gestorEntity.getEmail());
                     gestorDTO.setAtivo(gestorEntity.getAtivo());
-                    gestorDTO.setCargoDto(objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class));
+                    List<CargoDTO> lista = new ArrayList<>();
+                    gestorEntity.getCargoEntity().stream()
+                            .forEach(cargoEntity -> {
+                                CargoDTO cargoDTO = objectMapper.convertValue(cargoEntity, CargoDTO.class);
+                                cargoDTO.setId(cargoEntity.getIdCargo());
+                                lista.add(cargoDTO);
+                            });
+                    gestorDTO.setCargosDto(new ArrayList<>(lista));
                     return gestorDTO;
                 } ).toList();
         return new PageDTO<>(paginaGestorEntities.getTotalElements(),
@@ -76,7 +81,7 @@ public class GestorService {
     public GestorDTO findDtoById(Integer idGestor) throws RegraDeNegocioException {
         GestorEntity gestorEntity = findById(idGestor);
         GestorDTO gestorDTO = convertoToDTO(gestorEntity);
-        return gestorDTO;
+        return getGestorDTO(gestorEntity);
     }
 
     public GestorEntity findById(Integer id) throws RegraDeNegocioException {
@@ -124,7 +129,10 @@ public class GestorService {
                     gestorDTO.setNome(gestorEntity.getNome());
                     gestorDTO.setEmail(gestorEntity.getEmail());
                     gestorDTO.setAtivo(gestorEntity.getAtivo());
-                    gestorDTO.setCargoDto(objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class));
+                    List<CargoDTO> listaCargos = new ArrayList<>();
+                    CargoDTO cargoDTO = objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class);
+                    listaCargos.add(cargoDTO);
+                    gestorDTO.setCargosDto(new ArrayList<>(listaCargos));
                     return gestorDTO;
                 } )
                 .toList();
@@ -183,7 +191,10 @@ public class GestorService {
                     gestorDTO.setNome(gestorEntity.getNome());
                     gestorDTO.setEmail(gestorEntity.getEmail());
                     gestorDTO.setAtivo(gestorEntity.getAtivo());
-                    gestorDTO.setCargoDto(objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class));
+                    List<CargoDTO> listaCargos = new ArrayList<>();
+                    CargoDTO cargoDTO = objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class);
+                    listaCargos.add(cargoDTO);
+                    gestorDTO.setCargosDto(new ArrayList<>(listaCargos));
                     return gestorDTO;
                 } )
                 .toList();
@@ -191,7 +202,18 @@ public class GestorService {
 
     public GestorDTO convertoToDTO(GestorEntity gestorEntity) throws RegraDeNegocioException {
         GestorDTO gestorDTO = objectMapper.convertValue(gestorEntity, GestorDTO.class);
-        gestorDTO.setCargoDto(cargoService.convertToDTO(cargoService.findById(gestorDTO.getCargoDto().getId())));
+        return getGestorDTO(gestorEntity);
+    }
+
+    private GestorDTO getGestorDTO(GestorEntity gestorEntity) {
+        GestorDTO gestorDTO = objectMapper.convertValue(gestorEntity,GestorDTO.class) ;
+        List<CargoDTO> listaCargos = gestorEntity.getCargoEntity().stream()
+                        .map(cargoEntity -> {
+                            CargoDTO cargoDTO = objectMapper.convertValue(cargoEntity, CargoDTO.class);
+                            cargoDTO.setId(cargoEntity.getIdCargo());
+                            return  cargoDTO;
+                        }).toList();
+        gestorDTO.setCargosDto(listaCargos);
         return gestorDTO;
     }
 
@@ -206,7 +228,11 @@ public class GestorService {
     public GestorEntity convertToEntity(GestorDTO  gestorDTO) throws RegraDeNegocioException {
         GestorEntity gestorEntity = objectMapper.convertValue(gestorDTO, GestorEntity.class);
         Set<CargoEntity> cargo = new HashSet<>();
-        cargo.add(cargoService.findById(gestorDTO.getCargoDto().getId()));
+        gestorDTO.getCargosDto().stream()
+                        .forEach(cargoDTO -> {
+                            CargoEntity cargoEntity = objectMapper.convertValue(cargoDTO, CargoEntity.class);
+                            cargo.add(cargoEntity);
+                        });
         return gestorEntity;
     }
 }

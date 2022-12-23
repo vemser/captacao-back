@@ -51,7 +51,7 @@ public class PrintConfigPCService {
     }
 
     private Optional<PrintConfigPCEntity> findByCandidato(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
-        FormularioEntity formularioEntity = formularioService.findByEmail(candidatoEntity.getEmail());
+        FormularioEntity formularioEntity = formularioService.findById(candidatoEntity.getFormularioEntity().getIdFormulario());
         return objectMapper.convertValue(formularioEntity.getCurriculoEntity(),Optional.class);
     }
 

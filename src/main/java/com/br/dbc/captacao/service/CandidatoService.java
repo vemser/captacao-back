@@ -5,8 +5,6 @@ import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoCadastroDTO;
-import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EdicaoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
@@ -79,6 +77,7 @@ public class CandidatoService {
         List<CandidatoDTO> candidatoDtos = paginaCandidatoEntity.getContent().stream()
                 .map(candidatoEntity -> {
                     CandidatoDTO candidatoDto = converterEmDTO(candidatoEntity);
+                    candidatoDto.setFormulario(candidatoEntity.getFormularioEntity().getIdFormulario());
                     candidatoDto.setIdCandidato(candidatoEntity.getIdCandidato());
                     return candidatoDto;
                 }).toList();
