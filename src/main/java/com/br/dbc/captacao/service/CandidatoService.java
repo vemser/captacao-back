@@ -109,10 +109,21 @@ public class CandidatoService {
         CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
         linguagemList = getLinguagensCandidato(candidatoCreateDTO, linguagemList);
         candidatoEntity.setIdCandidato(id);
+        candidatoEntity.setNome(candidatoCreateDTO.getNome().trim());
+        candidatoEntity.setDataNascimento(candidatoCreateDTO.getDataNascimento());
         candidatoEntity.setEmail(candidatoCreateDTO.getEmail());
-        candidatoEntity.setNome(candidatoEntity.getNome().trim());
-        candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
+        candidatoEntity.setTelefone(candidatoCreateDTO.getTelefone());
+        candidatoEntity.setRg(candidatoCreateDTO.getRg());
+        candidatoEntity.setCpf(candidatoCreateDTO.getCpf());
+        candidatoEntity.setEstado(candidatoCreateDTO.getEstado());
+        candidatoEntity.setCidade(candidatoCreateDTO.getCidade());
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
+        return converterEmDTO(candidatoRepository.save(candidatoEntity));
+    }
+    public CandidatoDTO updateNota(Integer id, CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
+        findById(id);
+        CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
+        candidatoEntity.setNotaProva(candidatoCreateDTO.getNotaProva());
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 

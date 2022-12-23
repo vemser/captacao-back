@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -61,12 +62,29 @@ public class CandidatoCreateDTO {
     @Schema(description = "Cidade em que habita o candidato", example = "Porto Alegre")
     private String cidade;
 
-
     @Schema(example = "true", description = "TRUE or FALSE")
     private boolean isPcdboolean;
 
+    @Schema(description = "Observaçoes a respeito do candidato", example = "Boa Logica")
+    private String observacoes;
+
+    @Schema(description = "Nota da prova do candidato", example = "7")
+    private Double notaProva;
+
+    @Schema(description = "Nota comportamental da entrevista do candidato", example = "Pisca muito")
+    private Double notaEntrevistaComportamental;
+
+    @Schema(description = "Nota tecnica da entrevista do candidato", example = "Soube responder as perguntas feitas")
+    private Double notaEntrevistaTecnica;
+
     @Schema(example = "T", description = "(T)TRUE or (F)FALSE")
     private TipoMarcacao ativo;
+
+    @Schema(description = "Parecer comportamental do candidato", example = "Otimo comportamento")
+    private String parecerComportamental;
+
+    @Schema(description = "Parecer técnico do candidato", example = "Baixo nivel de raciocínio lógico")
+    private String parecerTecnico;
 
     @JsonIgnore
     private Double media;
