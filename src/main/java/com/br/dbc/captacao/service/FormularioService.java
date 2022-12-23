@@ -104,10 +104,11 @@ public class FormularioService {
     }
 
     public FormularioDTO update(Integer idFormulario, FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
-        findById(idFormulario);
-        FormularioEntity formulario1 = convertToEntity(formularioCreateDto);
-        formulario1.setIdFormulario(idFormulario);
-        FormularioEntity formularioEntity = formularioRepository.save(formulario1);
+        FormularioEntity formulario = findById(idFormulario);
+
+        formulario.setCurso(formularioCreateDto.getCurso());
+
+        FormularioEntity formularioEntity = formularioRepository.save(formulario);
         return convertToDto(formularioEntity);
     }
 
