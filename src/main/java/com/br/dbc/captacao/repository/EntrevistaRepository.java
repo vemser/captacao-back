@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.repository;
 
+import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,11 +10,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, Integer> {
 
-//    Optional<EntrevistaEntity> findByCandidatoEntity(CandidatoEntity candidatoEntity);
+    Optional<EntrevistaEntity> findByCandidatoEntity(CandidatoEntity candidatoEntity);
 
     List<EntrevistaEntity> findByDataEntrevista(LocalDateTime localDateTime);
 

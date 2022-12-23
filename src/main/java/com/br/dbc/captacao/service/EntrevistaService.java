@@ -1,10 +1,13 @@
 package com.br.dbc.captacao.service;
 
+import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
+import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
@@ -16,15 +19,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class EntrevistaService {
     private final EntrevistaRepository entrevistaRepository;
 
-//    private final CandidatoService candidatoService;
-//
-//    private final UsuarioService usuarioService;
+    private final CandidatoService candidatoService;
+
+    private final GestorService gestorService;
 
     private final ObjectMapper objectMapper;
 
@@ -39,12 +43,12 @@ public class EntrevistaService {
 
     public EntrevistaDTO converterParaEntrevistaDTO(EntrevistaEntity entrevistaEntity) {
         EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevistaEntity, EntrevistaDTO.class);
-//        entrevistaDTO.setUsuarioDTO(usuarioService.converterEmDTO(entrevistaEntity.getUsuarioEntity()));
-//        entrevistaDTO.setCandidatoDTO(candidatoService.converterEmDTO(entrevistaEntity.getCandidatoEntity()));
+        entrevistaDTO.setGestorDTO(gestorService.convertoToDTO(entrevistaEntity.getGestorEntity()));
+        entrevistaDTO.setCandidatoDTO(candidatoService.converterEmDTO(entrevistaEntity.getCandidatoEntity()));
         return entrevistaDTO;
     }
 
-    public PageDTO<EntrevistaDTO> list(Integer pagina, Integer tamanho) {
+    public PageDTO<EntrevistaDTO> list(Integer pagina, Integer tamanho) throws RegraDeNegocioException {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
         Page<EntrevistaEntity> entrevistaEntityPage = entrevistaRepository.findAll(pageRequest);
         List<EntrevistaDTO> entrevistaDTOList = entrevistaEntityPage.stream()
@@ -73,21 +77,21 @@ public class EntrevistaService {
     }
 
     public EntrevistaDTO createEntrevista(EntrevistaCreateDTO entrevistaCreateDTO) throws RegraDeNegocioException {
-//        UsuarioEntity usuario = usuarioService.findByEmail(entrevistaCreateDTO.getUsuarioEmail());
-//        CandidatoEntity candidato = candidatoService.findByEmailEntity(entrevistaCreateDTO.getCandidatoEmail());
-//        if (entrevistaRepository.findByCandidatoEntity(candidato).isPresent()) {
-//            throw new RegraDeNegocioException("Entrevista para o Candidato já agendada!");
-//        }
-        String cidade = entrevistaCreateDTO.getCidade();
-        String estado = entrevistaCreateDTO.getEstado();
+        GestorEntity gestor = gestorService.findByEmail(entrevistaCreateDTO.getUsuarioEmail());
+
+        CandidatoEntity candidato = candidatoService.findByEmailEntity(entrevistaCreateDTO.getCandidatoEmail());
+        if (entrevistaRepository.findByCandidatoEntity(candidato).isPresent()) {
+            throw new RegraDeNegocioException("Entrevista para o Candidato já agendada!");
+        }
+
         String observacoes = entrevistaCreateDTO.getObservacoes();
         LocalDateTime dia = entrevistaCreateDTO.getDataEntrevista();
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(dia);
-//        verificarListaEntrevistas(entrevistaCreateDTO, usuario, entrevistaEntityList);
+        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
         EntrevistaEntity entrevistaEntity = new EntrevistaEntity();
         entrevistaEntity.setDataEntrevista(dia);
-//        entrevistaEntity.setCandidatoEntity(candidato);
-//        entrevistaEntity.setUsuarioEntity(usuario);
+        entrevistaEntity.setCandidatoEntity(candidato);
+        entrevistaEntity.setGestorEntity(gestor);
         entrevistaEntity.setObservacoes(observacoes);
         entrevistaEntity.setLegenda(Legenda.PENDENTE);
 //        tokenConfirmacao(entrevistaEntity);
@@ -101,13 +105,13 @@ public class EntrevistaService {
 //        emailService.sendEmailConfirmacaoEntrevista(entrevistaEntity, entrevistaEntity.getCandidatoEntity().getEmail(), tokenSenha);
 //    }
 
-//    public EntrevistaEntity findByCandidatoEntity(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
-//        Optional<EntrevistaEntity> entrevistaEntityOptional = entrevistaRepository.findByCandidatoEntity(candidatoEntity);
-//        if (entrevistaEntityOptional.isEmpty()) {
-//            throw new RegraDeNegocioException("Entrevista com o candidato não encontrada!");
-//        }
-//        return entrevistaEntityOptional.get();
-//    }
+    public EntrevistaEntity findByCandidatoEntity(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
+        Optional<EntrevistaEntity> entrevistaEntityOptional = entrevistaRepository.findByCandidatoEntity(candidatoEntity);
+        if (entrevistaEntityOptional.isEmpty()) {
+            throw new RegraDeNegocioException("Entrevista com o candidato não encontrada!");
+        }
+        return entrevistaEntityOptional.get();
+    }
 
     public void deletarEntrevista(Integer idEntrevista) throws RegraDeNegocioException {
         EntrevistaEntity entrevistaRecuperada = findById(idEntrevista);
@@ -117,10 +121,10 @@ public class EntrevistaService {
     public EntrevistaDTO atualizarEntrevista(Integer idEntrevista,
                                              EntrevistaAtualizacaoDTO entrevistaCreateDTO,
                                              Legenda legenda) throws RegraDeNegocioException {
-//        UsuarioEntity usuario = usuarioService.findByEmail(entrevistaCreateDTO.getEmail());
+        GestorEntity gestor = gestorService.findByEmail(entrevistaCreateDTO.getEmail());
         EntrevistaEntity entrevista = findById(idEntrevista);
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(entrevista.getDataEntrevista());
-//        verificarListaEntrevistas(entrevistaCreateDTO, usuario, entrevistaEntityList);
+        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
         entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
         entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
         entrevista.setLegenda(legenda);
@@ -132,50 +136,49 @@ public class EntrevistaService {
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
-//    private void verificarListaEntrevistas(EntrevistaAtualizacaoDTO entrevistaCreateDTO,
-//                                           UsuarioEntity usuario,
-//                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
-//        if (!entrevistaEntityList.isEmpty()) {
-//            entrevistaEntityList = entrevistaEntityList.stream()
-//                    .filter(x -> x.getUsuarioEntity().getEmail().equals(usuario.getEmail()))
-//                    .collect(Collectors.toList());
-//            for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
-//                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
-//                    throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
-//                }
-//            }
-//        }
-//    }
+    private void verificarListaEntrevistas(EntrevistaAtualizacaoDTO entrevistaCreateDTO,
+                                           GestorEntity gestor,
+                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
+        if (!entrevistaEntityList.isEmpty()) {
+            entrevistaEntityList = entrevistaEntityList.stream()
+                    .filter(entrevista -> entrevista.getGestorEntity().getEmail().equals(gestor.getEmail()))
+                    .toList();
+            for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
+                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
+                    throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
+                }
+            }
+        }
+    }
 
-//    private void verificarListaEntrevistas(EntrevistaCreateDTO entrevistaCreateDTO,
-//                                           UsuarioEntity usuario,
-//                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
-//        if (!entrevistaEntityList.isEmpty()) {
-//            entrevistaEntityList = entrevistaEntityList.stream()
-//                    .filter(x -> x.getUsuarioEntity().getEmail().equals(usuario.getEmail()))
-//                    .collect(Collectors.toList());
-//            for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
-//                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
-//                    throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
-//                }
-//            }
-//        }
-//    }
+    private void verificarListaEntrevistas(EntrevistaCreateDTO entrevistaCreateDTO,
+                                           GestorEntity gestor,
+                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
+        if (!entrevistaEntityList.isEmpty()) {
+            entrevistaEntityList = entrevistaEntityList.stream()
+                    .filter(x -> x.getGestorEntity().getEmail().equals(gestor.getEmail()))
+                    .toList();
+            for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
+                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
+                    throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
+                }
+            }
+        }
+    }
 
-//    public EntrevistaDTO buscarPorEmailCandidato(String email) throws RegraDeNegocioException{
-//        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
-//        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
-//        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
-//        EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevista, EntrevistaDTO.class);
-//        return entrevistaDTO;
-//    }
+    public EntrevistaDTO buscarPorEmailCandidato(String email) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
+        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
+        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
+        return objectMapper.convertValue(entrevista, EntrevistaDTO.class);
+    }
 
-//    public void deletarEntrevistaEmail(String email) throws RegraDeNegocioException{
-//        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
-//        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
-//        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
-//        entrevistaRepository.deleteById(entrevista.getIdEntrevista());
-//    }
+    public void deletarEntrevistaEmail(String email) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
+        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
+        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
+        entrevistaRepository.deleteById(entrevista.getIdEntrevista());
+    }
 
     public void atualizarObservacaoEntrevista(Integer id, String observacao) throws RegraDeNegocioException {
         EntrevistaEntity entrevista = findById(id);
