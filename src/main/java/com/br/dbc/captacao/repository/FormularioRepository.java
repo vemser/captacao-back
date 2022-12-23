@@ -14,6 +14,6 @@ public interface FormularioRepository extends JpaRepository<FormularioEntity, In
     Optional<FormularioEntity> findByCandidatoEmail(String candidatoEmail);
 
     @Query("select f from FORMULARIO f " +
-            "WHERE (f.curriculoEntity is not null or f.imagemConfigPc is not null)")
+            "WHERE (f.curriculoEntity is not null and f.idFormulario is not null)")
     Page<FormularioEntity> listarFormulariosSemVazios(Pageable pageable);
 }

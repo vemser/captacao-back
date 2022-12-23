@@ -78,6 +78,9 @@ public class FormularioService {
                     if (formularioEntity.getCurriculoEntity() != null) {
                         formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
                     }
+                    if (formularioEntity.getImagemConfigPc() != null) {
+                        formularioDTO.setImagemConfigPc(formularioEntity.getImagemConfigPc().getIdImagem());
+                    }
                     return formularioDTO;
                 })
                 .toList();
