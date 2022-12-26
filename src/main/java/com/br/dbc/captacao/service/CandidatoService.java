@@ -6,10 +6,7 @@ import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
-import com.br.dbc.captacao.entity.EdicaoEntity;
-import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.LinguagemEntity;
+import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CandidatoRepository;
@@ -33,6 +30,8 @@ public class CandidatoService {
     private static final int DESCENDING = 1;
     private final CandidatoRepository candidatoRepository;
     private final FormularioService formularioService;
+
+    private final TrilhaService trilhaService;
 
     private final ObjectMapper objectMapper;
     private final LinguagemService linguagemService;
@@ -122,6 +121,7 @@ public class CandidatoService {
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
+
     public CandidatoDTO updateNota(Integer id, CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
         findById(id);
         CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
@@ -152,7 +152,7 @@ public class CandidatoService {
         return converterEmDTO(candidatoEntity);
     }
 
-        public List<CandidatoDTO> findCandidatoDtoByEmail(String email) throws RegraDeNegocioException {
+    public List<CandidatoDTO> findCandidatoDtoByEmail(String email) throws RegraDeNegocioException {
         List<CandidatoEntity> candidato = candidatoRepository.findCandidatoEntitiesByEmail(email);
         List<CandidatoDTO> candidatoDto = candidato.stream().map(candidatoEntity -> converterEmDTO(candidatoEntity)).toList();
         return candidatoDto;
@@ -221,19 +221,19 @@ public class CandidatoService {
 //    }
 
     public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
-    CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
-    candidatoEntity.setPcd(candidatoCreateDTO.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
-    candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario())));
-    return candidatoEntity;
+        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
+        candidatoEntity.setPcd(candidatoCreateDTO.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario())));
+        return candidatoEntity;
     }
 
 
-        public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) throws RegraDeNegocioException {
+    public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDto, CandidatoEntity.class);
         candidatoEntity.setFormularioEntity(objectMapper.convertValue(formularioService.findById(candidatoDto.getFormulario().getIdFormulario()), FormularioEntity.class));
         candidatoEntity.setEdicao(objectMapper.convertValue(candidatoDto.getEdicao(), EdicaoEntity.class));
         candidatoEntity.setLinguagens(candidatoDto.getLinguagens().stream()
-                .map(linguagemDTO -> objectMapper.convertValue(linguagemDTO,LinguagemEntity.class))
+                .map(linguagemDTO -> objectMapper.convertValue(linguagemDTO, LinguagemEntity.class))
                 .collect(Collectors.toSet()));
         return candidatoEntity;
     }
@@ -246,6 +246,29 @@ public class CandidatoService {
                 .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class))
                 .toList());
         return candidatoDTO;
+    }
+
+    public List<CandidatoDTO> listCandidatosByTrilha(String trilha) throws RegraDeNegocioException {
+
+        TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
+
+       List<CandidatoDTO> candidatoDTOListByTrilha = candidatoRepository.findCandidatoEntitiesByFormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
+               .map(candidatoEntity -> objectMapper.convertValue(candidatoEntity,CandidatoDTO.class))
+               .toList();
+
+
+        return candidatoDTOListByTrilha;
+    }
+
+    public List<CandidatoDTO> listCandidatosByEdicao(String edicao) throws RegraDeNegocioException {
+
+       EdicaoEntity edicaoRetorno = edicaoService.findByNome(edicao);
+
+       List<CandidatoDTO> candidatoDTOListByEdicao = candidatoRepository.findCandidatoEntitiesByEdicao(edicaoRetorno).stream()
+               .map(candidatoEntity -> objectMapper.convertValue(candidatoEntity, CandidatoDTO.class))
+               .toList();
+
+       return candidatoDTOListByEdicao;
     }
 
 }

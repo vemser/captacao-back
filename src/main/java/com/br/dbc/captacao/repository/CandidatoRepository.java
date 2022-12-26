@@ -2,6 +2,9 @@ package com.br.dbc.captacao.repository;
 
 import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
+import com.br.dbc.captacao.entity.EdicaoEntity;
+import com.br.dbc.captacao.entity.FormularioEntity;
+import com.br.dbc.captacao.entity.TrilhaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,5 +37,10 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 //            " and (:nomeTrilha is null or c.trilha.nome = :nomeTrilha)")
 //    Page<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, String nomeTrilha, String nomeEdicao, Pageable pageable);
 //
+
+    List<CandidatoEntity> findCandidatoEntitiesByFormularioEntity_TrilhaEntitySet(TrilhaEntity trilhaEntity);
+
+
+    List<CandidatoEntity> findCandidatoEntitiesByEdicao(EdicaoEntity edicao);
 
 }

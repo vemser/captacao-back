@@ -54,7 +54,13 @@ public class FormularioService {
 
         formulario.setImagemConfigPc(print);
         FormularioEntity formularioRetornoBanco = formularioRepository.save(formulario);
-        return convertToDto(formularioRetornoBanco);
+        FormularioDTO formularioRetorno = convertToDto(formularioRetornoBanco);
+        Set<TrilhaDTO> trilhaDTOSet = formularioRetornoBanco.getTrilhaEntitySet().stream()
+                .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
+                .collect(Collectors.toSet());
+        formularioRetorno.setTrilhas(trilhaDTOSet);
+
+        return formularioRetorno;
     }
 
     private List<TrilhaEntity> getTrilhasFormulario(FormularioCreateDTO formularioCreateDTO, List<TrilhaEntity> trilhas) throws RegraDeNegocioException {
@@ -75,6 +81,10 @@ public class FormularioService {
         List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
                 .map(formularioEntity -> {
                     FormularioDTO formularioDTO = convertToDto(formularioEntity);
+                    Set<TrilhaDTO> trilhaDTOSet = formularioEntity.getTrilhaEntitySet().stream()
+                            .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
+                            .collect(Collectors.toSet());
+                    formularioDTO.setTrilhas(trilhaDTOSet);
                     if (formularioEntity.getCurriculoEntity() != null) {
                         formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
                     }

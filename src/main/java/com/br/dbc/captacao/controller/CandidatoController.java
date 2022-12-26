@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -101,5 +102,21 @@ public class CandidatoController {
                                                    @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
         CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoCreateDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/find-by-trilha/{trilha}")
+    public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
+
+        List<CandidatoDTO> candidatoDTOListByTrilha = candidatoService.listCandidatosByTrilha(trilha);
+
+        return new ResponseEntity<>(candidatoDTOListByTrilha,HttpStatus.OK);
+    }
+
+    @GetMapping("/find-by-edicao/{edicao}")
+    public ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao ( @RequestParam("edicao") String edicao) throws  RegraDeNegocioException{
+
+        List<CandidatoDTO> candidatoDTOListByEdicao = candidatoService.listCandidatosByEdicao(edicao);
+
+        return new ResponseEntity<>(candidatoDTOListByEdicao,HttpStatus.OK);
     }
 }
