@@ -74,10 +74,9 @@ public class FormularioController implements FormularioControllerInterface {
         return new ResponseEntity<>(curriculoService.pegarCurriculoCandidato(idFormulario), HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deletarFormulario(@RequestParam Integer idFormulario) throws RegraDeNegocioException {
+    @DeleteMapping("/delete-fisico/{idFormulario}")
+    public ResponseEntity<Void> deletarFormulario(@PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException {
         formularioService.deleteById(idFormulario);
-        log.info("Deletando Formulario ID: " + idFormulario);
         return ResponseEntity.noContent().build();
     }
 }
