@@ -3,6 +3,7 @@ package com.br.dbc.captacao.controller;
 
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.CandidatoService;
@@ -99,8 +100,8 @@ public class CandidatoController {
 
     @PutMapping("/NotaProva/{idCandidato}")
     public ResponseEntity<CandidatoDTO> updateNota(@PathVariable("idCandidato") Integer id,
-                                                   @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
-        CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoCreateDTO);
+                                                   @Valid @RequestBody CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoNotaDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
 

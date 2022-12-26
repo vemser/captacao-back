@@ -2,6 +2,7 @@ package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
@@ -122,10 +123,9 @@ public class CandidatoService {
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 
-    public CandidatoDTO updateNota(Integer id, CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
-        findById(id);
-        CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
-        candidatoEntity.setNotaProva(candidatoCreateDTO.getNotaProva());
+    public CandidatoDTO updateNota(Integer id, CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = findById(id);
+        candidatoEntity.setNotaProva(candidatoNotaDTO.getNotaProva());
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 
