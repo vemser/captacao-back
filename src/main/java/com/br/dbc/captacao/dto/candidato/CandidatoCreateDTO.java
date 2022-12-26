@@ -69,7 +69,6 @@ public class CandidatoCreateDTO {
     private String observacoes;
 
     @JsonIgnore
-    @Schema(description = "Nota da prova do candidato", example = "7")
     private Double notaProva;
 
     @JsonIgnore
