@@ -69,9 +69,6 @@ public class CandidatoCreateDTO {
     private String observacoes;
 
     @JsonIgnore
-    private Double notaProva;
-
-    @JsonIgnore
     @Schema(description = "Nota comportamental da entrevista do candidato", example = "Pisca muito")
     private Double notaEntrevistaComportamental;
 
