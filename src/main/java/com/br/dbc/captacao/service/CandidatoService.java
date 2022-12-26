@@ -3,6 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
+import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
@@ -52,14 +53,15 @@ public class CandidatoService {
         candidatoEntity.setNome(candidatoEntity.getNome().trim());
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
-        candidatoEntity.setFormularioEntity(formularioService.findById(candidatoCreateDTO.getFormulario()));
+        FormularioEntity formulario = formularioService.findById(candidatoCreateDTO.getFormulario());
+        candidatoEntity.setFormularioEntity(formulario);
 
         EdicaoEntity edicao = edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome());
 
         candidatoEntity.setEdicao(edicao);
 
         CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
-        candidatoDTO.setFormulario(candidatoEntity.getFormularioEntity().getIdFormulario());
+        candidatoDTO.setFormulario(formularioService.convertToDto(formulario));
         candidatoDTO.setIdCandidato(candidatoEntity.getIdCandidato());
 
         return candidatoDTO;
@@ -77,7 +79,7 @@ public class CandidatoService {
         List<CandidatoDTO> candidatoDtos = paginaCandidatoEntity.getContent().stream()
                 .map(candidatoEntity -> {
                     CandidatoDTO candidatoDto = converterEmDTO(candidatoEntity);
-                    candidatoDto.setFormulario(candidatoEntity.getFormularioEntity().getIdFormulario());
+                    candidatoDto.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
                     candidatoDto.setIdCandidato(candidatoEntity.getIdCandidato());
                     return candidatoDto;
                 }).toList();
@@ -228,7 +230,7 @@ public class CandidatoService {
 
         public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDto, CandidatoEntity.class);
-        candidatoEntity.setFormularioEntity(objectMapper.convertValue(formularioService.findById(candidatoDto.getFormulario()), FormularioEntity.class));
+        candidatoEntity.setFormularioEntity(objectMapper.convertValue(formularioService.findById(candidatoDto.getFormulario().getIdFormulario()), FormularioEntity.class));
         candidatoEntity.setEdicao(objectMapper.convertValue(candidatoDto.getEdicao(), EdicaoEntity.class));
         candidatoEntity.setLinguagens(candidatoDto.getLinguagens().stream()
                 .map(linguagemDTO -> objectMapper.convertValue(linguagemDTO,LinguagemEntity.class))
@@ -242,7 +244,7 @@ public class CandidatoService {
         candidatoDTO.setLinguagens(candidatoEntity.getLinguagens()
                 .stream()
                 .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class))
-                .collect(Collectors.toSet()));
+                .toList());
         return candidatoDTO;
     }
 
