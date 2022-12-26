@@ -25,7 +25,7 @@ public class CurriculoService {
     }
 
     public FormularioEntity arquivarCurriculo(MultipartFile file, Integer idFormulario) throws IOException, RegraDeNegocioException {
-
+        formularioService.findById(idFormulario);
         String nomeArquivo = StringUtils.cleanPath(file.getOriginalFilename());
         if (!nomeArquivo.endsWith(".pdf") && !nomeArquivo.endsWith(".docx")) {
             throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .pdf ou .docx");

@@ -28,11 +28,10 @@ import java.io.IOException;
 public class FormularioController implements FormularioControllerInterface {
     private final FormularioService formularioService;
     private final CurriculoService curriculoService;
-
     private final PrintConfigPCService printConfigPCService;
 
     @PostMapping("/cadastro")
-    public ResponseEntity<FormularioDTO> create(@RequestBody FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
+    public ResponseEntity<FormularioDTO> create(@RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
         log.info("Criando formulario...");
         FormularioDTO formularioDto = formularioService.create(formularioCreateDto);
         log.info("Formulario criado, id:" + formularioDto.getIdFormulario());
@@ -59,25 +58,26 @@ public class FormularioController implements FormularioControllerInterface {
     @PutMapping(value = "/upload-curriculo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
                                                 @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
-        curriculoService.arquivarCurriculo(file,idFormulario);
+        curriculoService.arquivarCurriculo(file, idFormulario);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/upload-print-config-pc", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadPrintConfigPc(@RequestPart("file") MultipartFile file,
-                                                @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
-        printConfigPCService.arquivarPrintConfigPc(file,idFormulario);
+                                                    @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
+        printConfigPCService.arquivarPrintConfigPc(file, idFormulario);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/recuperar-curriculo")
     public ResponseEntity<String> recuperarCurriculo(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException {
         return new ResponseEntity<>(curriculoService.pegarCurriculoCandidato(idFormulario), HttpStatus.OK);
     }
 
     @DeleteMapping
-    public void deletarFormulario(@RequestParam Integer idFormulario) throws RegraDeNegocioException {
+    public ResponseEntity<Void> deletarFormulario(@RequestParam Integer idFormulario) throws RegraDeNegocioException {
         formularioService.deleteById(idFormulario);
         log.info("Deletando Formulario ID: " + idFormulario);
-        new ResponseEntity<>(null, HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }
