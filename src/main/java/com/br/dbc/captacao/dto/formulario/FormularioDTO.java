@@ -52,8 +52,6 @@ public class FormularioDTO {
 
     private String neurodiversidade;
 
-    private String configuracoes;
-
     private TipoMarcacao efetivacao;
 
     private String genero;
@@ -65,5 +63,7 @@ public class FormularioDTO {
     private Set<TrilhaDTO> trilhas;
 
     private Integer imagemConfigPc;
+
+    private String Importancia;
 
 }

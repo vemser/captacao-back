@@ -65,24 +65,30 @@ public class CandidatoCreateDTO {
     @Schema(example = "true", description = "TRUE or FALSE")
     private boolean isPcdboolean;
 
+    @JsonIgnore
     @Schema(description = "Observaçoes a respeito do candidato", example = "Boa Logica")
     private String observacoes;
 
+    @JsonIgnore
     @Schema(description = "Nota da prova do candidato", example = "7")
     private Double notaProva;
 
+    @JsonIgnore
     @Schema(description = "Nota comportamental da entrevista do candidato", example = "Pisca muito")
     private Double notaEntrevistaComportamental;
 
+    @JsonIgnore
     @Schema(description = "Nota tecnica da entrevista do candidato", example = "Soube responder as perguntas feitas")
     private Double notaEntrevistaTecnica;
 
     @Schema(example = "T", description = "(T)TRUE or (F)FALSE")
     private TipoMarcacao ativo;
 
+    @JsonIgnore
     @Schema(description = "Parecer comportamental do candidato", example = "Otimo comportamento")
     private String parecerComportamental;
 
+    @JsonIgnore
     @Schema(description = "Parecer técnico do candidato", example = "Baixo nivel de raciocínio lógico")
     private String parecerTecnico;
 
