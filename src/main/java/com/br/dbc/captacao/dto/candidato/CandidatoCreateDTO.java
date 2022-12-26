@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -65,31 +64,37 @@ public class CandidatoCreateDTO {
     @Schema(example = "true", description = "TRUE or FALSE")
     private boolean isPcdboolean;
 
+    @JsonIgnore
     @Schema(description = "Observaçoes a respeito do candidato", example = "Boa Logica")
     private String observacoes;
 
+    @JsonIgnore
     @Schema(description = "Nota da prova do candidato", example = "7")
     private Double notaProva;
 
+    @JsonIgnore
     @Schema(description = "Nota comportamental da entrevista do candidato", example = "Pisca muito")
     private Double notaEntrevistaComportamental;
 
+    @JsonIgnore
     @Schema(description = "Nota tecnica da entrevista do candidato", example = "Soube responder as perguntas feitas")
     private Double notaEntrevistaTecnica;
 
     @Schema(example = "T", description = "(T)TRUE or (F)FALSE")
     private TipoMarcacao ativo;
 
+    @JsonIgnore
     @Schema(description = "Parecer comportamental do candidato", example = "Otimo comportamento")
     private String parecerComportamental;
 
+    @JsonIgnore
     @Schema(description = "Parecer técnico do candidato", example = "Baixo nivel de raciocínio lógico")
     private String parecerTecnico;
 
     @JsonIgnore
     private Double media;
 
-    @Schema(example = "JAVA", description = "Nome da linguagem que o candidato sabe")
+    @NotNull
     private Set<LinguagemDTO> linguagens;
 
     @Schema(example = "1ª Edição")
