@@ -93,7 +93,7 @@ public class FormularioService {
 
     public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocioException {
         return formularioRepository.findById(idFormulario)
-                .orElseThrow(() -> new RegraDeNegocioException("Erro ao buscar Formulario"));
+                .orElseThrow(() -> new RegraDeNegocioException("Erro ao buscar o formulário."));
     }
 
     public FormularioDTO findDtoById(Integer idFormulario) throws RegraDeNegocioException {
