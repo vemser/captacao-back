@@ -7,6 +7,7 @@ import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -18,10 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -252,23 +250,58 @@ public class CandidatoService {
 
         TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
 
-       List<CandidatoDTO> candidatoDTOListByTrilha = candidatoRepository.findCandidatoEntitiesByFormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
-               .map(candidatoEntity -> objectMapper.convertValue(candidatoEntity,CandidatoDTO.class))
-               .toList();
+        List<CandidatoDTO> candidatoDTOListByTrilha = candidatoRepository.findCandidatoEntitiesByFormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
+                .map(candidatoEntity -> {
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
+                    candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
 
+                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
+                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()){
+                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+                    }
+                    candidatoDTO.getFormulario().setTrilhas(trilhaDTOList);
+
+                    candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
+
+                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
+                    for (LinguagemEntity linguagem: candidatoEntity.getLinguagens()) {
+                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem,LinguagemDTO.class));
+                    }
+                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
+                    return candidatoDTO;
+                })
+                .toList();
 
         return candidatoDTOListByTrilha;
     }
 
     public List<CandidatoDTO> listCandidatosByEdicao(String edicao) throws RegraDeNegocioException {
 
-       EdicaoEntity edicaoRetorno = edicaoService.findByNome(edicao);
+        EdicaoEntity edicaoRetorno = edicaoService.findByNome(edicao);
 
-       List<CandidatoDTO> candidatoDTOListByEdicao = candidatoRepository.findCandidatoEntitiesByEdicao(edicaoRetorno).stream()
-               .map(candidatoEntity -> objectMapper.convertValue(candidatoEntity, CandidatoDTO.class))
-               .toList();
+        List<CandidatoDTO> candidatoDTOListByEdicao = candidatoRepository.findCandidatoEntitiesByEdicao(edicaoRetorno).stream()
+                .map(candidatoEntity -> {
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
+                    candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
 
-       return candidatoDTOListByEdicao;
+                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
+                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()){
+                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+                    }
+                    candidatoDTO.getFormulario().setTrilhas(trilhaDTOList);
+
+                    candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
+
+                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
+                    for (LinguagemEntity linguagem: candidatoEntity.getLinguagens()) {
+                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem,LinguagemDTO.class));
+                    }
+                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
+                    return candidatoDTO;
+                })
+                .toList();
+
+        return candidatoDTOListByEdicao;
     }
 
 }
