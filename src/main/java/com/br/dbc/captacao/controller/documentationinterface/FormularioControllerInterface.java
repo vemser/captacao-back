@@ -3,6 +3,7 @@ package com.br.dbc.captacao.controller.documentationinterface;
 import com.br.dbc.captacao.dto.formulario.FormularioCreateDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,7 +49,7 @@ public interface FormularioControllerInterface {
             }
     )
     ResponseEntity<FormularioDTO> updateFormulario(@RequestParam Integer idFormulario,
-                                                   @RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException;
+                                                   @RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException, RegraDeNegocio404Exception;
 
     @Operation(summary = "Deletar Formulario", description = "Deletar formulario por ID")
     @ApiResponses(
@@ -59,5 +60,5 @@ public interface FormularioControllerInterface {
             }
     )
     @DeleteMapping("/delete-fisico/{idFormulario}")
-    public ResponseEntity<Void> deletarFormulario(@PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException ;
+    public ResponseEntity<Void> deletarFormulario(@PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception;
 }

@@ -3,6 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.PrintConfigPCRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +30,7 @@ public class PrintConfigPCService {
                 .orElseThrow(() -> new RegraDeNegocioException("Configurações do computador não encontrada!"));
     }
 
-    public void arquivarPrintConfigPc(MultipartFile file, Integer idFormulario) throws RegraDeNegocioException, IOException {
+    public void arquivarPrintConfigPc(MultipartFile file, Integer idFormulario) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception {
         FormularioEntity formulario = formularioService.findById(idFormulario);
         Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
@@ -49,7 +50,7 @@ public class PrintConfigPCService {
         }
     }
 
-    private Optional<PrintConfigPCEntity> findByCandidato(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
+    private Optional<PrintConfigPCEntity> findByCandidato(CandidatoEntity candidatoEntity) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         FormularioEntity formularioEntity = formularioService.findById(candidatoEntity.getFormularioEntity().getIdFormulario());
         return objectMapper.convertValue(formularioEntity.getCurriculoEntity(),Optional.class);
     }

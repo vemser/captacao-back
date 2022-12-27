@@ -9,6 +9,7 @@ import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.FormularioRepository;
 import com.br.dbc.captacao.repository.PrintConfigPCRepository;
@@ -108,22 +109,22 @@ public class FormularioService {
         return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
     }
 
-    public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocioException {
+    public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocio404Exception {
         return formularioRepository.findById(idFormulario)
-                .orElseThrow(() -> new RegraDeNegocioException("Erro ao buscar o formulário."));
+                .orElseThrow(() -> new RegraDeNegocio404Exception("Erro ao buscar o formulário."));
     }
 
-    public FormularioDTO findDtoById(Integer idFormulario) throws RegraDeNegocioException {
+    public FormularioDTO findDtoById(Integer idFormulario) throws RegraDeNegocio404Exception {
         FormularioEntity formulario = findById(idFormulario);
         return convertToDto(formulario);
     }
 
-    public void deleteById(Integer idFormulario) throws RegraDeNegocioException {
+    public void deleteById(Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         findById(idFormulario);
         formularioRepository.deleteById(idFormulario);
     }
 
-    public FormularioDTO update(Integer idFormulario, FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
+    public FormularioDTO update(Integer idFormulario, FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         FormularioEntity formulario = findById(idFormulario);
 
         formulario.setCurso(formularioCreateDto.getCurso());

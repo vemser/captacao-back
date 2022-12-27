@@ -5,6 +5,7 @@ import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.CandidatoService;
 import com.br.dbc.captacao.service.ImagemService;
@@ -44,14 +45,14 @@ public class CandidatoController {
     }
 
     @PostMapping
-    public ResponseEntity<CandidatoDTO> create(@Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, IOException {
+    public ResponseEntity<CandidatoDTO> create(@Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception {
         CandidatoDTO candidatoDTO = candidatoService.create(candidatoCreateDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{idCandidato}")
     public ResponseEntity<CandidatoDTO> update(@PathVariable("idCandidato") Integer id,
-                                               @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
+                                               @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         CandidatoDTO candidatoDTO = candidatoService.update(id, candidatoCreateDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }

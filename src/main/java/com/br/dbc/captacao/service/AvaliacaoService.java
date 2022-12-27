@@ -10,6 +10,7 @@ import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.enums.TipoEmail;
 import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.AvaliacaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -117,7 +118,7 @@ public class AvaliacaoService {
         return avaliacaoDTO;
     }
 
-    public AvaliacaoEntity convertToEntity(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException {
+    public AvaliacaoEntity convertToEntity(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         AvaliacaoEntity avaliacaoEntity = objectMapper.convertValue(avaliacaoCreateDTO, AvaliacaoEntity.class);
         InscricaoEntity inscricaoEntity = inscricaoService.convertToEntity(inscricaoService.findDtoByid(avaliacaoCreateDTO.getIdInscricao()));
         avaliacaoEntity.setInscricao(inscricaoEntity);
