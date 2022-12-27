@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 
 @Slf4j
@@ -48,23 +49,23 @@ public class FormularioController implements FormularioControllerInterface {
     }
 
     @PutMapping
-    public ResponseEntity<FormularioDTO> updateFormulario(@RequestParam Integer idFormulario,
+    public ResponseEntity<FormularioDTO> updateFormulario(@PathVariable Integer idFormulario,
                                                           @RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
         FormularioDTO formularioDto = formularioService.update(idFormulario, formularioCreateDto);
         log.info("Atualizando Formulario ID: " + idFormulario);
         return new ResponseEntity<>(formularioDto, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/upload-curriculo", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/upload-curriculo/{idFormulario}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
-                                                @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
+                                                @PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
         curriculoService.arquivarCurriculo(file, idFormulario);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "/upload-print-config-pc", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/upload-print-config-pc/{idFormulario}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadPrintConfigPc(@RequestPart("file") MultipartFile file,
-                                                    @RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
+                                                    @PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException {
         printConfigPCService.arquivarPrintConfigPc(file, idFormulario);
         return ResponseEntity.ok().build();
     }
