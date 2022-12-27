@@ -3,6 +3,7 @@ package com.br.dbc.captacao.controller;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.AvaliacaoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -103,5 +104,19 @@ public class AvaliacaoController {
     @GetMapping("/buscar-by-email")
     public ResponseEntity<List<AvaliacaoDTO>> findInscricaoPorEmail(@RequestParam String email) {
         return new ResponseEntity<>(avaliacaoService.findAvaliacaoByCanditadoEmail(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/list-by-trilha/{trilha}")
+    public ResponseEntity<List<AvaliacaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
+        List<AvaliacaoDTO> listByTrilha = avaliacaoService.listByTrilha(trilha);
+
+        return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
+    }
+
+    @GetMapping("/list-by-edicao/{edicao}")
+    public ResponseEntity<List<AvaliacaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
+        List<AvaliacaoDTO> listByEdicao = avaliacaoService.listByEdicao(edicao);
+
+        return new ResponseEntity<>(listByEdicao, HttpStatus.OK);
     }
 }

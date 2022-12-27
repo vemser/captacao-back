@@ -1,14 +1,17 @@
 package com.br.dbc.captacao.service;
 
-import com.br.dbc.captacao.dto.SendEmailDTO;
+import com.br.dbc.captacao.dto.CargoDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
+import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
+import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
+import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.AvaliacaoEntity;
-import com.br.dbc.captacao.entity.GestorEntity;
-import com.br.dbc.captacao.entity.InscricaoEntity;
-import com.br.dbc.captacao.enums.TipoEmail;
+import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
+import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.AvaliacaoRepository;
@@ -19,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -29,6 +34,11 @@ public class AvaliacaoService {
     private final ObjectMapper objectMapper;
     private final AvaliacaoRepository avaliacaoRepository;
     private final InscricaoService inscricaoService;
+
+    private final TrilhaService trilhaService;
+
+    private final EdicaoService edicaoService;
+
     private final GestorService gestorService;
     private final EmailService emailService;
 
@@ -48,6 +58,24 @@ public class AvaliacaoService {
         AvaliacaoDTO avaliacaoDto = convertToDTO(avaliacaoRetorno);
         GestorDTO gestorDTO = objectMapper.convertValue(gestor, GestorDTO.class);
         avaliacaoDto.setAvaliador(gestorDTO);
+        List<CargoDTO> cargoDTOList = new ArrayList<>();
+        for (CargoEntity cargo : gestor.getCargoEntity()) {
+            CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
+            cargoDTO.setId(cargo.getIdCargo());
+            cargoDTOList.add(cargoDTO);
+        }
+        gestorDTO.setCargosDto(cargoDTOList);
+
+        FormularioDTO formularioDTO = objectMapper.convertValue(inscricao.getCandidato().getFormularioEntity(), FormularioDTO.class);
+
+        List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
+        for (TrilhaEntity trilhaTemp : avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
+            trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+        }
+        formularioDTO.setTrilhas(new HashSet<>(trilhaDTOList));
+
+        avaliacaoDto.getInscricao().getCandidato().setFormulario(formularioDTO);
+
 //        SendEmailDTO sendEmailDTO = new SendEmailDTO();
 //        sendEmailDTO.setNome(avaliacaoDto.getInscricao().getCandidato().getNome());
 //        sendEmailDTO.setEmail(avaliacaoDto.getInscricao().getCandidato().getEmail());
@@ -125,5 +153,97 @@ public class AvaliacaoService {
         avaliacaoEntity.setAvaliador(gestorService.convertToEntity(gestorService.findDtoById(1)));
         return avaliacaoEntity;
     }
+
+    public List<AvaliacaoDTO> listByTrilha(String trilha) throws RegraDeNegocioException {
+
+        TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
+
+        List<AvaliacaoDTO> avaliacaoDTOListByTrilha = avaliacaoRepository.findAvaliacaoEntitiesByInscricao_Candidato_FormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
+                .map(avaliacaoEntity -> {
+
+                    AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao(), InscricaoDTO.class);
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato(), CandidatoDTO.class);
+
+                    List<CargoDTO> cargoDTOList = new ArrayList<>();
+                    for (CargoEntity cargo : avaliacaoEntity.getAvaliador().getCargoEntity()) {
+                        CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
+                        cargoDTO.setId(cargo.getIdCargo());
+                        cargoDTOList.add(cargoDTO);
+                    }
+                    avaliacaoDTO.getAvaliador().setCargosDto(cargoDTOList);
+
+                    List<LinguagemDTO> linguagemDTOList = new ArrayList<>();
+                    for (LinguagemEntity linguagem : avaliacaoEntity.getInscricao().getCandidato().getLinguagens()) {
+                        linguagemDTOList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
+                    }
+                    candidatoDTO.setLinguagens(linguagemDTOList);
+
+                    candidatoDTO.setFormulario(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity(), FormularioDTO.class));
+
+                    List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
+                    for (TrilhaEntity trilhaTemp : avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
+                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+                    }
+                    candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
+
+                    candidatoDTO.setEdicao(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getEdicao(), EdicaoDTO.class));
+                    inscricaoDTO.setCandidato(candidatoDTO);
+
+                    avaliacaoDTO.setInscricao(inscricaoDTO);
+
+                    return avaliacaoDTO;
+                })
+                .toList();
+
+        return avaliacaoDTOListByTrilha;
+    }
+
+
+    public List<AvaliacaoDTO> listByEdicao(String edicao) throws RegraDeNegocioException {
+
+        EdicaoEntity edicaoEntity = edicaoService.findByNome(edicao);
+
+        List<AvaliacaoDTO> avaliacaoDTOListByEdicao = avaliacaoRepository.findAvaliacaoEntitiesByInscricao_Candidato_Edicao(edicaoEntity).stream()
+                .map(avaliacaoEntity -> {
+
+                    AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao(), InscricaoDTO.class);
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato(), CandidatoDTO.class);
+
+                    List<CargoDTO> cargoDTOList = new ArrayList<>();
+                    for (CargoEntity cargo : avaliacaoEntity.getAvaliador().getCargoEntity()) {
+                        CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
+                        cargoDTO.setId(cargo.getIdCargo());
+                        cargoDTOList.add(cargoDTO);
+                    }
+                    avaliacaoDTO.getAvaliador().setCargosDto(cargoDTOList);
+
+                    List<LinguagemDTO> linguagemDTOList = new ArrayList<>();
+                    for (LinguagemEntity linguagem : avaliacaoEntity.getInscricao().getCandidato().getLinguagens()) {
+                        linguagemDTOList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
+                    }
+                    candidatoDTO.setLinguagens(linguagemDTOList);
+
+                    candidatoDTO.setFormulario(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity(), FormularioDTO.class));
+
+                    List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
+                    for (TrilhaEntity trilhaTemp : avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
+                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+                    }
+                    candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
+
+                    candidatoDTO.setEdicao(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getEdicao(), EdicaoDTO.class));
+                    inscricaoDTO.setCandidato(candidatoDTO);
+
+                    avaliacaoDTO.setInscricao(inscricaoDTO);
+
+                    return avaliacaoDTO;
+                })
+                .toList();
+
+        return avaliacaoDTOListByEdicao;
+    }
+
 
 }

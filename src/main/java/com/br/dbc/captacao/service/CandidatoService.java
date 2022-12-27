@@ -128,8 +128,8 @@ public class CandidatoService {
     }
 
     private List<LinguagemEntity> getLinguagensCandidato(CandidatoCreateDTO candidatoCreateDTO, List<LinguagemEntity> linguagemList) {
-        for (LinguagemDTO linguagem : candidatoCreateDTO.getLinguagens()) {
-            LinguagemEntity byNome = linguagemService.findByNome(linguagem.getNome());
+        for (String linguagem : candidatoCreateDTO.getLinguagens()) {
+            LinguagemEntity byNome = linguagemService.findByNome(linguagem);
             linguagemList.add(byNome);
         }
         return linguagemList;

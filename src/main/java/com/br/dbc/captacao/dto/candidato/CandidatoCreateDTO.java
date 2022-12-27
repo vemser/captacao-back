@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -91,7 +92,7 @@ public class CandidatoCreateDTO {
     private Double media;
 
     @NotNull
-    private Set<LinguagemDTO> linguagens;
+    private List<String> linguagens;
 
     @Schema(example = "1ª Edição")
     private EdicaoDTO edicao;

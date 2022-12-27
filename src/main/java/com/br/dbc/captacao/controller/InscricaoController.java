@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -77,6 +79,20 @@ public class InscricaoController {
                                                         @RequestParam(defaultValue = "0", required = false) int order) {
         log.info("Listando inscrições");
         return new ResponseEntity<>(inscricaoService.listar(pagina, tamanho, sort, order), HttpStatus.OK);
+    }
+
+    @GetMapping("/list-by-trilha/{trilha}")
+    public ResponseEntity<List<InscricaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
+        List<InscricaoDTO> listByTrilha = inscricaoService.listInscricoesByTrilha(trilha);
+
+        return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
+    }
+
+    @GetMapping("/list-by-edicao/{edicao}")
+    public ResponseEntity<List<InscricaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
+        List<InscricaoDTO> listByEdicao = inscricaoService.listInscricoesByEdicao(edicao);
+
+        return new ResponseEntity<>(listByEdicao,HttpStatus.OK);
     }
 
 
