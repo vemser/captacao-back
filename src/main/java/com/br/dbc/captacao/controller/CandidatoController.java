@@ -80,9 +80,9 @@ public class CandidatoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/upload-foto", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/upload-foto/{email}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadFoto(@RequestPart("file") MultipartFile file,
-                                           @RequestParam("email") String email) throws RegraDeNegocioException, IOException {
+                                           @PathVariable("email") String email) throws RegraDeNegocioException, IOException {
         imagemService.arquivarCandidato(file, email);
         return ResponseEntity.ok().build();
     }

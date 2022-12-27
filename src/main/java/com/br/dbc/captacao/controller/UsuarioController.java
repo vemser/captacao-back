@@ -108,9 +108,9 @@ public class UsuarioController implements UsuarioControllerInterface {
 //        return new ResponseEntity<>(gestorService.getLoggedUser(), HttpStatus.OK);
 //    }
 
-    @PutMapping(value = "/upload-imagem", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/upload-imagem/{email}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadImagem(@RequestPart("file") MultipartFile file,
-                                                @RequestParam("email") String email) throws RegraDeNegocioException, IOException {
+                                                @PathVariable("email") String email) throws RegraDeNegocioException, IOException {
         imagemService.arquivarGestor(file, email);
         return ResponseEntity.ok().build();
     }
