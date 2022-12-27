@@ -89,7 +89,7 @@ public class AvaliacaoController {
     public ResponseEntity<Void> delete(Integer idAvaliacao) throws RegraDeNegocioException {
         avaliacaoService.deleteById(idAvaliacao);
 
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Busca avaliacao por EMAIL", description = "Busca avaliação por email")

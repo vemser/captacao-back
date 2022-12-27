@@ -105,11 +105,11 @@ public class InscricaoController {
             }
     )
     @DeleteMapping
-    public void delete(@RequestParam("id-inscricao") Integer idInscricao) throws RegraDeNegocioException {
+    public ResponseEntity<Void> delete(@RequestParam("id-inscricao") Integer idInscricao) throws RegraDeNegocioException {
         log.info("Deletando inscrição");
         inscricaoService.delete(idInscricao);
         log.info("Inscrição deletada");
-        new ResponseEntity<>(null, HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
 }
