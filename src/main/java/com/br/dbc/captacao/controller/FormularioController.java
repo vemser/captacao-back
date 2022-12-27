@@ -43,7 +43,7 @@ public class FormularioController implements FormularioControllerInterface {
     public ResponseEntity<PageDTO<FormularioDTO>> listAll(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                           @RequestParam(defaultValue = "10", required = false) Integer tamanho,
                                                           @RequestParam(defaultValue = "idFormulario", required = false) String sort,
-                                                          @RequestParam(defaultValue = "0", required = false) int order) {
+                                                          @RequestParam(defaultValue = "0", required = false) int order) throws RegraDeNegocioException {
         log.info("Listando todos os formulários");
         return new ResponseEntity<>(formularioService.listAllPaginado(pagina, tamanho, sort, order), HttpStatus.OK);
     }

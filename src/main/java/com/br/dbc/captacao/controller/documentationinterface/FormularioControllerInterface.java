@@ -37,7 +37,7 @@ public interface FormularioControllerInterface {
     ResponseEntity<PageDTO<FormularioDTO>> listAll(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                    @RequestParam(defaultValue = "10", required = false) Integer tamanho,
                                                    @RequestParam(defaultValue = "idFormulario", required = false) String sort,
-                                                   @RequestParam(defaultValue = "0", required = false) int order);
+                                                   @RequestParam(defaultValue = "0", required = false) int order) throws RegraDeNegocioException;
 
     @Operation(summary = "Atualizar Formulario", description = "Atualizar formulario por ID")
     @ApiResponses(

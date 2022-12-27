@@ -71,34 +71,41 @@ public class FormularioService {
         return trilhas;
     }
 
-    public PageDTO<FormularioDTO> listAllPaginado(Integer pagina, Integer tamanho, String sort, int order) {
+    public PageDTO<FormularioDTO> listAllPaginado(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
         }
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-        Page<FormularioEntity> paginaFormularioEntity = formularioRepository.listarFormulariosSemVazios(pageRequest);
-        List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
-                .map(formularioEntity -> {
-                    FormularioDTO formularioDTO = convertToDto(formularioEntity);
-                    Set<TrilhaDTO> trilhaDTOSet = formularioEntity.getTrilhaEntitySet().stream()
-                            .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
-                            .collect(Collectors.toSet());
-                    formularioDTO.setTrilhas(trilhaDTOSet);
-                    if (formularioEntity.getCurriculoEntity() != null) {
-                        formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
-                    }
-                    if (formularioEntity.getImagemConfigPc() != null) {
-                        formularioDTO.setImagemConfigPc(formularioEntity.getImagemConfigPc().getIdImagem());
-                    }
-                    return formularioDTO;
-                })
-                .toList();
-        return new PageDTO<>(paginaFormularioEntity.getTotalElements(),
-                paginaFormularioEntity.getTotalPages(),
-                pagina,
-                tamanho,
-                formularioDtos);
+        if(tamanho < 0 || pagina < 0) {
+            throw new RegraDeNegocioException("Page ou Size não pode ser menor que zero.");
+        }
+        if (tamanho > 0) {
+            PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+            Page<FormularioEntity> paginaFormularioEntity = formularioRepository.listarFormulariosSemVazios(pageRequest);
+            List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
+                    .map(formularioEntity -> {
+                        FormularioDTO formularioDTO = convertToDto(formularioEntity);
+                        Set<TrilhaDTO> trilhaDTOSet = formularioEntity.getTrilhaEntitySet().stream()
+                                .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
+                                .collect(Collectors.toSet());
+                        formularioDTO.setTrilhas(trilhaDTOSet);
+                        if (formularioEntity.getCurriculoEntity() != null) {
+                            formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
+                        }
+                        if (formularioEntity.getImagemConfigPc() != null) {
+                            formularioDTO.setImagemConfigPc(formularioEntity.getImagemConfigPc().getIdImagem());
+                        }
+                        return formularioDTO;
+                    })
+                    .toList();
+            return new PageDTO<>(paginaFormularioEntity.getTotalElements(),
+                    paginaFormularioEntity.getTotalPages(),
+                    pagina,
+                    tamanho,
+                    formularioDtos);
+        }
+        List<FormularioDTO> listaVazia = new ArrayList<>();
+        return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
     }
 
     public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocioException {
