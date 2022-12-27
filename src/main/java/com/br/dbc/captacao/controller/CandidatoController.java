@@ -39,7 +39,7 @@ public class CandidatoController {
         return candidatoService.listaAllPaginado(pagina,tamanho,sort,order);
     }
 
-    @GetMapping("/findbyemails/{email}")
+    @GetMapping("/findbyemails")
     public CandidatoDTO findByEmail(@RequestParam ("email") String email) throws RegraDeNegocioException {
         return candidatoService.findByEmail(email);
     }
@@ -106,7 +106,7 @@ public class CandidatoController {
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-trilha/{trilha}")
+    @GetMapping("/find-by-trilha")
     public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
 
         List<CandidatoDTO> candidatoDTOListByTrilha = candidatoService.listCandidatosByTrilha(trilha);
@@ -114,7 +114,7 @@ public class CandidatoController {
         return new ResponseEntity<>(candidatoDTOListByTrilha,HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-edicao/{edicao}")
+    @GetMapping("/find-by-edicao")
     public ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao ( @RequestParam("edicao") String edicao) throws  RegraDeNegocioException{
 
         List<CandidatoDTO> candidatoDTOListByEdicao = candidatoService.listCandidatosByEdicao(edicao);

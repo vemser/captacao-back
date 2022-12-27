@@ -81,14 +81,14 @@ public class InscricaoController {
         return new ResponseEntity<>(inscricaoService.listar(pagina, tamanho, sort, order), HttpStatus.OK);
     }
 
-    @GetMapping("/list-by-trilha/{trilha}")
+    @GetMapping("/list-by-trilha")
     public ResponseEntity<List<InscricaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
         List<InscricaoDTO> listByTrilha = inscricaoService.listInscricoesByTrilha(trilha);
 
         return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
     }
 
-    @GetMapping("/list-by-edicao/{edicao}")
+    @GetMapping("/list-by-edicao")
     public ResponseEntity<List<InscricaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
         List<InscricaoDTO> listByEdicao = inscricaoService.listInscricoesByEdicao(edicao);
 

@@ -106,14 +106,14 @@ public class AvaliacaoController {
         return new ResponseEntity<>(avaliacaoService.findAvaliacaoByCanditadoEmail(email), HttpStatus.OK);
     }
 
-    @GetMapping("/list-by-trilha/{trilha}")
+    @GetMapping("/list-by-trilha")
     public ResponseEntity<List<AvaliacaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
         List<AvaliacaoDTO> listByTrilha = avaliacaoService.listByTrilha(trilha);
 
         return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
     }
 
-    @GetMapping("/list-by-edicao/{edicao}")
+    @GetMapping("/list-by-edicao")
     public ResponseEntity<List<AvaliacaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
         List<AvaliacaoDTO> listByEdicao = avaliacaoService.listByEdicao(edicao);
 
