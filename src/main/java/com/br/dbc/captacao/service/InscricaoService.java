@@ -13,6 +13,7 @@ import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoEmail;
 import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -119,7 +120,7 @@ public class InscricaoService {
         return inscricaoEntity;
     }
 
-    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException {
+    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoDTO, InscricaoEntity.class);
         inscricaoEntity.setCandidato(candidatoService.convertToEntity(inscricaoDTO.getCandidato()));
         return inscricaoEntity;

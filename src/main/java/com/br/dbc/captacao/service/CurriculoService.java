@@ -2,6 +2,7 @@ package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.entity.CurriculoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CurriculoRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class CurriculoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Currículo não encontrado!"));
     }
 
-    public FormularioEntity arquivarCurriculo(MultipartFile file, Integer idFormulario) throws IOException, RegraDeNegocioException {
+    public FormularioEntity arquivarCurriculo(MultipartFile file, Integer idFormulario) throws IOException, RegraDeNegocioException, RegraDeNegocio404Exception {
         formularioService.findById(idFormulario);
         String nomeArquivo = StringUtils.cleanPath(file.getOriginalFilename());
         if (!nomeArquivo.endsWith(".pdf") && !nomeArquivo.endsWith(".docx")) {
@@ -42,7 +43,7 @@ public class CurriculoService {
         return formulario;
     }
 
-    public String pegarCurriculoCandidato(Integer idFormulario) throws RegraDeNegocioException {
+    public String pegarCurriculoCandidato(Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception {
 
         FormularioEntity formularioEntity = formularioService.findById(idFormulario);
 

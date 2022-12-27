@@ -9,6 +9,7 @@ import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.FormularioRepository;
 import com.br.dbc.captacao.repository.PrintConfigPCRepository;
@@ -71,52 +72,59 @@ public class FormularioService {
         return trilhas;
     }
 
-    public PageDTO<FormularioDTO> listAllPaginado(Integer pagina, Integer tamanho, String sort, int order) {
+    public PageDTO<FormularioDTO> listAllPaginado(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
         }
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-        Page<FormularioEntity> paginaFormularioEntity = formularioRepository.listarFormulariosSemVazios(pageRequest);
-        List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
-                .map(formularioEntity -> {
-                    FormularioDTO formularioDTO = convertToDto(formularioEntity);
-                    Set<TrilhaDTO> trilhaDTOSet = formularioEntity.getTrilhaEntitySet().stream()
-                            .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
-                            .collect(Collectors.toSet());
-                    formularioDTO.setTrilhas(trilhaDTOSet);
-                    if (formularioEntity.getCurriculoEntity() != null) {
-                        formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
-                    }
-                    if (formularioEntity.getImagemConfigPc() != null) {
-                        formularioDTO.setImagemConfigPc(formularioEntity.getImagemConfigPc().getIdImagem());
-                    }
-                    return formularioDTO;
-                })
-                .toList();
-        return new PageDTO<>(paginaFormularioEntity.getTotalElements(),
-                paginaFormularioEntity.getTotalPages(),
-                pagina,
-                tamanho,
-                formularioDtos);
+        if(tamanho < 0 || pagina < 0) {
+            throw new RegraDeNegocioException("Page ou Size não pode ser menor que zero.");
+        }
+        if (tamanho > 0) {
+            PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+            Page<FormularioEntity> paginaFormularioEntity = formularioRepository.listarFormulariosSemVazios(pageRequest);
+            List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
+                    .map(formularioEntity -> {
+                        FormularioDTO formularioDTO = convertToDto(formularioEntity);
+                        Set<TrilhaDTO> trilhaDTOSet = formularioEntity.getTrilhaEntitySet().stream()
+                                .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
+                                .collect(Collectors.toSet());
+                        formularioDTO.setTrilhas(trilhaDTOSet);
+                        if (formularioEntity.getCurriculoEntity() != null) {
+                            formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
+                        }
+                        if (formularioEntity.getImagemConfigPc() != null) {
+                            formularioDTO.setImagemConfigPc(formularioEntity.getImagemConfigPc().getIdImagem());
+                        }
+                        return formularioDTO;
+                    })
+                    .toList();
+            return new PageDTO<>(paginaFormularioEntity.getTotalElements(),
+                    paginaFormularioEntity.getTotalPages(),
+                    pagina,
+                    tamanho,
+                    formularioDtos);
+        }
+        List<FormularioDTO> listaVazia = new ArrayList<>();
+        return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
     }
 
-    public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocioException {
+    public FormularioEntity findById(Integer idFormulario) throws RegraDeNegocio404Exception {
         return formularioRepository.findById(idFormulario)
-                .orElseThrow(() -> new RegraDeNegocioException("Erro ao buscar o formulário."));
+                .orElseThrow(() -> new RegraDeNegocio404Exception("Erro ao buscar o formulário."));
     }
 
-    public FormularioDTO findDtoById(Integer idFormulario) throws RegraDeNegocioException {
+    public FormularioDTO findDtoById(Integer idFormulario) throws RegraDeNegocio404Exception {
         FormularioEntity formulario = findById(idFormulario);
         return convertToDto(formulario);
     }
 
-    public void deleteById(Integer idFormulario) throws RegraDeNegocioException {
+    public void deleteById(Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         findById(idFormulario);
         formularioRepository.deleteById(idFormulario);
     }
 
-    public FormularioDTO update(Integer idFormulario, FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
+    public FormularioDTO update(Integer idFormulario, FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         FormularioEntity formulario = findById(idFormulario);
 
         formulario.setCurso(formularioCreateDto.getCurso());
