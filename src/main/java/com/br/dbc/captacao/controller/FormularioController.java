@@ -48,8 +48,8 @@ public class FormularioController implements FormularioControllerInterface {
         return new ResponseEntity<>(formularioService.listAllPaginado(pagina, tamanho, sort, order), HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<FormularioDTO> updateFormulario(@PathVariable Integer idFormulario,
+    @PutMapping("/atualizar-formulario/{idFormulario}")
+    public ResponseEntity<FormularioDTO> updateFormulario(@PathVariable("idFormulario") Integer idFormulario,
                                                           @RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
         FormularioDTO formularioDto = formularioService.update(idFormulario, formularioCreateDto);
         log.info("Atualizando Formulario ID: " + idFormulario);

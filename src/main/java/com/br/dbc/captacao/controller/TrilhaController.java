@@ -34,8 +34,8 @@ public class TrilhaController implements TrilhaControllerInterface {
         return new ResponseEntity<>(trilhaService.list(), HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> delete(@RequestParam Integer idTrilha) throws RegraDeNegocioException{
+    @DeleteMapping("/deletar/{idTrilha}")
+    public ResponseEntity<Void>delete(@PathVariable("idTrilha") Integer idTrilha) throws RegraDeNegocioException{
         trilhaService.deleteFisico(idTrilha);
         return ResponseEntity.noContent().build();
     }

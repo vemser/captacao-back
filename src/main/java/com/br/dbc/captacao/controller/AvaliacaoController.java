@@ -67,8 +67,8 @@ public class AvaliacaoController {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    @PutMapping
-    public ResponseEntity<AvaliacaoDTO> update(@RequestParam Integer idAvaliacao,
+    @PutMapping("/update/{idAvaliacao}")
+    public ResponseEntity<AvaliacaoDTO> update(@PathVariable("idAvaliacao") Integer idAvaliacao,
                                                @RequestBody AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
 
         AvaliacaoDTO avaliacaoDtoRetorno = avaliacaoService.update(idAvaliacao, avaliacaoCreateDto);
@@ -85,8 +85,8 @@ public class AvaliacaoController {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    @DeleteMapping
-    public ResponseEntity<Void> delete(Integer idAvaliacao) throws RegraDeNegocioException {
+    @DeleteMapping("/{idAvaliacao}")
+    public ResponseEntity<Void> delete(@PathVariable("idAvaliacao") Integer idAvaliacao) throws RegraDeNegocioException {
         avaliacaoService.deleteById(idAvaliacao);
 
         return ResponseEntity.noContent().build();
