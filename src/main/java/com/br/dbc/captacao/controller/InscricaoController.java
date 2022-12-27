@@ -104,13 +104,8 @@ public class InscricaoController {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-<<<<<<< HEAD
-    @DeleteMapping
-    public ResponseEntity<Void> delete(@RequestParam("id-inscricao") Integer idInscricao) throws RegraDeNegocioException {
-=======
     @DeleteMapping("/{idInscricao}")
-    public void delete(@PathVariable("idInscricao") Integer idInscricao) throws RegraDeNegocioException {
->>>>>>> 3dd9b892c2cfcd498c492e47e4efdf95e8052cfc
+    public ResponseEntity<Void> delete(@PathVariable("idInscricao") Integer idInscricao) throws RegraDeNegocioException {
         log.info("Deletando inscrição");
         inscricaoService.delete(idInscricao);
         log.info("Inscrição deletada");
