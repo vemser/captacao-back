@@ -66,10 +66,13 @@ public class CandidatoService {
     }
 
 
-    public PageDTO<CandidatoDTO> listaAllPaginado(Integer pagina, Integer tamanho, String sort, int order) {
+    public PageDTO<CandidatoDTO> listaAllPaginado(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
+        }
+        if (tamanho <= 0){
+            throw new RegraDeNegocioException("O tamanho não pode ser menor do que 1.");
         }
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
         Page<CandidatoEntity> paginaCandidatoEntity = candidatoRepository.findAll(pageRequest);
