@@ -73,7 +73,7 @@ public class FormularioCreateDTO {
     @NotEmpty(message = "O campo Neurodiversidade não deve ser vazio.")
     @Schema(example = "TDAH", description = "Digite sua neurodiversidade")
     private String neurodiversidade;
-    
+
     @Schema(example = "true", description = "T(TRUE) or F(FALSE)")
     private boolean efetivacaoBoolean;
 
