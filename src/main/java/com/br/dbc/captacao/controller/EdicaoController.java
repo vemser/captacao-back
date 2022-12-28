@@ -27,4 +27,10 @@ public class EdicaoController implements EdicaoControllerInterface {
     public ResponseEntity<EdicaoDTO> cadastrarEdicao(@Valid @RequestBody EdicaoDTO edicaoDTO) {
         return new ResponseEntity<>(edicaoService.createAndReturnDTO(edicaoDTO), HttpStatus.CREATED);
     }
+
+    @GetMapping("/edicao-atual")
+    public ResponseEntity<String> retornarEdicaoAtual(){
+       String nomeEdicao= edicaoService.RetornarEdicaoAtual();
+        return new ResponseEntity<>(nomeEdicao,HttpStatus.OK);
+    }
 }

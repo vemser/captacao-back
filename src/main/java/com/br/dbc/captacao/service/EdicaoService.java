@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class EdicaoService {
@@ -37,5 +40,11 @@ public class EdicaoService {
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
         findById(id);
         edicaoRepository.deleteById(id);
+    }
+
+    public String RetornarEdicaoAtual() {
+        int id = edicaoRepository.findAll().size();
+        EdicaoDTO edicaoDTORetorno = objectMapper.convertValue(edicaoRepository.findById(id), EdicaoDTO.class);
+        return edicaoDTORetorno.getNome();
     }
 }
