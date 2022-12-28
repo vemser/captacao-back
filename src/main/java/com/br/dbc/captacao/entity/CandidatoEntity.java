@@ -83,7 +83,7 @@ public class CandidatoEntity {
         @OneToOne(mappedBy = "candidatoEntity")
         private EntrevistaEntity entrevistaEntity;
 
-        @OneToOne(mappedBy = "candidato")
+        @OneToOne(mappedBy = "candidato", orphanRemoval = true)
         private ImagemEntity imageEntity;
 
         @JsonIgnore
@@ -93,7 +93,7 @@ public class CandidatoEntity {
         private EdicaoEntity edicao;
 
         @JsonIgnore
-        @OneToOne(fetch = FetchType.LAZY)
+        @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
         @JoinColumn(name = "ID_FORMULARIO", referencedColumnName = "ID_FORMULARIO")
         private FormularioEntity formularioEntity;
 }
