@@ -31,6 +31,9 @@ public class ImagemService {
         CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(email);
         Optional<ImagemEntity> imagemBD = findByCandidato(candidatoEntity);
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
+        if(!nomeArquivo.endsWith(".png") && !nomeArquivo.endsWith(".jpeg") && !nomeArquivo.endsWith(".jpg")){
+            throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .png, .jpg ou .jpeg");
+        }
         if (imagemBD.isPresent()) {
             imagemBD.get().setNome(nomeArquivo);
             imagemBD.get().setTipo(file.getContentType());
@@ -51,6 +54,9 @@ public class ImagemService {
         GestorEntity gestorEntity = gestorService.findByEmail(email);
         Optional<ImagemEntity> imagemBD = findByGestor(gestorEntity);
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
+        if(!nomeArquivo.endsWith(".png") && !nomeArquivo.endsWith(".jpeg") && !nomeArquivo.endsWith(".jpg")){
+            throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .png, .jpg ou .jpeg");
+        }
         if (imagemBD.isPresent()) {
             imagemBD.get().setNome(nomeArquivo);
             imagemBD.get().setTipo(file.getContentType());

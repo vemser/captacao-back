@@ -34,6 +34,9 @@ public class PrintConfigPCService {
         FormularioEntity formulario = formularioService.findById(idFormulario);
         Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
+        if(!nomeArquivo.endsWith(".png") && !nomeArquivo.endsWith(".jpeg") && !nomeArquivo.endsWith(".jpg")){
+            throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .png, .jpg ou .jpeg");
+        }
         if (printConfigPCEntity.isPresent()) {
             printConfigPCEntity.get().setNome(nomeArquivo);
             printConfigPCEntity.get().setTipo(file.getContentType());
