@@ -81,6 +81,9 @@ public class CandidatoService {
         List<CandidatoDTO> candidatoDtos = paginaCandidatoEntity.getContent().stream()
                 .map(candidatoEntity -> {
                     CandidatoDTO candidatoDto = converterEmDTO(candidatoEntity);
+                    if(candidatoEntity.getImageEntity() != null) {
+                        candidatoDto.setImagem(candidatoEntity.getImageEntity().getIdImagem());
+                    }
                     candidatoDto.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
                     candidatoDto.setIdCandidato(candidatoEntity.getIdCandidato());
                     return candidatoDto;

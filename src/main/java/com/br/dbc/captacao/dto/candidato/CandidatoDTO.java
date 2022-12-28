@@ -67,4 +67,6 @@ public class CandidatoDTO {
 
     private FormularioDTO formulario;
 
+    private Integer imagem;
+
 }
