@@ -8,12 +8,15 @@ import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import javax.validation.Valid;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface FormularioControllerInterface {
 
@@ -61,4 +64,42 @@ public interface FormularioControllerInterface {
     )
     @DeleteMapping("/delete-fisico/{idFormulario}")
     public ResponseEntity<Void> deletarFormulario(@PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception;
-}
+
+    @Operation(summary = "Atualizar curriculo dentro de Formulario", description = "Atualizar curriculo dentro formulario passado por ID")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Atualizado com sucesso"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @PutMapping(value = "/upload-print-config-pc/{idFormulario}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> uploadPrintConfigPc(@RequestPart("file") MultipartFile file,
+                                                    @PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception;
+
+    @Operation(summary = "Atualizar Print Config PC dentro de Formulario", description = "Atualizar Print CONFIGURAÇÕES do computador dentro formulario passado por ID")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Atualizado com sucesso"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @PutMapping(value = "/upload-curriculo/{idFormulario}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
+                                                @PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception;
+
+
+    @Operation(summary = "Recuperar curriculo em Base64 por ID-Formulario", description = "Recuperar curriculo em Base64 pelo ID-Formulario inserido")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Recurou Curriculo em Base64 com sucesso"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @GetMapping("/recuperar-curriculo")
+    public ResponseEntity<String> recuperarCurriculo(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception;
+
+
+    }
