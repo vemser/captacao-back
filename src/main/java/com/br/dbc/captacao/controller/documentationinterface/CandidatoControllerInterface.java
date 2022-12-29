@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface CandidatoControllerInterface {
 
@@ -139,4 +140,25 @@ public interface CandidatoControllerInterface {
                                                                              @RequestParam(defaultValue = "20") Integer tamanho,
                                                                              @RequestParam(required = false) String nomeTrilha,
                                                                              @RequestParam(required = false) String nomeEdicao) throws RegraDeNegocioException;
-}
+
+    @Operation(summary = "Busca lista de candidatos por EDIÇAO.", description = "Busca lista de candidatos por EDIÇAO.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @GetMapping
+    public ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao (@RequestParam("edicao") String edicao) throws  RegraDeNegocioException;
+
+    @Operation(summary = "Busca lista de candidatos por TRILHA.", description = "Busca lista de candidatos por TRILHA.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @GetMapping
+    public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException;
+
+
+
+    }

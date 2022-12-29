@@ -1,13 +1,11 @@
 package com.br.dbc.captacao.controller;
 
+import com.br.dbc.captacao.controller.documentationinterface.AvaliacaoControllerInterface;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.AvaliacaoService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,18 +20,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/avaliacao")
-public class AvaliacaoController {
+public class AvaliacaoController implements AvaliacaoControllerInterface {
 
     private final AvaliacaoService avaliacaoService;
 
-    @Operation(summary = "Cadastrar Avaliacao", description = "Cadastro de avaliacao")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Avaliacao cadastrada com sucesso"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
     @PostMapping
     public ResponseEntity<AvaliacaoDTO> create(@RequestBody AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
 
@@ -42,14 +32,6 @@ public class AvaliacaoController {
         return new ResponseEntity<>(avaliacaoDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "Listar todas Avaliações", description = "Retorna uma lista com todas avaliações")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Retornou lista de avaliações com sucesso"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
     @GetMapping
     public ResponseEntity<PageDTO<AvaliacaoDTO>> listAll(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                          @RequestParam(defaultValue = "10", required = false) Integer tamanho,
@@ -59,16 +41,8 @@ public class AvaliacaoController {
     }
 
 
-    @Operation(summary = "Atualizar Avaliação", description = "Atualizar avaliação por ID")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Avaliacao atualiazada com sucesso"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @PutMapping
-    public ResponseEntity<AvaliacaoDTO> update(@RequestParam Integer idAvaliacao,
+    @PutMapping("/update/{idAvaliacao}")
+    public ResponseEntity<AvaliacaoDTO> update(@PathVariable("idAvaliacao") Integer idAvaliacao,
                                                @RequestBody AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
 
         AvaliacaoDTO avaliacaoDtoRetorno = avaliacaoService.update(idAvaliacao, avaliacaoCreateDto);
@@ -77,31 +51,30 @@ public class AvaliacaoController {
     }
 
 
-    @Operation(summary = "Deletar Avaliacao", description = "Deletar uma avaliacao por ID")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Avaliacao excluída com sucesso"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @DeleteMapping
-    public ResponseEntity<Void> delete(Integer idAvaliacao) throws RegraDeNegocioException {
+    @DeleteMapping("/{idAvaliacao}")
+    public ResponseEntity<Void> delete(@PathVariable("idAvaliacao") Integer idAvaliacao) throws RegraDeNegocioException {
         avaliacaoService.deleteById(idAvaliacao);
 
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Busca avaliacao por EMAIL", description = "Busca avaliação por email")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Retorna uma avaliacao."),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
+
     @GetMapping("/buscar-by-email")
     public ResponseEntity<List<AvaliacaoDTO>> findInscricaoPorEmail(@RequestParam String email) {
         return new ResponseEntity<>(avaliacaoService.findAvaliacaoByCanditadoEmail(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/list-by-trilha")
+    public ResponseEntity<List<AvaliacaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
+        List<AvaliacaoDTO> listByTrilha = avaliacaoService.listByTrilha(trilha);
+
+        return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
+    }
+
+    @GetMapping("/list-by-edicao")
+    public ResponseEntity<List<AvaliacaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
+        List<AvaliacaoDTO> listByEdicao = avaliacaoService.listByEdicao(edicao);
+
+        return new ResponseEntity<>(listByEdicao, HttpStatus.OK);
     }
 }

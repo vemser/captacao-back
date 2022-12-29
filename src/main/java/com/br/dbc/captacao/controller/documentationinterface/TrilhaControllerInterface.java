@@ -43,5 +43,5 @@ public interface TrilhaControllerInterface {
             }
     )
     @DeleteMapping
-    void delete(@RequestParam Integer idTrilha) throws RegraDeNegocioException;
+   ResponseEntity<Void> delete(@RequestParam Integer idTrilha) throws RegraDeNegocioException;
 }

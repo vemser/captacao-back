@@ -5,7 +5,9 @@ import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoNotaComportamentalDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoTecnicoNotaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.CandidatoService;
 import com.br.dbc.captacao.service.ImagemService;
@@ -39,20 +41,20 @@ public class CandidatoController {
         return candidatoService.listaAllPaginado(pagina,tamanho,sort,order);
     }
 
-    @GetMapping("/findbyemails/{email}")
+    @GetMapping("/findbyemails")
     public CandidatoDTO findByEmail(@RequestParam ("email") String email) throws RegraDeNegocioException {
         return candidatoService.findByEmail(email);
     }
 
     @PostMapping
-    public ResponseEntity<CandidatoDTO> create(@Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, IOException {
+    public ResponseEntity<CandidatoDTO> create(@Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception {
         CandidatoDTO candidatoDTO = candidatoService.create(candidatoCreateDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{idCandidato}")
     public ResponseEntity<CandidatoDTO> update(@PathVariable("idCandidato") Integer id,
-                                               @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException {
+                                               @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         CandidatoDTO candidatoDTO = candidatoService.update(id, candidatoCreateDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
@@ -81,9 +83,9 @@ public class CandidatoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/upload-foto", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = "/upload-foto/{email}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadFoto(@RequestPart("file") MultipartFile file,
-                                           @RequestParam("email") String email) throws RegraDeNegocioException, IOException {
+                                           @PathVariable("email") String email) throws RegraDeNegocioException, IOException {
         imagemService.arquivarCandidato(file, email);
         return ResponseEntity.ok().build();
     }
@@ -99,7 +101,7 @@ public class CandidatoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/NotaProva/{idCandidato}")
+    @PutMapping("/nota-prova/{idCandidato}")
     public ResponseEntity<CandidatoDTO> updateNota(@PathVariable("idCandidato") Integer id,
                                                    @Valid @RequestBody CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
         CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoNotaDTO);
@@ -112,7 +114,14 @@ public class CandidatoController {
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-trilha/{trilha}")
+    @PutMapping("/Nota-ParecerTecnico/{idCandidato}")
+    public ResponseEntity<CandidatoDTO> updateNotaEParecerTecnico(@PathVariable("idCandidato") Integer id,
+                                                   @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.updateTecnico(id, candidatoNotaDTO);
+        return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/find-by-trilha")
     public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
 
         List<CandidatoDTO> candidatoDTOListByTrilha = candidatoService.listCandidatosByTrilha(trilha);
@@ -120,7 +129,7 @@ public class CandidatoController {
         return new ResponseEntity<>(candidatoDTOListByTrilha,HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-edicao/{edicao}")
+    @GetMapping("/find-by-edicao")
     public ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao ( @RequestParam("edicao") String edicao) throws  RegraDeNegocioException{
 
         List<CandidatoDTO> candidatoDTOListByEdicao = candidatoService.listCandidatosByEdicao(edicao);

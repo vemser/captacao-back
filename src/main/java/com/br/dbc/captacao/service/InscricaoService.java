@@ -2,13 +2,18 @@ package com.br.dbc.captacao.service;
 
 
 import com.br.dbc.captacao.dto.SendEmailDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
+import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoCreateDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
+import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
-import com.br.dbc.captacao.entity.InscricaoEntity;
+import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
+import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoEmail;
 import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +24,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +37,9 @@ public class InscricaoService {
     private final InscricaoRepository inscricaoRepository;
     private final CandidatoService candidatoService;
     private final EmailService emailService;
+
+    private final EdicaoService edicaoService;
+    private final TrilhaService trilhaService;
     private final ObjectMapper objectMapper;
 
     public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
@@ -109,9 +120,78 @@ public class InscricaoService {
         return inscricaoEntity;
     }
 
-    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException {
+    public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoDTO, InscricaoEntity.class);
         inscricaoEntity.setCandidato(candidatoService.convertToEntity(inscricaoDTO.getCandidato()));
         return inscricaoEntity;
     }
+
+    public List<InscricaoDTO> listInscricoesByTrilha(String trilha) throws RegraDeNegocioException {
+
+        TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
+
+        List<InscricaoDTO> inscricaoDTOListByTrilha = inscricaoRepository.findInscricaoEntitiesByCandidato_FormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
+                .map(inscricaoEntity -> {
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
+
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
+                    candidatoDTO.setEdicao(objectMapper.convertValue(inscricaoEntity.getCandidato().getEdicao(), EdicaoDTO.class));
+
+                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
+                    for (TrilhaEntity trilhaTemp : inscricaoEntity.getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
+                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+                    }
+                    FormularioDTO formularioDTO = objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class);
+                    formularioDTO.setTrilhas(trilhaDTOList);
+                    candidatoDTO.setFormulario(formularioDTO);
+
+                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
+                    for (LinguagemEntity linguagem : inscricaoEntity.getCandidato().getLinguagens()) {
+                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
+                    }
+                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
+
+                    inscricaoDTO.setCandidato(candidatoDTO);
+                    return inscricaoDTO;
+                })
+                .toList();
+
+        return inscricaoDTOListByTrilha;
+    }
+
+    public List<InscricaoDTO> listInscricoesByEdicao(String edicao) throws RegraDeNegocioException {
+
+        EdicaoEntity edicaoEntity = edicaoService.findByNome(edicao);
+
+        List<InscricaoDTO> inscricaoDTOListByEdicao = inscricaoRepository.findInscricaoEntitiesByCandidato_Edicao(edicaoEntity).stream()
+                .map(inscricaoEntity -> {
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
+
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
+                    candidatoDTO.setEdicao(objectMapper.convertValue(inscricaoEntity.getCandidato().getEdicao(), EdicaoDTO.class));
+
+                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
+                    for (TrilhaEntity trilhaTemp : inscricaoEntity.getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
+                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+                    }
+                    FormularioDTO formularioDTO = objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class);
+                    formularioDTO.setTrilhas(trilhaDTOList);
+                    candidatoDTO.setFormulario(formularioDTO);
+
+                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
+                    for (LinguagemEntity linguagem : inscricaoEntity.getCandidato().getLinguagens()) {
+                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
+                    }
+                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
+
+                    inscricaoDTO.setCandidato(candidatoDTO);
+                    inscricaoDTO.setAvaliacao(inscricaoEntity.getAvaliado());
+                    return inscricaoDTO;
+                })
+                .toList();
+
+
+        return inscricaoDTOListByEdicao;
+    }
+
 }
