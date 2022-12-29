@@ -80,10 +80,6 @@ public class FormularioEntity {
     @Column(name = "NEURODIVERSIDADE")
     private String neurodiversidade;
 
-    @Column(name = "CONFIG_PC")
-    private String configuracoes;
-
-
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PRINT_CONFIG_PC", referencedColumnName = "ID_PRINT_CONFIG_PC")

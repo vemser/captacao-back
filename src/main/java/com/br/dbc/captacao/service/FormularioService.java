@@ -77,7 +77,7 @@ public class FormularioService {
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
         }
-        if(tamanho < 0 || pagina < 0) {
+        if (tamanho < 0 || pagina < 0) {
             throw new RegraDeNegocioException("Page ou Size não pode ser menor que zero.");
         }
         if (tamanho > 0) {
@@ -124,13 +124,36 @@ public class FormularioService {
         formularioRepository.deleteById(idFormulario);
     }
 
-    public FormularioDTO update(Integer idFormulario, FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException, RegraDeNegocio404Exception {
+    public FormularioDTO update(Integer idFormulario, FormularioCreateDTO formularioCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         FormularioEntity formulario = findById(idFormulario);
 
-        formulario.setCurso(formularioCreateDto.getCurso());
+        formulario.setMatriculado(formularioCreateDTO.isMatriculadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setCurso(formularioCreateDTO.getCurso());
+        formulario.setTurno(formularioCreateDTO.getTurno());
+        formulario.setInstituicao(formularioCreateDTO.getInstituicao());
+        formulario.setGithub(formularioCreateDTO.getGithub());
+        formulario.setLinkedin(formularioCreateDTO.getLinkedin());
+        formulario.setDesafios(formularioCreateDTO.isDesafiosBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setProblema(formularioCreateDTO.isProblemaBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setReconhecimento(formularioCreateDTO.isReconhecimentoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setAltruismo(formularioCreateDTO.isAltruismoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setResposta(formularioCreateDTO.getResposta());
+        formulario.setLgpd(formularioCreateDTO.isLgpdBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setProva(formularioCreateDTO.isProvaBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setIngles(formularioCreateDTO.getIngles());
+        formulario.setEspanhol(formularioCreateDTO.getEspanhol());
+        formulario.setNeurodiversidade(formularioCreateDTO.getNeurodiversidade());
+        formulario.setEfetivacao(formularioCreateDTO.isEfetivacaoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setDisponibilidade(formularioCreateDTO.isDisponibilidadeBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        formulario.setGenero(formularioCreateDTO.getGenero());
+        formulario.setOrientacao(formularioCreateDTO.getOrientacao());
+        formulario.setImportancia(formularioCreateDTO.getImportancia());
 
-        FormularioEntity formularioEntity = formularioRepository.save(formulario);
-        return convertToDto(formularioEntity);
+        FormularioEntity formularioRetornoBanco = formularioRepository.save(formulario);
+
+        FormularioDTO formularioDTORetorno = convertToDto(formularioRetornoBanco);
+
+        return formularioDTORetorno;
     }
 
     public FormularioDTO convertToDto(FormularioEntity formulario) {
