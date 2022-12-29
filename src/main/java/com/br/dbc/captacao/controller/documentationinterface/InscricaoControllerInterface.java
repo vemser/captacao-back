@@ -48,7 +48,7 @@ public interface InscricaoControllerInterface {
     public ResponseEntity<PageDTO<InscricaoDTO>> listar(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                         @RequestParam(defaultValue = "10", required = false) Integer tamanho,
                                                         @RequestParam(defaultValue = "idInscricao", required = false) String sort,
-                                                        @RequestParam(defaultValue = "0", required = false) int order);
+                                                        @RequestParam(defaultValue = "0", required = false) int order) throws RegraDeNegocioException;
 
     @Operation(summary = "Busca inscricao por EMAIL", description = "Busca inscrição por ID")
     @ApiResponses(

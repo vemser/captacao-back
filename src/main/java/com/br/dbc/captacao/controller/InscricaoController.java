@@ -45,7 +45,7 @@ public class InscricaoController implements InscricaoControllerInterface {
     public ResponseEntity<PageDTO<InscricaoDTO>> listar(@RequestParam(defaultValue = "0", required = false) Integer pagina,
                                                         @RequestParam(defaultValue = "10", required = false) Integer tamanho,
                                                         @RequestParam(defaultValue = "idInscricao", required = false) String sort,
-                                                        @RequestParam(defaultValue = "0", required = false) int order) {
+                                                        @RequestParam(defaultValue = "0", required = false) int order) throws RegraDeNegocioException {
         log.info("Listando inscrições");
         return new ResponseEntity<>(inscricaoService.listar(pagina, tamanho, sort, order), HttpStatus.OK);
     }

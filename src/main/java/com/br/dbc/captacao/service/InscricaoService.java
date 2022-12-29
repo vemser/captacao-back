@@ -74,22 +74,29 @@ public class InscricaoService {
                 .toList();
     }
 
-    public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) {
+    public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
         }
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-        Page<InscricaoEntity> paginaInscricaoEntities = inscricaoRepository.findAll(pageRequest);
+        if(tamanho < 0 || pagina < 0) {
+            throw new RegraDeNegocioException("Page ou Size não pode ser menor que zero.");
+        }
+        if(tamanho > 0) {
+            PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+            Page<InscricaoEntity> paginaInscricaoEntities = inscricaoRepository.findAll(pageRequest);
 
-        List<InscricaoDTO> inscricaoDtos = paginaInscricaoEntities.getContent().stream()
-                .map(inscricaoEntity -> converterParaDTO(inscricaoEntity)).toList();
+            List<InscricaoDTO> inscricaoDtos = paginaInscricaoEntities.getContent().stream()
+                    .map(inscricaoEntity -> converterParaDTO(inscricaoEntity)).toList();
 
-        return new PageDTO<>(paginaInscricaoEntities.getTotalElements(),
-                paginaInscricaoEntities.getTotalPages(),
-                pagina,
-                tamanho,
-                inscricaoDtos);
+            return new PageDTO<>(paginaInscricaoEntities.getTotalElements(),
+                    paginaInscricaoEntities.getTotalPages(),
+                    pagina,
+                    tamanho,
+                    inscricaoDtos);
+        }
+        List<InscricaoDTO> listaVazia = new ArrayList<>();
+        return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
     }
 
     public InscricaoDTO findDtoByid(Integer idInscricao) throws RegraDeNegocioException {
