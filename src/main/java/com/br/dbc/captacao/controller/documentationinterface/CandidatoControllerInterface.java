@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.controller.documentationinterface;
 
-import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.candidato.*;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoCadastroDTO;
 import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
@@ -159,6 +158,33 @@ public interface CandidatoControllerInterface {
     @GetMapping
     public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException;
 
+    @Operation(summary = "Atualiza a nota da prova do candidato", description = "Atualizar a nota da prova do no Sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Nota da prova do candidato atualizada com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @PutMapping
+    ResponseEntity<CandidatoDTO> updateNota(@PathVariable("idCandidato") Integer id,
+                                        @Valid @RequestBody CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException;
 
+    @Operation(summary = "Atualiza a notas e parecer comportamentais do candidato", description = "Atualiza a nota e parecer comportamentais do candidato no Sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Nota e parecer comportamentais do candidato atualizadas com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @PutMapping
+    ResponseEntity<CandidatoDTO> updateComportamental(@PathVariable("idCandidato") Integer id,
+                                        @Valid @RequestBody CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO) throws RegraDeNegocioException;
 
+    @Operation(summary = "Atualiza a notas e parecer técnicos do candidato", description = "Atualiza a nota e parecer técnicos do candidato no Sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Nota e parecer técnicos do candidato atualizadas com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @PutMapping
+    ResponseEntity<CandidatoDTO> updateNotaEParecerTecnico(@PathVariable("idCandidato") Integer id,
+                                                      @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException;
     }
