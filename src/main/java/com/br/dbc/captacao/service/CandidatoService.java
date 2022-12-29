@@ -2,6 +2,7 @@ package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoNotaComportamentalDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
@@ -124,6 +125,12 @@ public class CandidatoService {
     public CandidatoDTO updateNota(Integer id, CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
         candidatoEntity.setNotaProva(candidatoNotaDTO.getNotaProva());
+        return converterEmDTO(candidatoRepository.save(candidatoEntity));
+    }
+    public CandidatoDTO updateComportamental(Integer id, CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO) throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = findById(id);
+        candidatoEntity.setNotaEntrevistaComportamental(candidatoNotaComportamentalDTO.getNotaComportamental());
+        candidatoEntity.setParecerComportamental(candidatoNotaComportamentalDTO.getParecerComportamental());
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 
