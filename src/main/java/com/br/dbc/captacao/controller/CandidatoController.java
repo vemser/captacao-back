@@ -114,7 +114,7 @@ public class CandidatoController {
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/Nota-ParecerTecnico/{idCandidato}")
+    @PutMapping("/nota-parecer-tecnico/{idCandidato}")
     public ResponseEntity<CandidatoDTO> updateNotaEParecerTecnico(@PathVariable("idCandidato") Integer id,
                                                    @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
         CandidatoDTO candidatoDTO = candidatoService.updateTecnico(id, candidatoNotaDTO);
