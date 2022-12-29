@@ -4,6 +4,7 @@ package com.br.dbc.captacao.controller;
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoTecnicoNotaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -103,6 +104,13 @@ public class CandidatoController {
     public ResponseEntity<CandidatoDTO> updateNota(@PathVariable("idCandidato") Integer id,
                                                    @Valid @RequestBody CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
         CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoNotaDTO);
+        return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/Nota-ParecerTecnico/{idCandidato}")
+    public ResponseEntity<CandidatoDTO> updateNotaEParecerTecnico(@PathVariable("idCandidato") Integer id,
+                                                   @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.updateTecnico(id, candidatoNotaDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
 

@@ -3,6 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
+import com.br.dbc.captacao.dto.candidato.CandidatoTecnicoNotaDTO;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
@@ -125,6 +126,22 @@ public class CandidatoService {
         candidatoEntity.setEstado(candidatoCreateDTO.getEstado());
         candidatoEntity.setCidade(candidatoCreateDTO.getCidade());
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
+        return converterEmDTO(candidatoRepository.save(candidatoEntity));
+    }
+
+    public CandidatoDTO updateTecnico(Integer id, CandidatoTecnicoNotaDTO candidatoTecnicoNotaDTO) throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = findById(id);
+        candidatoEntity.setNotaEntrevistaTecnica(candidatoTecnicoNotaDTO.getNotaTecnico());
+        candidatoEntity.setParecerTecnico(candidatoTecnicoNotaDTO.getParecerTecnico());
+        return converterEmDTO(candidatoRepository.save(candidatoEntity));
+    }
+
+    public CandidatoDTO calcularMediaNotas(Integer id) throws RegraDeNegocioException{
+        CandidatoEntity candidatoEntity = findById(id);
+        Double nota1 = candidatoEntity.getNotaProva() * 0.3;
+        Double nota2 = candidatoEntity.getNotaEntrevistaComportamental() * 0.35;
+        Double nota3 = candidatoEntity.getNotaEntrevistaTecnica() * 0.35;
+        candidatoEntity.setMedia(nota1 + nota2 + nota3);
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 
