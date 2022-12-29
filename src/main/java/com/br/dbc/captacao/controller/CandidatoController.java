@@ -100,7 +100,7 @@ public class CandidatoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/NotaProva/{idCandidato}")
+    @PutMapping("/nota-prova/{idCandidato}")
     public ResponseEntity<CandidatoDTO> updateNota(@PathVariable("idCandidato") Integer id,
                                                    @Valid @RequestBody CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
         CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoNotaDTO);
