@@ -117,6 +117,8 @@ public class CandidatoService {
         }
         CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
         linguagemList = getLinguagensCandidato(candidatoCreateDTO, linguagemList);
+        EdicaoEntity edicao = edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome());
+        candidatoEntity.setEdicao(edicao);
         candidatoEntity.setIdCandidato(id);
         candidatoEntity.setNome(candidatoCreateDTO.getNome().trim());
         candidatoEntity.setDataNascimento(candidatoCreateDTO.getDataNascimento());
