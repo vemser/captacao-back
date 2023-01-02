@@ -30,10 +30,11 @@ public class EdicaoController implements EdicaoControllerInterface {
     }
 
     @GetMapping("/edicao-atual")
-    public ResponseEntity<String> retornarEdicaoAtual(){
-       String nomeEdicao= edicaoService.RetornarEdicaoAtual();
-        return new ResponseEntity<>(nomeEdicao,HttpStatus.OK);
+    public ResponseEntity<String> retornarEdicaoAtual() throws RegraDeNegocioException {
+        String nomeEdicao = edicaoService.retornarEdicaoAtual();
+        return new ResponseEntity<>(nomeEdicao, HttpStatus.OK);
     }
+
     @GetMapping("/listar-todas")
     public ResponseEntity<List<EdicaoDTO>> list() {
         return new ResponseEntity<>(edicaoService.list(), HttpStatus.OK);

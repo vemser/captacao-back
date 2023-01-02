@@ -18,13 +18,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.br.dbc.captacao.factory.EdicaoFactory.getEdicaoDTO;
 import static com.br.dbc.captacao.factory.EdicaoFactory.getEdicaoEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -116,7 +117,6 @@ public class EdicaoServiceTest {
 
         //Assert
         verify(edicaoRepository).deleteById(idEdicao);
-
     }
 
     @Test
@@ -159,10 +159,26 @@ public class EdicaoServiceTest {
         edicaoService.findById(id);
     }
 
-    private static EdicaoDTO getEdicaoDTO() {
-        final String nome = "10";
-        EdicaoDTO edicaoDTO = new EdicaoDTO();
-        edicaoDTO.setNome(nome);
-        return edicaoDTO;
+    @Test
+    public void deveRetornarEdiçãoAtual() throws RegraDeNegocioException {
+        String edicaoNomeEsperado = "Edição 10";
+        EdicaoEntity edicaoRetornada = new EdicaoEntity(1, edicaoNomeEsperado, Set.of());
+
+        when(edicaoRepository.findAll()).thenReturn(List.of(edicaoRetornada));
+        when(edicaoRepository.findById(anyInt())).thenReturn(Optional.of(edicaoRetornada));
+        String edicaoAtualNome = edicaoService.retornarEdicaoAtual();
+
+        assertEquals(edicaoNomeEsperado, edicaoAtualNome);
+    }
+
+    @Test
+    public void deveRetornarListaDeEdicoes() {
+        final int tamanhoEsperado = 1;
+        List<EdicaoEntity> list = List.of(getEdicaoEntity());
+
+        when(edicaoRepository.findAll()).thenReturn(list);
+        List<EdicaoDTO> edicoesList = edicaoService.list();
+
+        assertEquals(tamanhoEsperado, edicoesList.size());
     }
 }

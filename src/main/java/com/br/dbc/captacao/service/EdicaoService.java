@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,9 +47,9 @@ public class EdicaoService {
         edicaoRepository.deleteById(id);
     }
 
-    public String RetornarEdicaoAtual() {
+    public String retornarEdicaoAtual() throws RegraDeNegocioException {
         int id = edicaoRepository.findAll().size();
-        EdicaoDTO edicaoDTORetorno = objectMapper.convertValue(edicaoRepository.findById(id), EdicaoDTO.class);
+        EdicaoDTO edicaoDTORetorno = objectMapper.convertValue(findById(id), EdicaoDTO.class);
         return edicaoDTORetorno.getNome();
     }
 }

@@ -37,5 +37,5 @@ public interface EdicaoControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    public ResponseEntity<String> retornarEdicaoAtual();
+    public ResponseEntity<String> retornarEdicaoAtual() throws RegraDeNegocioException;
 }
