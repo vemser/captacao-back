@@ -22,6 +22,12 @@ public class EdicaoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Edição não encontrada!"));
     }
 
+    public List<EdicaoDTO> list(){
+        return edicaoRepository.findAll().stream()
+                .map(contato -> objectMapper.convertValue(contato, EdicaoDTO.class))
+                .toList();
+    }
+
     public EdicaoDTO createAndReturnDTO(EdicaoDTO edicaoDTO) {
         edicaoDTO.setNome(edicaoDTO.getNome().trim());
         EdicaoEntity edicaoEntity = edicaoRepository.save(converterEntity(edicaoDTO));

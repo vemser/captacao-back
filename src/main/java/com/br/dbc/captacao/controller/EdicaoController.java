@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,5 +33,9 @@ public class EdicaoController implements EdicaoControllerInterface {
     public ResponseEntity<String> retornarEdicaoAtual(){
        String nomeEdicao= edicaoService.RetornarEdicaoAtual();
         return new ResponseEntity<>(nomeEdicao,HttpStatus.OK);
+    }
+    @GetMapping("/listar-todas")
+    public ResponseEntity<List<EdicaoDTO>> list() {
+        return new ResponseEntity<>(edicaoService.list(), HttpStatus.OK);
     }
 }
