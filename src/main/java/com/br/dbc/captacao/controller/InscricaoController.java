@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Slf4j
@@ -77,6 +79,12 @@ public class InscricaoController implements InscricaoControllerInterface {
         log.info("Deletando inscrição");
         inscricaoService.delete(idInscricao);
         log.info("Inscrição deletada");
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/exportar-candidatos-para-csv")
+    public ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException {
+        inscricaoService.exportarCandidatoCSV();
         return ResponseEntity.noContent().build();
     }
 

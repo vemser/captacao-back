@@ -138,10 +138,4 @@ public class CandidatoController {
 
         return new ResponseEntity<>(candidatoDTOListByEdicao,HttpStatus.OK);
     }
-
-    @GetMapping("/exportar-candidatos-para-csv")
-    public ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException, FileNotFoundException, UnsupportedEncodingException {
-        candidatoService.exportarCandidatoCSV();
-        return ResponseEntity.noContent().build();
-    }
 }

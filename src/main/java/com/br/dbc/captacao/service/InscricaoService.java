@@ -23,6 +23,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -102,6 +106,33 @@ public class InscricaoService {
     public InscricaoDTO findDtoByid(Integer idInscricao) throws RegraDeNegocioException {
         InscricaoDTO inscricaoDto = converterParaDTO(findById(idInscricao));
         return inscricaoDto;
+    }
+
+    public void exportarCandidatoCSV() throws RegraDeNegocioException {
+        List<InscricaoEntity> inscricaoEntityList = inscricaoRepository.listarInscricoesAprovadas();
+        try {
+            BufferedWriter bw = new BufferedWriter
+                    (new OutputStreamWriter(new FileOutputStream("candidatos.csv", false), "UTF-8"));
+            for (InscricaoEntity inscricao : inscricaoEntityList) {
+                StringBuilder oneLine = new StringBuilder();
+                oneLine.append(inscricao.getCandidato().getIdCandidato());
+                oneLine.append(",");
+                oneLine.append(inscricao.getCandidato().getNome());
+                oneLine.append(",");
+                oneLine.append(inscricao.getCandidato().getEmail());
+                oneLine.append(",");
+                oneLine.append(inscricao.getCandidato().getMedia());
+                oneLine.append(",");
+                oneLine.append(inscricao.getCandidato().getParecerTecnico());
+                oneLine.append(",");
+                oneLine.append(inscricao.getCandidato().getParecerComportamental());
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException e) {
+            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
+        }
     }
 
     public void delete(Integer id) throws RegraDeNegocioException {
