@@ -4,6 +4,7 @@ import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.AvaliacaoEntity;
+import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -74,6 +75,11 @@ public class AvaliacaoServiceTest {
     @Test
     public void deveTestarCreateComSucessoAprovado() throws RegraDeNegocioException, RegraDeNegocio404Exception {
         AvaliacaoCreateDTO avaliacaoCreateDTO = AvaliacaoFactory.getAvaliacaoCreateDto();
+        AvaliacaoEntity avaliacaoEntity = AvaliacaoFactory.getAvaliacaoEntityAprovado();
+
+        when(avaliacaoRepository.findById(anyInt())).thenReturn(Optional.of(avaliacaoEntity));
+        when(gestorService.findByEmail(any())).thenReturn(AvaliacaoFactory.getAvaliacaoEntityAprovado().getAvaliador());
+        when(avaliacaoRepository.save(any())).thenReturn(Optional.of(avaliacaoEntity));
         when(avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(anyInt())).thenReturn(Optional.empty());
         when(inscricaoService.findDtoByid(anyInt())).thenReturn(InscricaoFactory.getInscricaoDto());
         when(inscricaoService.convertToEntity(any())).thenReturn(InscricaoFactory.getInscricaoEntity());
