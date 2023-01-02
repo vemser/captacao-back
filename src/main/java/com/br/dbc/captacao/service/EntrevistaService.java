@@ -168,7 +168,7 @@ public class EntrevistaService {
         }
     }
 
-    public void exportarEntrevistaCSV() throws FileNotFoundException, UnsupportedEncodingException {
+    public void exportarEntrevistaCSV() throws RegraDeNegocioException {
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findAll();
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("entrevistas.csv", false));
@@ -194,7 +194,7 @@ public class EntrevistaService {
             }
             bw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
         }
     }
 

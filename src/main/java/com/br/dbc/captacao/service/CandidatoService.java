@@ -199,7 +199,7 @@ public class CandidatoService {
         return candidatoEntity.get();
     }
 
-    public void exportarCandidatoCSV() throws FileNotFoundException, UnsupportedEncodingException {
+    public void exportarCandidatoCSV() throws RegraDeNegocioException {
         List<CandidatoEntity> candidatoEntityList = candidatoRepository.findAll();
         try {
             BufferedWriter bw = new BufferedWriter
@@ -222,7 +222,7 @@ public class CandidatoService {
             }
             bw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
         }
     }
 
