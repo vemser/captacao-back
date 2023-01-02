@@ -43,10 +43,10 @@ public class ImageServiceTest {
     private GestorService usuarioService;
 
     @Test
-    public void deveTestarUploadCandidatoImagemComSucesso() throws RegraDeNegocioException, IOException {
+    public void deveTestarArquivarCandidatoComSucesso() throws RegraDeNegocioException, IOException {
         CandidatoEntity candidatoEntity = getCandidatoEntity();
         byte[] imagemBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
-        MultipartFile imagem = new MockMultipartFile("imagem", imagemBytes);
+        MultipartFile imagem = new MockMultipartFile("imagem.png","imagem.png",".png",imagemBytes);
 
         when(candidatoService.findByEmailEntity(any())).thenReturn(candidatoEntity);
         when(imageRepository.save(any())).thenReturn(getImageEntity());
@@ -57,13 +57,11 @@ public class ImageServiceTest {
     }
 
     @Test
-    public void testarUploadImagemCandidatoCasoExistaComSucesso() throws RegraDeNegocioException, IOException {
+    public void deveTestarArquivarCandidatoComImagemComSucesso() throws RegraDeNegocioException, IOException {
         CandidatoEntity candidatoEntity = getCandidatoEntity();
         byte[] imagemBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
-        MultipartFile imagem = new MockMultipartFile("imagem.png", imagemBytes);
+        MultipartFile imagem = new MockMultipartFile("imagem.png","imagem.png",".png",imagemBytes);
         ImagemEntity imagemEntity = getImageEntity();
-        imagemEntity.setNome(".png");
-        imagemEntity.setTipo(".png");
         candidatoEntity.setImageEntity(imagemEntity);
 
         when(candidatoService.findByEmailEntity(any())).thenReturn(candidatoEntity);
@@ -84,7 +82,6 @@ public class ImageServiceTest {
 
         when(candidatoService.findByEmailEntity(any())).thenReturn(candidatoEntity);
         when(imageRepository.findByCandidato(any())).thenReturn(Optional.of(getImageEntity()));
-        when(imageRepository.save(any())).thenReturn(getImageEntity());
 
         imageService.arquivarCandidato(imagem, candidatoEntity.getEmail());
 
@@ -95,7 +92,8 @@ public class ImageServiceTest {
     public void deveTestarUploadUsuarioCasoExistaImagemComSucesso() throws RegraDeNegocioException, IOException {
         GestorEntity usuario = GestorFactory.getGestorEntity();
         byte[] imagemBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
-        MultipartFile imagem = new MockMultipartFile("imagem", imagemBytes);
+        MultipartFile imagem = new MockMultipartFile("imagem.png","imagem.png",".png",imagemBytes);
+
 
         when(usuarioService.findByEmail(any())).thenReturn(usuario);
         when(imageRepository.findByGestorEntity(any())).thenReturn(Optional.of(getImageEntity()));
@@ -110,7 +108,7 @@ public class ImageServiceTest {
     public void testarUploadImagemUsuarioCasoNaoExistaComSucesso() throws RegraDeNegocioException, IOException {
         GestorEntity usuario = GestorFactory.getGestorEntity();
         byte[] imagemBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
-        MultipartFile imagem = new MockMultipartFile("imagem", imagemBytes);
+        MultipartFile imagem = new MockMultipartFile("imagem.png","imagem.png",".png",imagemBytes);
 
         when(usuarioService.findByEmail(any())).thenReturn(usuario);
         when(imageRepository.findByGestorEntity(any())).thenReturn(Optional.empty());
@@ -145,29 +143,15 @@ public class ImageServiceTest {
         String imagemBase64 = imageService.pegarImagemCandidato(candidatoEntity.getEmail());
     }
 
-    @Test(expected = IOException.class)
-    public void deveTestarArquivarImagemCandidatoComIOException() throws RegraDeNegocioException, IOException {
-        CandidatoEntity candidatoEntity = getCandidatoEntity();
-        final MultipartFile imagem = Mockito.mock(MultipartFile.class, Mockito.RETURNS_DEEP_STUBS);
-        ImagemEntity imageEntity = getImageEntity();
-        imageEntity.setCandidato(candidatoEntity);
-        imageEntity.setData(imagem.getBytes());
 
-        when(candidatoService.findByEmailEntity(any())).thenReturn(getCandidatoEntity());
-        when(imageRepository.findByCandidato(any())).thenReturn(Optional.of(getImageEntity()));
-        when(imagem.getBytes()).thenThrow(new IOException("Teste"));
-
-        imageService.arquivarCandidato(imagem, candidatoEntity.getEmail());
-    }
-
-    @Test(expected = IOException.class)
-    public void deveTestarArquivarImagemUsuarioComIOException() throws RegraDeNegocioException, IOException {
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarArquivarGestorComExcpetion() throws RegraDeNegocioException, IOException {
         GestorEntity usuarioEntity = GestorFactory.getGestorEntity();
-        final MultipartFile imagem = Mockito.mock(MultipartFile.class, Mockito.RETURNS_DEEP_STUBS);
+        byte[] imagemBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
+        MultipartFile imagem = new MockMultipartFile("imagem", imagemBytes);
 
-        when(usuarioService.findByEmail(any())).thenReturn(any());
+        when(usuarioService.findByEmail(any())).thenReturn(usuarioEntity);
         when(imageRepository.findByGestorEntity(any())).thenReturn(Optional.of(getImageEntity()));
-        when(imagem.getBytes()).thenThrow(new IOException("Teste"));
 
         imageService.arquivarGestor(imagem, usuarioEntity.getEmail());
     }
