@@ -34,8 +34,4 @@ public class CargoService {
         findById(id);
         cargoRepository.deleteById(id);
     }
-
-    public CargoEntity convertToEntity(CargoDTO cargo) {
-        return objectMapper.convertValue(cargo, CargoEntity.class);
-    }
 }
