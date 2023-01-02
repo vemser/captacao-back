@@ -8,6 +8,7 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -163,6 +165,38 @@ public class EntrevistaService {
                     throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
                 }
             }
+        }
+    }
+
+    public void exportarEntrevistaCSV() throws FileNotFoundException, UnsupportedEncodingException {
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findAll();
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("entrevistas.csv"));
+            for (EntrevistaEntity entrevista : entrevistaEntityList) {
+                StringBuilder oneLine = new StringBuilder();
+                oneLine.append(entrevista.getIdEntrevista());
+                oneLine.append(",");
+                oneLine.append(entrevista.getDataEntrevista());
+                oneLine.append(",");
+                oneLine.append(entrevista.getCandidatoEntity().getIdCandidato());
+                oneLine.append(",");
+                oneLine.append(entrevista.getCandidatoEntity().getNome());
+                oneLine.append(",");
+                oneLine.append(entrevista.getCandidatoEntity().getEmail());
+                oneLine.append(",");
+                oneLine.append(entrevista.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().stream().map(TrilhaEntity::getNome).toList());
+                oneLine.append(",");
+                oneLine.append(entrevista.getLegenda().toString());
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

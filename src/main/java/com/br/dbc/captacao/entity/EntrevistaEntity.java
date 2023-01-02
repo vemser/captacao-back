@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class EntrevistaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ENTREVISTA")
-    @SequenceGenerator(name = "SEQ_ENTREVISTA", sequenceName = "SEQ_ID_ENTREVISTAS", allocationSize = 1)
+    @SequenceGenerator(name = "SEQ_ENTREVISTA", sequenceName = "SEQ_ENTREVISTA", allocationSize = 1)
     @Column(name = "id_entrevista")
     private Integer idEntrevista;
 

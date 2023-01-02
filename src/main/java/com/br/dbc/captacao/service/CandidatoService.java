@@ -22,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -195,6 +197,33 @@ public class CandidatoService {
             throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
         }
         return candidatoEntity.get();
+    }
+
+    public void exportarCandidatoCSV() throws FileNotFoundException, UnsupportedEncodingException {
+        List<CandidatoEntity> candidatoEntityList = candidatoRepository.findAll();
+        try {
+            BufferedWriter bw = new BufferedWriter
+                    (new OutputStreamWriter(new FileOutputStream("candidatos.csv"), "UTF-8"));
+            for (CandidatoEntity candidato : candidatoEntityList) {
+                StringBuilder oneLine = new StringBuilder();
+                oneLine.append(candidato.getIdCandidato());
+                oneLine.append(",");
+                oneLine.append(candidato.getNome());
+                oneLine.append(",");
+                oneLine.append(candidato.getEmail());
+                oneLine.append(",");
+                oneLine.append(candidato.getMedia());
+                oneLine.append(",");
+                oneLine.append(candidato.getParecerTecnico());
+                oneLine.append(",");
+                oneLine.append(candidato.getParecerComportamental());
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 //    public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao) throws RegraDeNegocioException {

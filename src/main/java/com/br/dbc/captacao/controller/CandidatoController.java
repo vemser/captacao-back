@@ -21,7 +21,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Slf4j
@@ -135,5 +137,11 @@ public class CandidatoController {
         List<CandidatoDTO> candidatoDTOListByEdicao = candidatoService.listCandidatosByEdicao(edicao);
 
         return new ResponseEntity<>(candidatoDTOListByEdicao,HttpStatus.OK);
+    }
+
+    @GetMapping("/exportar-candidatos-para-csv")
+    public ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException, FileNotFoundException, UnsupportedEncodingException {
+        candidatoService.exportarCandidatoCSV();
+        return ResponseEntity.noContent().build();
     }
 }

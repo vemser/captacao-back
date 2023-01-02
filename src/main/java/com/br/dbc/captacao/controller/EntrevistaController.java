@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @Validated
@@ -71,6 +73,12 @@ public class EntrevistaController implements EntrevistaControllerInterface {
     @GetMapping("/buscar-entrevista-email-candidato/{email}")
     public ResponseEntity<EntrevistaDTO> buscarEntrevistaPorEmailCandidato(@PathVariable ("email") String email) throws RegraDeNegocioException {
         return new ResponseEntity<>(entrevistaService.buscarPorEmailCandidato(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/exportar-entrevista-para-csv")
+    public ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException, FileNotFoundException, UnsupportedEncodingException {
+        entrevistaService.exportarEntrevistaCSV();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/deletar-entrevista-email-candidato/{email}")
