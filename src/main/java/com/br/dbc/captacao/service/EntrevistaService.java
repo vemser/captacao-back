@@ -186,15 +186,13 @@ public class EntrevistaService {
                 oneLine.append(",");
                 oneLine.append(entrevista.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().stream().map(TrilhaEntity::getNome).toList());
                 oneLine.append(",");
+                oneLine.append(entrevista.getAvaliado() == null ? "F" : entrevista.getAvaliado());
+                oneLine.append(",");
                 oneLine.append(entrevista.getLegenda().toString());
                 bw.write(oneLine.toString());
                 bw.newLine();
             }
             bw.close();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
