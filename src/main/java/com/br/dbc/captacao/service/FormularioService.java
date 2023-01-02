@@ -65,8 +65,8 @@ public class FormularioService {
     }
 
     private List<TrilhaEntity> getTrilhasFormulario(FormularioCreateDTO formularioCreateDTO, List<TrilhaEntity> trilhas) throws RegraDeNegocioException {
-        for (Integer integer : formularioCreateDTO.getTrilhas()) {
-            TrilhaEntity trilhaEntity = trilhaService.findById(integer);
+        for (String nomeTrilha : formularioCreateDTO.getTrilhas()) {
+            TrilhaEntity trilhaEntity = trilhaService.findByNome(nomeTrilha);
             trilhas.add(trilhaEntity);
         }
         return trilhas;
@@ -175,7 +175,12 @@ public class FormularioService {
         formularioEntity.setProva(formularioCreateDto.isProvaBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
         formularioEntity.setEfetivacao(formularioCreateDto.isEfetivacaoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
         formularioEntity.setDisponibilidade(formularioCreateDto.isDisponibilidadeBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
-        Set<TrilhaEntity> trilhas = trilhaService.findListaTrilhas(formularioCreateDto.getTrilhas());
+        List<Integer> trilhasFormulario = new ArrayList<>();
+        for(String nomeTrilha: formularioCreateDto.getTrilhas()){
+            TrilhaEntity trilha = trilhaService.findByNome(nomeTrilha);
+            trilhasFormulario.add(trilha.getIdTrilha());
+        }
+        Set<TrilhaEntity> trilhas = trilhaService.findListaTrilhas(trilhasFormulario);
         formularioEntity.setTrilhaEntitySet(trilhas);
         return formularioEntity;
     }
@@ -186,7 +191,7 @@ public class FormularioService {
         return formulario;
     }
 
-    public void updateCurriculo(FormularioEntity formularioEntity, CurriculoEntity curriculoEntity) throws RegraDeNegocioException, IOException {
+    public void updateCurriculo(FormularioEntity formularioEntity, CurriculoEntity curriculoEntity) {
         formularioEntity.setCurriculoEntity(curriculoEntity);
         formularioRepository.save(formularioEntity);
     }

@@ -27,8 +27,7 @@
 //import java.io.IOException;
 //import java.util.Optional;
 //
-//import static org.junit.jupiter.api.Assertions.assertNotEquals;
-//import static org.junit.jupiter.api.Assertions.assertNotNull;
+//import static org.junit.jupiter.api.Assertions.*;
 //import static org.mockito.ArgumentMatchers.any;
 //import static org.mockito.Mockito.*;
 //
@@ -57,16 +56,16 @@
 //        ReflectionTestUtils.setField(formularioService, "objectMapper", objectMapper);
 //    }
 //
-//    @Test
-//    public void deveTestarCreateFormularioComSucesso() throws RegraDeNegocioException {
-//        FormularioCreateDTO formularioCreateDto = FormularioFactory.getFormularioCreateDto();
-//
-//        when(formularioRepository.save(any())).thenReturn(FormularioFactory.getFormularioEntity());
-//
-//        FormularioDTO formularioDtoRetorno = formularioService.create(formularioCreateDto);
-//
-//        assertNotNull(formularioDtoRetorno);
-//    }
+////    @Test
+////    public void deveTestarCreateFormularioComSucesso() throws RegraDeNegocioException {
+////        FormularioCreateDTO formularioCreateDto = FormularioFactory.getFormularioCreateDto();
+////
+////        when(formularioRepository.save(any())).thenReturn(FormularioFactory.getFormularioEntity());
+////
+////        FormularioDTO formularioDtoRetorno = formularioService.create(formularioCreateDto);
+////
+////        assertNotNull(formularioDtoRetorno);
+////    }
 //
 //    @Test(expected = RegraDeNegocioException.class)
 //    public void deveTestarCreateFormularioComException() throws RegraDeNegocioException {
@@ -119,4 +118,54 @@
 //        verify(formularioRepository, times(1)).save(any(FormularioEntity.class));
 //    }
 //
+//    @Test
+//    public void deveTestarFindDtoByIdComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
+//        FormularioEntity formularioEntity = FormularioFactory.getFormularioEntity();
+//
+//        when(formularioRepository.findById(anyInt())).thenReturn(Optional.of(formularioEntity));
+//
+//        FormularioDTO formularioRetorno = formularioService.findDtoById(1);
+//
+//        assertEquals(formularioRetorno.getIdFormulario(), formularioEntity.getIdFormulario());
+//    }
+//
+//    @Test
+//    public void deveTestarDeleteByIdComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
+//        FormularioEntity formularioEntity = FormularioFactory.getFormularioEntity();
+//
+//        when(formularioRepository.findById(anyInt())).thenReturn(Optional.of(formularioEntity));
+//
+//        formularioService.deleteById(10);
+//
+//        verify(formularioRepository, times(1)).deleteById(anyInt());
+//    }
+//
+//    @Test
+//    public void deveTestarFindByIdComSucesso() throws RegraDeNegocio404Exception {
+//        FormularioEntity formularioEntity = FormularioFactory.getFormularioEntity();
+//
+//        when(formularioRepository.findById(anyInt())).thenReturn(Optional.of(formularioEntity));
+//
+//        FormularioEntity formularioRetorno = formularioService.findById(1);
+//
+//        assertEquals(formularioEntity,formularioRetorno);
+//    }
+//
+//    @Test(expected = RegraDeNegocio404Exception.class)
+//    public void deveTestarFindByIdComRegraDeNegocio404Exception() throws RegraDeNegocio404Exception {
+//        FormularioEntity formularioEntity = FormularioFactory.getFormularioEntity();
+//
+//        FormularioEntity formularioRetorno = formularioService.findById(1);
+//    }
+//
+//    @Test
+//    public void deveTestarConvertToEntityComSucesso(){
+//        FormularioDTO formularioDTO = FormularioFactory.getFormularioDto();
+//
+//        when(trilhaService.convertToEntity(any())).thenReturn(FormularioFactory.getFormularioEntity().getTrilhaEntitySet());
+//
+//        FormularioEntity formularioRetorno = formularioService.convertToEntity(formularioDTO);
+//
+//        assertEquals(formularioRetorno.getIdFormulario(),formularioDTO.getIdFormulario());
+//    }
 //}

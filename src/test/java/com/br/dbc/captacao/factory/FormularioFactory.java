@@ -41,7 +41,6 @@
 //        formularioEntity.setIngles("Basico");
 //        formularioEntity.setEspanhol("Não possuo");
 //        formularioEntity.setNeurodiversidade("Não possuo");
-//        formularioEntity.setConfiguracoes("16gb RAM");
 //        formularioEntity.setEfetivacao(TipoMarcacao.T);
 //        formularioEntity.setDisponibilidade(TipoMarcacao.T);
 //        formularioEntity.setGenero("MASCULINO");
@@ -56,8 +55,8 @@
 //    public static FormularioCreateDTO getFormularioCreateDto() {
 //        FormularioCreateDTO formularioCreateDto = new FormularioCreateDTO();
 //
-//        List<Integer> trilhas = new ArrayList<>();
-//        trilhas.add(TrilhaFactory.getTrilhaEntity().getIdTrilha());
+//        List<String> trilhas = new ArrayList<>();
+//        trilhas.add(TrilhaFactory.getTrilhaEntity().getNome());
 //
 //        formularioCreateDto.setMatriculadoBoolean(true);
 //        formularioCreateDto.setCurso("TECNICO T.I");

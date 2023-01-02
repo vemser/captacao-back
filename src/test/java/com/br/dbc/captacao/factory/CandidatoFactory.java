@@ -35,15 +35,15 @@
 //
 //    public static CandidatoCreateDTO getCandidatoCreateDTO() {
 //        LinguagemDTO linguagemDTO = new LinguagemDTO("Java");
-//        List<LinguagemDTO> linguagemDTOList = new ArrayList<>();
-//        linguagemDTOList.add(linguagemDTO);
+//        List<String> linguagemDTOList = new ArrayList<>();
+//        linguagemDTOList.add(linguagemDTO.getNome());
 //
 //        CandidatoCreateDTO candidatoCreateDTO = new CandidatoCreateDTO();
 //        candidatoCreateDTO.setNome("Heloise Isabela Lopes");
 //        candidatoCreateDTO.setCidade("Santana");
 //        candidatoCreateDTO.setEstado("AP");
 //        candidatoCreateDTO.setEmail("heloise.lopes@dbccompany.com.br");
-//        candidatoCreateDTO.setLinguagens(new HashSet<>(linguagemDTOList));
+//        candidatoCreateDTO.setLinguagens(linguagemDTOList);
 //        candidatoCreateDTO.setEdicao(getEdicaoDTO());
 //        candidatoCreateDTO.setAtivo(TipoMarcacao.T);
 //
@@ -60,7 +60,7 @@
 //        candidatoDTO.setCidade("Santana");
 //        candidatoDTO.setEstado("AP");
 //        candidatoDTO.setEmail("heloise.lopes@dbccompany.com.br");
-//        candidatoDTO.setLinguagens(new HashSet<>(linguagemDTOList));
+//        candidatoDTO.setLinguagens(linguagemDTOList);
 //        candidatoDTO.setEdicao(getEdicaoDTO());
 //        candidatoDTO.setAtivo(TipoMarcacao.T);
 //
