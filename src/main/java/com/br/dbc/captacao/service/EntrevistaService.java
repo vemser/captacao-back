@@ -171,7 +171,7 @@ public class EntrevistaService {
     public void exportarEntrevistaCSV() throws FileNotFoundException, UnsupportedEncodingException {
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findAll();
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("entrevistas.csv"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("entrevistas.csv", false));
             for (EntrevistaEntity entrevista : entrevistaEntityList) {
                 StringBuilder oneLine = new StringBuilder();
                 oneLine.append(entrevista.getIdEntrevista());

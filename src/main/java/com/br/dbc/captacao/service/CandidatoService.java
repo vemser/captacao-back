@@ -203,7 +203,7 @@ public class CandidatoService {
         List<CandidatoEntity> candidatoEntityList = candidatoRepository.findAll();
         try {
             BufferedWriter bw = new BufferedWriter
-                    (new OutputStreamWriter(new FileOutputStream("candidatos.csv"), "UTF-8"));
+                    (new OutputStreamWriter(new FileOutputStream("candidatos.csv", false), "UTF-8"));
             for (CandidatoEntity candidato : candidatoEntityList) {
                 StringBuilder oneLine = new StringBuilder();
                 oneLine.append(candidato.getIdCandidato());
