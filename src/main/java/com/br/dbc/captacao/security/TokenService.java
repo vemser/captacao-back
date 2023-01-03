@@ -1,9 +1,5 @@
 package com.br.dbc.captacao.security;
 
-import br.com.vemser.facetoface.entity.EntrevistaEntity;
-import br.com.vemser.facetoface.entity.PerfilEntity;
-import br.com.vemser.facetoface.entity.UsuarioEntity;
-import br.com.vemser.facetoface.exceptions.InvalidTokenException;
 import com.br.dbc.captacao.entity.CargoEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.exception.InvalidTokenException;
@@ -64,7 +60,7 @@ public class TokenService {
                 .compact();
     }
 
-    public String getTokenSenha(GestorEntity usuarioEntity) {
+    public String getTokenSenha(GestorEntity gestorEntity) {
 
         LocalDateTime localDateTimeAtual = LocalDateTime.now();
         Date dataAtual = Date.from(localDateTimeAtual.atZone(ZoneId.systemDefault()).toInstant());
@@ -72,9 +68,9 @@ public class TokenService {
         Date expiracao = Date.from(dateExpiracaoLocalDate.atZone(ZoneId.systemDefault()).toInstant());
 
         return Jwts.builder().
-                setIssuer("facetoface-api")
-                .claim(Claims.ID, usuarioEntity.getEmail())
-                .claim("Userpassword", usuarioEntity.getPassword())
+                setIssuer("captacao-api")
+                .claim(Claims.ID, gestorEntity.getEmail())
+                .claim("Userpassword", gestorEntity.getSenha())
                 .setIssuedAt(dataAtual)
                 .setExpiration(expiracao)
                 .signWith(SignatureAlgorithm.HS256, secret)
