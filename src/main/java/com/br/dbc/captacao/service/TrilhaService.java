@@ -22,10 +22,14 @@ public class TrilhaService {
     private final ObjectMapper objectMapper;
     private final TrilhaRepository trilhaRepository;
 
-    public TrilhaDTO create(TrilhaCreateDTO trilhaCreateDTO){
+    public TrilhaDTO create(TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException {
+
         TrilhaEntity trilha = objectMapper.convertValue(trilhaCreateDTO, TrilhaEntity.class);
-        trilhaRepository.save(trilha);
-        return convertToDTO(trilha);
+        if (!trilha.getNome().isEmpty()) {
+            trilhaRepository.save(trilha);
+            return convertToDTO(trilha);
+        }
+        throw new RegraDeNegocioException("Nome não pode ser nulo!");
     }
 
     public List<TrilhaDTO> list() {

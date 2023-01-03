@@ -24,7 +24,7 @@ public class TrilhaController implements TrilhaControllerInterface {
     private final TrilhaService trilhaService;
 
     @PostMapping
-    public ResponseEntity<TrilhaDTO> create(@RequestBody TrilhaCreateDTO trilhaCreateDTO){
+    public ResponseEntity<TrilhaDTO> create(@RequestBody TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException {
         TrilhaDTO trilhaDTO = trilhaService.create(trilhaCreateDTO);
         return new ResponseEntity<>(trilhaDTO, HttpStatus.OK);
     }

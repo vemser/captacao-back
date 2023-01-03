@@ -4,6 +4,7 @@ import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
+import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
@@ -202,7 +203,15 @@ public class EntrevistaService {
         CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
         EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
-        return objectMapper.convertValue(entrevista, EntrevistaDTO.class);
+
+        EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevista, EntrevistaDTO.class);
+        entrevistaDTO.setCandidatoDTO(candidatoDTO);
+        entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
+        entrevistaDTO.setUsuarioEmail(entrevista.getGestorEntity().getEmail());
+        entrevistaDTO.setAvaliado(entrevista.getAvaliado().toString());
+        entrevistaDTO.setGestorDTO(objectMapper.convertValue(entrevista.getGestorEntity(), GestorDTO.class));
+
+        return entrevistaDTO;
     }
 
     public void deletarEntrevistaEmail(String email) throws RegraDeNegocioException {

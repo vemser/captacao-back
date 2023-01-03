@@ -21,7 +21,7 @@ public interface TrilhaControllerInterface {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             })
     @PostMapping
-    ResponseEntity<TrilhaDTO> create(@RequestBody TrilhaCreateDTO trilhaCreateDTO);
+    ResponseEntity<TrilhaDTO> create(@RequestBody TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException;
 
     @Operation(summary = "Listar Trilhas", description = "Lista todas Trilhas do banco de dados")
     @ApiResponses(
