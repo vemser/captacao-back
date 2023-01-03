@@ -1,14 +1,12 @@
 package com.br.dbc.captacao.service;
 
-import br.com.vemser.facetoface.dto.login.LoginDTO;
-import br.com.vemser.facetoface.entity.CandidatoEntity;
-import br.com.vemser.facetoface.entity.EntrevistaEntity;
-import br.com.vemser.facetoface.entity.UsuarioEntity;
-import br.com.vemser.facetoface.entity.enums.Legenda;
-import br.com.vemser.facetoface.exceptions.RegraDeNegocioException;
-import br.com.vemser.facetoface.repository.EntrevistaRepository;
-import br.com.vemser.facetoface.security.TokenService;
+import com.br.dbc.captacao.dto.login.LoginDTO;
+import com.br.dbc.captacao.entity.CandidatoEntity;
+import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.exception.RegraDeNegocioException;
+import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.br.dbc.captacao.security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,7 +34,7 @@ public class AuthService {
                 );
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         Object principal = authentication.getPrincipal();
-        UsuarioEntity usuarioEntity = (UsuarioEntity) principal;
+        GestorEntity usuarioEntity = (GestorEntity) principal;
         return usuarioEntity;
     }
 
@@ -46,12 +44,12 @@ public class AuthService {
         entrevistaRepository.save(entrevista);
     }
 
-    public void trocarSenha(String email) throws RegraDeNegocioException {
-        UsuarioEntity usuarioEntityOptional = usuarioService.findByEmail(email);
-
-        String tokenSenha = tokenService.getTokenSenha(usuarioEntityOptional);
-        emailService.sendEmailRecuperacaoSenha(usuarioEntityOptional, tokenSenha);
-    }
+//    public void trocarSenha(String email) throws RegraDeNegocioException {
+//        GestorEntity usuarioEntityOptional = usuarioService.findByEmail(email);
+//
+//        String tokenSenha = tokenService.getTokenSenha(usuarioEntityOptional);
+//        emailService.sendEmailRecuperacaoSenha(usuarioEntityOptional, tokenSenha);
+//    }
 
     public String procurarUsuario(String token) throws RegraDeNegocioException {
         String cpfByToken = tokenService.getEmailByToken(token);
