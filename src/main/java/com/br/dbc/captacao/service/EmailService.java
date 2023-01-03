@@ -27,7 +27,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
-    private JavaMailSender emailSender;
+    private final JavaMailSender emailSender;
 
     public void sendEmail(SendEmailDTO sendEmailDTO, TipoEmail tipoEmail) throws RegraDeNegocioException {
 
