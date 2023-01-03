@@ -1,6 +1,7 @@
 package com.br.dbc.captacao.security;
 
 import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.GestorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +15,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationService implements UserDetailsService {
 
-    private final GestorService usuarioService;
+    private final GestorService gestorService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<GestorEntity> usuarioEntityOptional = usuarioService.findByEmail(username);
-        return usuarioEntityOptional
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário inválido"));
+    public UserDetails loadUserByUsername(String loginUsername) throws UsernameNotFoundException {
+        try {
+            GestorEntity usuarioOptional = gestorService.findByEmail(loginUsername);
+            return usuarioOptional;
+        } catch (RegraDeNegocioException e) {
+            throw new UsernameNotFoundException(e.getMessage());
+        }
     }
 }
