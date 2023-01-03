@@ -5,13 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity(name = "CARGO")
-public class CargoEntity {
+public class CargoEntity implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CARGO")
@@ -22,4 +23,8 @@ public class CargoEntity {
     @Column(name = "nome")
     private String nome;
 
+    @Override
+    public String getAuthority() {
+        return nome;
+    }
 }
