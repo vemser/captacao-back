@@ -20,7 +20,7 @@ public interface InscricaoRepository extends JpaRepository<InscricaoEntity, Inte
 
     Optional<InscricaoEntity> findInscricaoEntitiesByCandidato_IdCandidato(Integer idCandidato);
 
-    List<InscricaoEntity> findInscricaoEntitiesByCandidato_Email(String email);
+    InscricaoEntity findInscricaoEntitiesByCandidato_Email(String email);
 
     List<InscricaoEntity> findInscricaoEntitiesByCandidato_FormularioEntity_TrilhaEntitySet(TrilhaEntity trilhaEntity);
 

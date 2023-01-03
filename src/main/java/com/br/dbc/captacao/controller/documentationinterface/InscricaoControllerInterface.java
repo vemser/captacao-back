@@ -59,7 +59,7 @@ public interface InscricaoControllerInterface {
             }
     )
     @GetMapping
-    public ResponseEntity<List<InscricaoDTO>> findInscricaoPorEmail(@RequestParam String email);
+    public ResponseEntity<InscricaoDTO> findInscricaoPorEmail(@RequestParam String email) throws RegraDeNegocioException;
 
     @Operation(summary = "Deleta inscrição por ID", description = "Deleta inscrição por ID")
     @ApiResponses(

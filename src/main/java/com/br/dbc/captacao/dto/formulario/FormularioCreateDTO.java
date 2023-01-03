@@ -88,7 +88,7 @@ public class FormularioCreateDTO {
     @Schema(example = "Heterosexual")
     private String orientacao;
 
-    @Schema(example = "[ 1 ]", description = "Escolha sua(s) trilha(s) entre Frontend (1), Backend (2) e QA (3)")
+    @NotNull
     private List<String> trilhas;
 
     @NotBlank(message = "O campo Importância não deve ser vazio ou nulo.")

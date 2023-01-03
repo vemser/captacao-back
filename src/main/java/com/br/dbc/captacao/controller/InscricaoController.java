@@ -35,7 +35,7 @@ public class InscricaoController implements InscricaoControllerInterface {
         return new ResponseEntity<>(inscricaoDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/by-id")
+    @GetMapping("/find-by-idInscricao")
     public ResponseEntity<InscricaoDTO> findById(@RequestParam("id") Integer id) throws RegraDeNegocioException {
         log.info("Buscando inscrição por id...");
         InscricaoDTO inscricaoDTO = inscricaoService.findDtoByid(id);
@@ -66,12 +66,12 @@ public class InscricaoController implements InscricaoControllerInterface {
         return new ResponseEntity<>(listByEdicao, HttpStatus.OK);
     }
 
-    @GetMapping("/buscar-by-email")
-    public ResponseEntity<List<InscricaoDTO>> findInscricaoPorEmail(@RequestParam String email) {
+    @GetMapping("/find-by-email")
+    public ResponseEntity<InscricaoDTO> findInscricaoPorEmail(@RequestParam String email) throws RegraDeNegocioException {
         log.info("Buscando Inscrição por email...");
-        List<InscricaoDTO> list = inscricaoService.findInscricaoPorEmail(email);
+        InscricaoDTO inscricaoPorEmail = inscricaoService.findInscricaoPorEmail(email);
         log.info("Retornando inscrição encontrada.");
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        return new ResponseEntity<>(inscricaoPorEmail, HttpStatus.OK);
     }
 
     @DeleteMapping("/{idInscricao}")

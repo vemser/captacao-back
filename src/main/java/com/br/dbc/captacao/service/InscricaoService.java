@@ -72,10 +72,12 @@ public class InscricaoService {
         return inscricao;
     }
 
-    public List<InscricaoDTO> findInscricaoPorEmail(String email) {
-        List<InscricaoEntity> lista = inscricaoRepository.findInscricaoEntitiesByCandidato_Email(email);
-        return lista.stream().map(inscricaoEntity -> converterParaDTO(inscricaoEntity))
-                .toList();
+    public InscricaoDTO findInscricaoPorEmail(String email) throws RegraDeNegocioException {
+        InscricaoEntity inscricaoEntity = inscricaoRepository.findInscricaoEntitiesByCandidato_Email(email);
+        if(inscricaoEntity == null){
+            throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
+        }
+        return objectMapper.convertValue(inscricaoEntity,InscricaoDTO.class);
     }
 
     public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {

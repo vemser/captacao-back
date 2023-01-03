@@ -1,10 +1,6 @@
 package com.br.dbc.captacao.service;
 
-import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoNotaComportamentalDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoNotaDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoTecnicoNotaDTO;
+import com.br.dbc.captacao.dto.candidato.*;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
@@ -22,8 +18,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +74,7 @@ public class CandidatoService {
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
         }
-        if (tamanho <= 0){
+        if (tamanho <= 0) {
             throw new RegraDeNegocioException("O tamanho não pode ser menor do que 1.");
         }
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
@@ -85,7 +83,7 @@ public class CandidatoService {
         List<CandidatoDTO> candidatoDtos = paginaCandidatoEntity.getContent().stream()
                 .map(candidatoEntity -> {
                     CandidatoDTO candidatoDto = converterEmDTO(candidatoEntity);
-                    if(candidatoEntity.getImageEntity() != null) {
+                    if (candidatoEntity.getImageEntity() != null) {
                         candidatoDto.setImagem(candidatoEntity.getImageEntity().getIdImagem());
                     }
                     candidatoDto.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
@@ -141,7 +139,7 @@ public class CandidatoService {
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 
-    public CandidatoDTO calcularMediaNotas(Integer id) throws RegraDeNegocioException{
+    public CandidatoDTO calcularMediaNotas(Integer id) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
         Double nota1 = candidatoEntity.getNotaProva() * 0.3;
         Double nota2 = candidatoEntity.getNotaEntrevistaComportamental() * 0.35;
@@ -155,6 +153,7 @@ public class CandidatoService {
         candidatoEntity.setNotaProva(candidatoNotaDTO.getNotaProva());
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
+
     public CandidatoDTO updateComportamental(Integer id, CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
         candidatoEntity.setNotaEntrevistaComportamental(candidatoNotaComportamentalDTO.getNotaComportamental());
@@ -165,6 +164,10 @@ public class CandidatoService {
     private List<LinguagemEntity> getLinguagensCandidato(CandidatoCreateDTO candidatoCreateDTO, List<LinguagemEntity> linguagemList) {
         for (String linguagem : candidatoCreateDTO.getLinguagens()) {
             LinguagemEntity byNome = linguagemService.findByNome(linguagem);
+            if (byNome == null) {
+                LinguagemDTO linguagemDTO = new LinguagemDTO(linguagem);
+                linguagemService.create(linguagemDTO);
+            }
             linguagemList.add(byNome);
         }
         return linguagemList;
@@ -318,7 +321,7 @@ public class CandidatoService {
                     candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
 
                     Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
-                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()){
+                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
                         trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
                     }
                     candidatoDTO.getFormulario().setTrilhas(trilhaDTOList);
@@ -326,8 +329,8 @@ public class CandidatoService {
                     candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
 
                     List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
-                    for (LinguagemEntity linguagem: candidatoEntity.getLinguagens()) {
-                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem,LinguagemDTO.class));
+                    for (LinguagemEntity linguagem : candidatoEntity.getLinguagens()) {
+                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
                     }
                     candidatoDTO.setLinguagens(linguagemDTOArrayList);
                     return candidatoDTO;
@@ -347,7 +350,7 @@ public class CandidatoService {
                     candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
 
                     Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
-                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()){
+                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
                         trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
                     }
                     candidatoDTO.getFormulario().setTrilhas(trilhaDTOList);
@@ -355,8 +358,8 @@ public class CandidatoService {
                     candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
 
                     List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
-                    for (LinguagemEntity linguagem: candidatoEntity.getLinguagens()) {
-                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem,LinguagemDTO.class));
+                    for (LinguagemEntity linguagem : candidatoEntity.getLinguagens()) {
+                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
                     }
                     candidatoDTO.setLinguagens(linguagemDTOArrayList);
                     return candidatoDTO;
