@@ -4,6 +4,9 @@ import br.com.vemser.facetoface.entity.EntrevistaEntity;
 import br.com.vemser.facetoface.entity.PerfilEntity;
 import br.com.vemser.facetoface.entity.UsuarioEntity;
 import br.com.vemser.facetoface.exceptions.InvalidTokenException;
+import com.br.dbc.captacao.entity.CargoEntity;
+import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -37,7 +40,7 @@ public class TokenService {
     @Value("${jwt.expiration}")
     private String expirationChangePassword;
 
-    public String getToken(UsuarioEntity usuarioEntity, String expiration) {
+    public String getToken(GestorEntity usuarioEntity, String expiration) {
         if (expiration != null) {
             this.expiration = expiration;
         }
@@ -47,8 +50,8 @@ public class TokenService {
         Date expiracao = Date.from(dateExpiracaoLocalDate.atZone(ZoneId.systemDefault()).toInstant());
 
 
-        List<String> cargosDoUsuario = usuarioEntity.getPerfis().stream()
-                .map(PerfilEntity::getAuthority)
+        List<String> cargosDoUsuario = usuarioEntity.getCargoEntity().stream()
+                .map(CargoEntity::getAuthority)
                 .toList();
 
         return Jwts.builder().
@@ -61,7 +64,7 @@ public class TokenService {
                 .compact();
     }
 
-    public String getTokenSenha(UsuarioEntity usuarioEntity) {
+    public String getTokenSenha(GestorEntity usuarioEntity) {
 
         LocalDateTime localDateTimeAtual = LocalDateTime.now();
         Date dataAtual = Date.from(localDateTimeAtual.atZone(ZoneId.systemDefault()).toInstant());
@@ -78,23 +81,23 @@ public class TokenService {
                 .compact();
     }
 
-    public String getTokenConfirmacao(EntrevistaEntity entrevistaEntity){
-        LocalDateTime dataAtual = LocalDateTime.now();
-        Date now = Date.from(dataAtual.atZone(ZoneId.systemDefault()).toInstant());
-
-        LocalDateTime dataExpiracao = dataAtual.plusDays(Long.parseLong(expirationChangePassword));
-        Date exp = Date.from(dataExpiracao.atZone(ZoneId.systemDefault()).toInstant());
-
-        String meuToken = Jwts.builder()
-                .setIssuer("facetoface-api")
-                .claim(Claims.ID, entrevistaEntity.getCandidatoEntity().getEmail())
-                .setIssuedAt(now)
-                .setExpiration(exp)
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
-
-        return meuToken;
-    }
+//    public String getTokenConfirmacao(EntrevistaEntity entrevistaEntity){
+//        LocalDateTime dataAtual = LocalDateTime.now();
+//        Date now = Date.from(dataAtual.atZone(ZoneId.systemDefault()).toInstant());
+//
+//        LocalDateTime dataExpiracao = dataAtual.plusDays(Long.parseLong(expirationChangePassword));
+//        Date exp = Date.from(dataExpiracao.atZone(ZoneId.systemDefault()).toInstant());
+//
+//        String meuToken = Jwts.builder()
+//                .setIssuer("facetoface-api")
+//                .claim(Claims.ID, entrevistaEntity.getCandidatoEntity().getEmail())
+//                .setIssuedAt(now)
+//                .setExpiration(exp)
+//                .signWith(SignatureAlgorithm.HS256, secret)
+//                .compact();
+//
+//        return meuToken;
+//    }
 
     public UsernamePasswordAuthenticationToken isValid(String token) {
         if (token == null) {
