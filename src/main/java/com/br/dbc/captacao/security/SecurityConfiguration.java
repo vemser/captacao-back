@@ -65,7 +65,6 @@ public class SecurityConfiguration {
                         .antMatchers("/imagem/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .anyRequest().authenticated()
-
                 );
 
         http.addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);

@@ -149,11 +149,9 @@ public class FormularioService {
         formulario.setOrientacao(formularioCreateDTO.getOrientacao());
         formulario.setImportancia(formularioCreateDTO.getImportancia());
 
-        FormularioEntity formularioRetornoBanco = formularioRepository.save(formulario);
+        formulario = formularioRepository.save(formulario);
 
-        FormularioDTO formularioDTORetorno = convertToDto(formularioRetornoBanco);
-
-        return formularioDTORetorno;
+        return convertToDto(formulario);
     }
 
     public FormularioDTO convertToDto(FormularioEntity formulario) {

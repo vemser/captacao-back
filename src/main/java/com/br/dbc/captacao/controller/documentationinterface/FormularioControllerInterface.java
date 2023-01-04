@@ -51,7 +51,8 @@ public interface FormularioControllerInterface {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    ResponseEntity<FormularioDTO> updateFormulario(@PathVariable Integer idFormulario,
+    @PutMapping("/atualizar-formulario/{idFormulario}")
+    ResponseEntity<FormularioDTO> updateFormulario(@PathVariable("idFormulario") Integer idFormulario,
                                                    @RequestBody @Valid FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException, RegraDeNegocio404Exception;
 
     @Operation(summary = "Deletar Formulario", description = "Deletar formulario por ID")
