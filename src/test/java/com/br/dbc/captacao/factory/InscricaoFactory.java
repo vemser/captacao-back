@@ -22,7 +22,7 @@ public class InscricaoFactory {
 
         InscricaoEntity inscricaoEntity = new InscricaoEntity();
         inscricaoEntity.setIdInscricao(1);
-        inscricaoEntity.setDataInscricao(LocalDate.now());
+//        inscricaoEntity.setDataInscricao(LocalDate.now());
         inscricaoEntity.setAvaliado(AvaliacaoFactory.getAvaliacaoEntityAprovado().getAprovado());
         inscricaoEntity.setCandidato(CandidatoFactory.getCandidatoEntity());
         inscricaoEntity.setAvaliacaoEntity(AvaliacaoFactory.getAvaliacaoEntityAprovado());
