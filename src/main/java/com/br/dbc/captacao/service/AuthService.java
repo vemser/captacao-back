@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final GestorService usuarioService;
-    private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final EntrevistaService entrevistaService;
