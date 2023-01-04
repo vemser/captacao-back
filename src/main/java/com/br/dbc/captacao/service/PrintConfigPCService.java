@@ -53,11 +53,6 @@ public class PrintConfigPCService {
         }
     }
 
-    private Optional<PrintConfigPCEntity> findByCandidato(CandidatoEntity candidatoEntity) throws RegraDeNegocioException, RegraDeNegocio404Exception {
-        FormularioEntity formularioEntity = formularioService.findById(candidatoEntity.getFormularioEntity().getIdFormulario());
-        return objectMapper.convertValue(formularioEntity.getCurriculoEntity(),Optional.class);
-    }
-
     private Optional<PrintConfigPCEntity> findByFormulario(FormularioEntity formulario) {
         return printConfigPCRepository.findByFormulario(formulario);
     }

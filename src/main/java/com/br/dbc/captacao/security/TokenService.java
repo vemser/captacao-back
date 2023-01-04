@@ -22,19 +22,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private static final String KEY_CARGOS = "CARGOS";
+    private static final String CHAVE_CARGOS = "cargos";
+    private static final String CHAVE_LOGIN = "login";
 
     @Value("${jwt.secret}")
     private String secret;
 
     @Value("${jwt.expiration}")
     private String expiration;
-
-    @Value("${jwt.expirationSenha}")
-    private String expirationSenha;
-
-    @Value("${jwt.expiration}")
-    private String expirationChangePassword;
 
     public String getToken(GestorEntity usuarioEntity, String expiration) {
         if (expiration != null) {
@@ -50,69 +45,39 @@ public class TokenService {
                 .map(CargoEntity::getAuthority)
                 .toList();
 
-        return Jwts.builder().
-                setIssuer("facetoface-api")
+        return Jwts.builder()
+                .claim(CHAVE_LOGIN, usuarioEntity.getEmail())
                 .claim(Claims.ID, usuarioEntity.getEmail())
-                .claim(KEY_CARGOS, cargosDoUsuario)
+                .claim(CHAVE_CARGOS, cargosDoUsuario)
                 .setIssuedAt(dataAtual)
                 .setExpiration(expiracao)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
-
-    public String getTokenSenha(GestorEntity gestorEntity) {
-
-        LocalDateTime localDateTimeAtual = LocalDateTime.now();
-        Date dataAtual = Date.from(localDateTimeAtual.atZone(ZoneId.systemDefault()).toInstant());
-        LocalDateTime dateExpiracaoLocalDate = localDateTimeAtual.plusMinutes(Long.parseLong(this.expirationSenha));
-        Date expiracao = Date.from(dateExpiracaoLocalDate.atZone(ZoneId.systemDefault()).toInstant());
-
-        return Jwts.builder().
-                setIssuer("captacao-api")
-                .claim(Claims.ID, gestorEntity.getEmail())
-                .claim("Userpassword", gestorEntity.getSenha())
-                .setIssuedAt(dataAtual)
-                .setExpiration(expiracao)
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
-    }
-
-//    public String getTokenConfirmacao(EntrevistaEntity entrevistaEntity){
-//        LocalDateTime dataAtual = LocalDateTime.now();
-//        Date now = Date.from(dataAtual.atZone(ZoneId.systemDefault()).toInstant());
-//
-//        LocalDateTime dataExpiracao = dataAtual.plusDays(Long.parseLong(expirationChangePassword));
-//        Date exp = Date.from(dataExpiracao.atZone(ZoneId.systemDefault()).toInstant());
-//
-//        String meuToken = Jwts.builder()
-//                .setIssuer("facetoface-api")
-//                .claim(Claims.ID, entrevistaEntity.getCandidatoEntity().getEmail())
-//                .setIssuedAt(now)
-//                .setExpiration(exp)
-//                .signWith(SignatureAlgorithm.HS256, secret)
-//                .compact();
-//
-//        return meuToken;
-//    }
 
     public UsernamePasswordAuthenticationToken isValid(String token) {
         if (token == null) {
             return null;
         }
+
         token = token.replace("Bearer ", "");
-        Claims claims = Jwts.parser()
+
+        Claims chaves = Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody();
 
-        String user = claims.get(Claims.ID, String.class);
-        List<String> cargos = claims.get(KEY_CARGOS, List.class);
+        String idUsuario = chaves.get(Claims.ID, String.class);
 
-        List<SimpleGrantedAuthority> listaDeCargos = cargos.stream()
+        List<String> cargos = chaves.get(CHAVE_CARGOS, List.class);
+
+        List<SimpleGrantedAuthority> cargosList = cargos.stream()
                 .map(SimpleGrantedAuthority::new)
                 .toList();
 
-        return new UsernamePasswordAuthenticationToken(user, null, listaDeCargos);
+
+        return new UsernamePasswordAuthenticationToken(idUsuario,
+                null, cargosList);
     }
 
     public String getEmailByToken(String token) throws InvalidTokenException {
