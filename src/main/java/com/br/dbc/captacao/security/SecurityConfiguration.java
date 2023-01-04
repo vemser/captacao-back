@@ -20,14 +20,53 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-//    private final TokenService tokenService;
+    private final TokenService tokenService;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.headers().frameOptions().disable().and()
+        http.headers()
+                .frameOptions().disable().and()
                 .cors().and()
-                .csrf().disable();
-//        http.addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
+                .csrf().disable()
+                .authorizeHttpRequests((auth) -> auth.antMatchers("/", "/auth/**").permitAll()
+
+                        .antMatchers(HttpMethod.POST, "/formulario/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/formulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/fomulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.DELETE, "/fomulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers(HttpMethod.POST, "/inscricao/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/inscricao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/incricao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.DELETE, "/inscricao").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers(HttpMethod.POST, "/candidato/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/candidato/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/candidato/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.DELETE, "/candidato/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers("/usuario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers(HttpMethod.GET, "/entrevista/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.POST, "/entrevista/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/entrevista/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.DELETE, "/entrevista/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers("/avaliacao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers("/trilha/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers("/edicao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers("/linguagem/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .antMatchers("/imagem/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+
+                        .anyRequest().authenticated()
+
+                );
+
+        http.addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

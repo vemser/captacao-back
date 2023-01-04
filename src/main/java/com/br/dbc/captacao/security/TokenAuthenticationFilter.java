@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,13 +21,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String headerAut = request.getHeader("Authorization");
+        try {
+            String authorization = request.getHeader("Authorization");
 
-        UsernamePasswordAuthenticationToken isValid = tokenService.isValid(headerAut);
+            UsernamePasswordAuthenticationToken dtoToken = tokenService.isValid(authorization);
+            SecurityContextHolder.getContext().setAuthentication(dtoToken);
 
-        SecurityContextHolder.getContext().setAuthentication(isValid);
-
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+        }catch(ExpiredJwtException e) {
+            response.setStatus(403);
+        }
     }
 
 }

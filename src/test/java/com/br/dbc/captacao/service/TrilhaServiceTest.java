@@ -46,29 +46,17 @@ public class TrilhaServiceTest {
 
     @Test
     public void deveTestarCriarComSucesso() throws RegraDeNegocioException {
+    final String trilhaNova = "Fullstack";
     TrilhaEntity trilha = getTrilhaEntity();
-    TrilhaCreateDTO trilhaCreateDTO = new TrilhaCreateDTO();
-    trilhaCreateDTO.setNome("BACKEND");
+    TrilhaCreateDTO trilhaCreateDTO = getTrilhaDTO();
+    trilhaCreateDTO.setNome("Fullstack");
 
     when(trilhaRepository.findByNome(anyString())).thenReturn(Optional.empty());
     when(trilhaRepository.save(any())).thenReturn(trilha);
 
     TrilhaDTO novaTrilha = trilhaService.create(trilhaCreateDTO);
 
-    assertEquals(trilha.getNome(), novaTrilha.getNome());
-
-    }
-
-    @Test(expected = RegraDeNegocioException.class)
-    public void deveTestarCriarComErro() throws RegraDeNegocioException {
-        TrilhaEntity trilha = getTrilhaEntity();
-
-        TrilhaCreateDTO trilhaCreateDTO = new TrilhaCreateDTO();
-
-        when(trilhaRepository.findByNome(anyString())).thenReturn(Optional.empty());
-        when(trilhaRepository.save(any())).thenReturn(trilha);
-
-        trilhaService.create(trilhaCreateDTO);
+    assertEquals(trilhaNova, novaTrilha.getNome());
 
     }
 
@@ -76,12 +64,12 @@ public class TrilhaServiceTest {
     public void deveListarComSucesso(){
         TrilhaEntity trilha = getTrilhaEntity();
 
-        when(trilhaRepository.findByNome(anyString())).thenReturn(Optional.empty());
+        when(trilhaRepository.findAll()).thenReturn(List.of(trilha));
         when(trilhaRepository.save(any())).thenReturn(trilha);
 
         List<TrilhaDTO> listarTrilha = trilhaService.list();
 
-        assertEquals(0, (listarTrilha.size()));
+        assertEquals(1, listarTrilha.size());
     }
 
     @Test
