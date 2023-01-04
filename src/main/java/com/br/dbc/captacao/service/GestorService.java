@@ -123,18 +123,7 @@ public class GestorService {
         CargoEntity cargo = cargoService.findById(gestorEmailNomeCargoDTO.getCargo().getId());
         List<GestorEntity> lista = gestorRepository.findGestorEntitiesByCargoEntityAndNomeIgnoreCaseOrCargoEntityAndEmailIgnoreCase(cargo, gestorEmailNomeCargoDTO.getNome(), cargo, gestorEmailNomeCargoDTO.getEmail());
         return lista.stream()
-                .map(gestorEntity -> {
-                    GestorDTO gestorDTO = new GestorDTO();
-                    gestorDTO.setIdGestor(gestorEntity.getIdGestor());
-                    gestorDTO.setNome(gestorEntity.getNome());
-                    gestorDTO.setEmail(gestorEntity.getEmail());
-                    gestorDTO.setAtivo(gestorEntity.getAtivo());
-                    List<CargoDTO> listaCargos = new ArrayList<>();
-                    CargoDTO cargoDTO = objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class);
-                    listaCargos.add(cargoDTO);
-                    gestorDTO.setCargosDto(new ArrayList<>(listaCargos));
-                    return gestorDTO;
-                })
+                .map(gestorEntity -> convertoToDTO(gestorEntity))
                 .toList();
 
     }
@@ -185,18 +174,7 @@ public class GestorService {
 
     public List<GestorDTO> contasInativas() {
         return gestorRepository.findByAtivo(USUARIO_INATIVO).stream()
-                .map(gestorEntity -> {
-                    GestorDTO gestorDTO = new GestorDTO();
-                    gestorDTO.setIdGestor(gestorEntity.getIdGestor());
-                    gestorDTO.setNome(gestorEntity.getNome());
-                    gestorDTO.setEmail(gestorEntity.getEmail());
-                    gestorDTO.setAtivo(gestorEntity.getAtivo());
-                    List<CargoDTO> listaCargos = new ArrayList<>();
-                    CargoDTO cargoDTO = objectMapper.convertValue(gestorEntity.getCargoEntity(), CargoDTO.class);
-                    listaCargos.add(cargoDTO);
-                    gestorDTO.setCargosDto(new ArrayList<>(listaCargos));
-                    return gestorDTO;
-                })
+                .map(gestorEntity -> convertoToDTO(gestorEntity))
                 .toList();
     }
 
