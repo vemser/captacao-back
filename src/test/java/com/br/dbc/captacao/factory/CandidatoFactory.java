@@ -29,6 +29,7 @@ public class CandidatoFactory {
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
         candidatoEntity.setEdicao(EdicaoFactory.getEdicaoEntity());
         candidatoEntity.setAtivo(TipoMarcacao.T);
+        candidatoEntity.setPcd(TipoMarcacao.T);
 
         return candidatoEntity;
     }
@@ -46,6 +47,7 @@ public class CandidatoFactory {
         candidatoCreateDTO.setLinguagens(linguagemDTOList);
         candidatoCreateDTO.setEdicao(getEdicaoDTO());
         candidatoCreateDTO.setAtivo(TipoMarcacao.T);
+        candidatoCreateDTO.setPcdboolean(true);
 
         return candidatoCreateDTO;
     }
