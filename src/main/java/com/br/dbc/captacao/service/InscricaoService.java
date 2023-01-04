@@ -40,6 +40,7 @@ public class InscricaoService {
     private static final int DESCENDING = 1;
     private final InscricaoRepository inscricaoRepository;
     private final CandidatoService candidatoService;
+
     private final EmailService emailService;
 
     private final EdicaoService edicaoService;
@@ -155,10 +156,6 @@ public class InscricaoService {
         return inscricaoDto;
     }
 
-    private InscricaoEntity convertToEntity(InscricaoCreateDTO inscricaoCreateDTO) {
-        InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoCreateDTO, InscricaoEntity.class);
-        return inscricaoEntity;
-    }
 
     public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoDTO, InscricaoEntity.class);
