@@ -5,11 +5,9 @@ import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
+import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
-import com.br.dbc.captacao.entity.EntrevistaEntity;
-import com.br.dbc.captacao.entity.GestorEntity;
-import com.br.dbc.captacao.entity.TrilhaEntity;
+import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
@@ -44,7 +42,7 @@ public class EntrevistaService {
                 .orElseThrow(() -> new RegraDeNegocioException("Entrevista não encontrada!"));
     }
 
-    public EntrevistaDTO converterParaEntrevistaDTO(EntrevistaEntity entrevistaEntity) {
+    public EntrevistaDTO converterParaEntrevistaDTO(EntrevistaEntity entrevistaEntity){
         EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevistaEntity, EntrevistaDTO.class);
         entrevistaDTO.setGestorDTO(gestorService.convertoToDTO(entrevistaEntity.getGestorEntity()));
         entrevistaDTO.setCandidatoDTO(candidatoService.converterEmDTO(entrevistaEntity.getCandidatoEntity()));
