@@ -51,7 +51,6 @@ public class TrilhaServiceTest {
     TrilhaCreateDTO trilhaCreateDTO = getTrilhaDTO();
     trilhaCreateDTO.setNome("Fullstack");
 
-    when(trilhaRepository.findByNome(anyString())).thenReturn(Optional.empty());
     when(trilhaRepository.save(any())).thenReturn(trilha);
 
     TrilhaDTO novaTrilha = trilhaService.create(trilhaCreateDTO);
@@ -65,7 +64,6 @@ public class TrilhaServiceTest {
         TrilhaEntity trilha = getTrilhaEntity();
 
         when(trilhaRepository.findAll()).thenReturn(List.of(trilha));
-        when(trilhaRepository.save(any())).thenReturn(trilha);
 
         List<TrilhaDTO> listarTrilha = trilhaService.list();
 
@@ -83,9 +81,7 @@ public class TrilhaServiceTest {
         List<Integer> listaIds = new ArrayList<>();
         listaIds.add(trilha.getIdTrilha());
 
-        when(trilhaRepository.findByNome(anyString())).thenReturn(Optional.of(trilha));
         when(trilhaRepository.findById(anyInt())).thenReturn(Optional.of(trilha));
-        when(trilhaRepository.save(any())).thenReturn(trilha);
 
         Set<TrilhaEntity> novasTrilhas = trilhaService.findListaTrilhas(listaIds);
 
@@ -102,9 +98,6 @@ public class TrilhaServiceTest {
 
         List<Integer> listaIds = new ArrayList<>();
         listaIds.add(trilha.getIdTrilha());
-
-        when(trilhaRepository.findByNome(anyString())).thenReturn(Optional.empty());
-        when(trilhaRepository.save(any())).thenReturn(trilha);
 
        trilhaService.findListaTrilhas(listaIds);
     }
@@ -131,8 +124,6 @@ public class TrilhaServiceTest {
         TrilhaDTO trilhaDTO = getTrilhaDTO();
         Set<TrilhaDTO> trilhaDTOS = new HashSet<>();
         trilhaDTOS.add(trilhaDTO);
-
-        when(trilhaRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         Set<TrilhaEntity> trilhaEntity = trilhaService.convertToEntity(trilhaDTOS);
 
