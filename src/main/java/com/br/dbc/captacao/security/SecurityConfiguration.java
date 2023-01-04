@@ -42,14 +42,16 @@ public class SecurityConfiguration {
 
                         .antMatchers(HttpMethod.POST, "/candidato/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/candidato/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
-                        .antMatchers(HttpMethod.PUT, "/candidato/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/candidato/nota-prova/**", "/candidato/nota-parecer-tecnico/**", "/candidato/nota-comportamental/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/candidato/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.DELETE, "/candidato/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers("/usuario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers(HttpMethod.GET, "/entrevista/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.POST, "/entrevista/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
-                        .antMatchers(HttpMethod.PUT, "/entrevista/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/entrevista/atualizar-entrevista/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/entrevista/atualizar-entrevista/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.DELETE, "/entrevista/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers("/avaliacao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
