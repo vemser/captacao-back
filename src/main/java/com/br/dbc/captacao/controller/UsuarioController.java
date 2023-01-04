@@ -96,7 +96,7 @@ public class UsuarioController implements UsuarioControllerInterface {
         return new ResponseEntity<>(gestorService.contasInativas(), HttpStatus.OK);
     }
 
-    @PostMapping("/gestor-by-nome-email")
+    @GetMapping("/gestor-by-nome-email")
     public ResponseEntity<List<GestorDTO>> pegarGestorPorEmailNomeCargo(@RequestBody GestorEmailNomeCargoDTO gestorEmailNomeCargoDto) throws RegraDeNegocioException {
         log.info("Buscando gestor por cargo e ( email ou nome )");
         return new ResponseEntity<>(gestorService.findGestorbyNomeOrEmail(gestorEmailNomeCargoDto), HttpStatus.OK);

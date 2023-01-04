@@ -119,7 +119,7 @@ public interface UsuarioControllerInterface {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    @PostMapping("/gestor-by-nome-email")
+    @GetMapping("/gestor-by-nome-email")
     ResponseEntity<List<GestorDTO>> pegarGestorPorEmailNomeCargo(@RequestBody GestorEmailNomeCargoDTO gestorEmailNomeCargoDto) throws RegraDeNegocioException;
 
 //    @Operation(summary = "Pegar conta logada", description = "Pegar sua conta logado no sistema")
