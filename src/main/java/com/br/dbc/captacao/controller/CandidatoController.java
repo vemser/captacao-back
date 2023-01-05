@@ -138,4 +138,12 @@ public class CandidatoController {
 
         return new ResponseEntity<>(candidatoDTOListByEdicao,HttpStatus.OK);
     }
+
+    @GetMapping("/find-by-nota")
+    public ResponseEntity<PageDTO<CandidatoDTO>> findCandidatosByNota (Integer pagina, Integer tamanho) {
+
+        PageDTO<CandidatoDTO> candidatoDTOListByNota = candidatoService.listCandidatosByNota(pagina, tamanho);
+
+        return new ResponseEntity<>(candidatoDTOListByNota,HttpStatus.OK);
+    }
 }

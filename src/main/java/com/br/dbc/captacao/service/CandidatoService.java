@@ -22,6 +22,7 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -369,4 +370,18 @@ public class CandidatoService {
         return candidatoDTOListByEdicao;
     }
 
+    public PageDTO<CandidatoDTO> listCandidatosByNota(Integer pagina, Integer tamanho) {
+
+        Sort orderBy = Sort.by("notaProva");
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho, orderBy);
+        Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByNota(pageRequest);
+        List<CandidatoDTO> candidatoDTOList = paginaDoRepositorio.getContent().stream()
+                .map(candidato -> objectMapper.convertValue(candidato, CandidatoDTO.class))
+                .toList();
+        return new PageDTO<>(paginaDoRepositorio.getTotalElements(),
+                paginaDoRepositorio.getTotalPages(),
+                pagina,
+                tamanho,
+                candidatoDTOList);
+    }
 }
