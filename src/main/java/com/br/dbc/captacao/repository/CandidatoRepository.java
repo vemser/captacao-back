@@ -43,4 +43,8 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     List<CandidatoEntity> findCandidatoEntitiesByEdicao(EdicaoEntity edicao);
 
+    @Query(" SELECT obj " +
+            " FROM CANDIDATO obj " +
+            " WHERE obj.notaProva > 1 ")
+    Page<CandidatoEntity> findByNota(Pageable pageable);
 }

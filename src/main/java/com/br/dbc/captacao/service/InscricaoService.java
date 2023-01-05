@@ -78,7 +78,7 @@ public class InscricaoService {
         if(inscricaoEntity == null){
             throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
         }
-        return objectMapper.convertValue(inscricaoEntity,InscricaoDTO.class);
+        return converterParaDTO(inscricaoEntity);
     }
 
     public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
@@ -154,6 +154,9 @@ public class InscricaoService {
         InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
         inscricaoDto.setCandidato(candidatoService.converterEmDTO(inscricaoEntity.getCandidato()));
         inscricaoDto.getCandidato().setFormulario(objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class));
+
+        inscricaoDto.setAvaliacao(inscricaoEntity.getAvaliado() == TipoMarcacao.T ? TipoMarcacao.T : TipoMarcacao.F);
+
         return inscricaoDto;
     }
 
