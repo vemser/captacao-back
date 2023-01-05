@@ -153,6 +153,7 @@ public class InscricaoService {
     public InscricaoDTO converterParaDTO(InscricaoEntity inscricaoEntity) {
         InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
         inscricaoDto.setCandidato(candidatoService.converterEmDTO(inscricaoEntity.getCandidato()));
+        inscricaoDto.getCandidato().setFormulario(objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class));
         return inscricaoDto;
     }
 

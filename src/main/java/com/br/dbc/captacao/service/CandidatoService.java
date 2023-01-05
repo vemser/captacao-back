@@ -188,9 +188,9 @@ public class CandidatoService {
         return converterEmDTO(candidatoEntity);
     }
 
-    public List<CandidatoDTO> findCandidatoDtoByEmail(String email) throws RegraDeNegocioException {
-        List<CandidatoEntity> candidato = candidatoRepository.findCandidatoEntitiesByEmail(email);
-        List<CandidatoDTO> candidatoDto = candidato.stream().map(candidatoEntity -> converterEmDTO(candidatoEntity)).toList();
+    public CandidatoDTO findCandidatoDtoByEmail(String email) throws RegraDeNegocioException {
+        CandidatoEntity candidato = candidatoRepository.findCandidatoEntitiesByEmail(email);
+        CandidatoDTO candidatoDto = converterEmDTO(candidato);
         return candidatoDto;
     }
 

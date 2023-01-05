@@ -15,7 +15,6 @@ import lombok.Setter;
 public class EntrevistaDTO extends EntrevistaCreateDTO {
 
     private Integer idEntrevista;
-
     private CandidatoDTO candidatoDTO;
 
     private GestorDTO gestorDTO;

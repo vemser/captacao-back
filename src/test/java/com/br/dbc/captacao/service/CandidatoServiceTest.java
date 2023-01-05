@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.service;
 
-import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.candidato.*;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
@@ -196,13 +195,169 @@ public class CandidatoServiceTest {
         candidatoService.deleteLogicoById(1);
     }
 
-//    @Test
-//    public void deveTestarUpdateComSucesso(){
-//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-//
-//        when(candidatoRepository.findById(anyInt()))
-//                .thenReturn(Optional.of(candidatoEntity));
-//    }
+    @Test
+    public void deveTestarUpdateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        CandidatoCreateDTO candidatoCreateDTO = CandidatoFactory.getCandidatoCreateDTO();
+        EdicaoEntity edicaoEntity = EdicaoFactory.getEdicaoEntity();
+
+        when(candidatoRepository.findById(anyInt()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        when(edicaoService.findByNome(anyString()))
+                .thenReturn(edicaoEntity);
+
+        when(candidatoRepository.save(any(CandidatoEntity.class)))
+                .thenReturn(candidatoEntity);
+
+        CandidatoDTO candidatoDTO = candidatoService.update(1,candidatoCreateDTO);
+
+        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarUpdateComException() throws RegraDeNegocioException, RegraDeNegocio404Exception {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        CandidatoCreateDTO candidatoCreateDTO = CandidatoFactory.getCandidatoCreateDTO();
+        candidatoCreateDTO.setEmail("");
+        EdicaoEntity edicaoEntity = EdicaoFactory.getEdicaoEntity();
+
+        when(candidatoRepository.findById(anyInt()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        CandidatoDTO candidatoDTO = candidatoService.update(1,candidatoCreateDTO);
+    }
+
+    @Test
+    public void deveTestarUpdateTecnicoComSucesso() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        CandidatoTecnicoNotaDTO candidatoTecnicoNotaDTO = new CandidatoTecnicoNotaDTO();
+        candidatoTecnicoNotaDTO.setNotaTecnico(80.0);
+        candidatoTecnicoNotaDTO.setParecerTecnico("observacao");
+
+        when(candidatoRepository.findById(anyInt()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        when(candidatoRepository.save(any(CandidatoEntity.class)))
+                .thenReturn(candidatoEntity);
+
+        CandidatoDTO candidatoRetorno = candidatoService.updateTecnico(1,candidatoTecnicoNotaDTO);
+
+        assertNotNull(candidatoRetorno);
+    }
+
+    @Test
+    public void deveTestarCalcularMediaNotas() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        candidatoEntity.setNotaProva(80.0);
+        candidatoEntity.setNotaEntrevistaTecnica(90.0);
+        candidatoEntity.setNotaEntrevistaComportamental(70.0);
+
+        when(candidatoRepository.findById(anyInt()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        when(candidatoRepository.save(any(CandidatoEntity.class)))
+                .thenReturn(candidatoEntity);
+
+        CandidatoDTO candidatoDTO = candidatoService.calcularMediaNotas(1);
+
+        assertNotNull(candidatoDTO);
+    }
+
+
+    @Test
+    public void deveTestarUpdateNota() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        CandidatoNotaDTO candidatoNotaDTO = new CandidatoNotaDTO();
+        candidatoNotaDTO.setNotaProva(80.0);
+
+        when(candidatoRepository.findById(anyInt()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        when(candidatoRepository.save(any(CandidatoEntity.class)))
+                .thenReturn(candidatoEntity);
+
+        CandidatoDTO candidatoRetorno = candidatoService.updateNota(1,candidatoNotaDTO);
+
+        assertNotNull(candidatoRetorno);
+    }
+
+    @Test
+    public void deveTestarUpdateComportamental() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO = new CandidatoNotaComportamentalDTO();
+        candidatoNotaComportamentalDTO.setParecerComportamental("observacoes");
+        candidatoNotaComportamentalDTO.setNotaComportamental(80.0);
+
+        when(candidatoRepository.findById(anyInt()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        when(candidatoRepository.save(any(CandidatoEntity.class)))
+                .thenReturn(candidatoEntity);
+
+        CandidatoDTO candidatoDTO = candidatoService.updateComportamental(1,candidatoNotaComportamentalDTO);
+
+        assertNotNull(candidatoDTO);
+    }
+
+    @Test
+    public void deveTestarFindDtoByIdComSucesso() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+
+        when(candidatoRepository.findById(anyInt()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        CandidatoDTO candidatoDTO = candidatoService.findDtoById(1);
+
+        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+    }
+
+    @Test
+    public void deveTestarFindByEmailComSucesso() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+
+        when(candidatoRepository.findByEmail(anyString()))
+                .thenReturn(Optional.of(candidatoEntity));
+
+        CandidatoDTO candidatoDTO = candidatoService.findByEmail("email@email");
+
+        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+    }
+
+    @Test
+    public void deveTestarFindCandidatoDtoByEmailComSucesso() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+
+        when(candidatoRepository.findCandidatoEntitiesByEmail(anyString()))
+                .thenReturn(candidatoEntity);
+
+        CandidatoDTO candidatoDTO = candidatoService.findCandidatoDtoByEmail("email@email");
+
+        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarFindByEmailEntityComException() throws RegraDeNegocioException {
+
+        when(candidatoRepository.findByEmail(anyString()))
+                .thenReturn(Optional.empty());
+
+        candidatoService.findByEmailEntity("email@email");
+    }
+
+    @Test
+    public void deveTestarConvertToEntityComSucesso() throws RegraDeNegocio404Exception, RegraDeNegocioException {
+
+        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
+        candidatoDTO.setFormulario(FormularioFactory.getFormularioDto());
+
+        when(formularioService.findById(anyInt()))
+                .thenReturn(FormularioFactory.getFormularioEntity());
+
+        CandidatoEntity candidatoRetorno = candidatoService.convertToEntity(candidatoDTO);
+
+        assertEquals(candidatoDTO.getNome(),candidatoRetorno.getNome());
+    }
 
 
 
