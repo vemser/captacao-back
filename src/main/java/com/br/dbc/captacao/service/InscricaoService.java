@@ -48,9 +48,9 @@ public class InscricaoService {
     private final ObjectMapper objectMapper;
 
     public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
-//        if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(inscricaoCreateDTO.getIdCandidato()).isEmpty()) {
-//            throw new RegraDeNegocioException("Inscrição já realizada");
-//        }
+        if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(idCandidato).isEmpty()) {
+            throw new RegraDeNegocioException("Inscrição já realizada");
+        }
 
         InscricaoEntity inscricaoEntity = new InscricaoEntity();
         inscricaoEntity.setCandidato(candidatoService.findById(idCandidato));
