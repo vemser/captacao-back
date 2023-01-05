@@ -20,10 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.BufferedWriter;
@@ -435,5 +432,24 @@ public class CandidatoServiceTest {
                 .thenReturn(candidatoEntityList);
 
         candidatoService.exportarCandidatoCSV();
+    }
+
+    @Test
+    public void deveTestarListCandidatosByNotaComSucesso() {
+
+        Sort orderBy = Sort.by("notaProva");
+        PageRequest pageRequest = PageRequest.of(0, 1, orderBy);
+        Page<CandidatoEntity> page = mock(Page.class);
+
+        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
+        List<CandidatoDTO> candidatoDTOList = new ArrayList<>();
+        candidatoDTOList.add(candidatoDTO);
+
+        when(candidatoRepository.findByNota(any(PageRequest.class)))
+                .thenReturn(page);
+
+        PageDTO<CandidatoDTO> listCandidatoPage = candidatoService.listCandidatosByNota(0,1);
+
+        assertNotNull(listCandidatoPage);
     }
 }
