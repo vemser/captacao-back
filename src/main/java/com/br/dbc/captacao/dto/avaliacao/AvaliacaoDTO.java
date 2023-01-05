@@ -19,6 +19,5 @@ public class AvaliacaoDTO {
     private GestorDTO avaliador;
 
     private TipoMarcacao aprovado;
-
     private InscricaoDTO inscricao;
 }

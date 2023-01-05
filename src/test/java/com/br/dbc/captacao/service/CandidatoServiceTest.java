@@ -3,9 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.candidato.*;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
-import com.br.dbc.captacao.entity.EdicaoEntity;
-import com.br.dbc.captacao.entity.LinguagemEntity;
+import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -20,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,12 +26,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.internal.util.MockUtil.createMock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CandidatoServiceTest {
@@ -48,6 +54,9 @@ public class CandidatoServiceTest {
 
     @Mock
     private FormularioService formularioService;
+
+    @Mock
+    private TrilhaService trilhaService;
 
     @Mock
     private LinguagemService linguagemService;
@@ -179,9 +188,9 @@ public class CandidatoServiceTest {
         when(candidatoRepository.findById(anyInt()))
                 .thenReturn(Optional.of(candidatoEntity));
 
-       candidatoService.deleteLogicoById(1);
+        candidatoService.deleteLogicoById(1);
 
-       assertNotEquals(candidatoEntity.getAtivo(), TipoMarcacao.T);
+        assertNotEquals(candidatoEntity.getAtivo(), TipoMarcacao.T);
     }
 
     @Test
@@ -192,7 +201,7 @@ public class CandidatoServiceTest {
         when(candidatoRepository.findById(anyInt()))
                 .thenReturn(Optional.of(candidatoEntity));
 
-        candidatoService.deleteLogicoById(1);
+        candidatoService.deleteFisico(1);
     }
 
     @Test
@@ -210,9 +219,9 @@ public class CandidatoServiceTest {
         when(candidatoRepository.save(any(CandidatoEntity.class)))
                 .thenReturn(candidatoEntity);
 
-        CandidatoDTO candidatoDTO = candidatoService.update(1,candidatoCreateDTO);
+        CandidatoDTO candidatoDTO = candidatoService.update(1, candidatoCreateDTO);
 
-        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+        assertEquals(candidatoDTO.getNome(), candidatoEntity.getNome());
     }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -225,7 +234,7 @@ public class CandidatoServiceTest {
         when(candidatoRepository.findById(anyInt()))
                 .thenReturn(Optional.of(candidatoEntity));
 
-        CandidatoDTO candidatoDTO = candidatoService.update(1,candidatoCreateDTO);
+        CandidatoDTO candidatoDTO = candidatoService.update(1, candidatoCreateDTO);
     }
 
     @Test
@@ -241,7 +250,7 @@ public class CandidatoServiceTest {
         when(candidatoRepository.save(any(CandidatoEntity.class)))
                 .thenReturn(candidatoEntity);
 
-        CandidatoDTO candidatoRetorno = candidatoService.updateTecnico(1,candidatoTecnicoNotaDTO);
+        CandidatoDTO candidatoRetorno = candidatoService.updateTecnico(1, candidatoTecnicoNotaDTO);
 
         assertNotNull(candidatoRetorno);
     }
@@ -277,7 +286,7 @@ public class CandidatoServiceTest {
         when(candidatoRepository.save(any(CandidatoEntity.class)))
                 .thenReturn(candidatoEntity);
 
-        CandidatoDTO candidatoRetorno = candidatoService.updateNota(1,candidatoNotaDTO);
+        CandidatoDTO candidatoRetorno = candidatoService.updateNota(1, candidatoNotaDTO);
 
         assertNotNull(candidatoRetorno);
     }
@@ -295,7 +304,7 @@ public class CandidatoServiceTest {
         when(candidatoRepository.save(any(CandidatoEntity.class)))
                 .thenReturn(candidatoEntity);
 
-        CandidatoDTO candidatoDTO = candidatoService.updateComportamental(1,candidatoNotaComportamentalDTO);
+        CandidatoDTO candidatoDTO = candidatoService.updateComportamental(1, candidatoNotaComportamentalDTO);
 
         assertNotNull(candidatoDTO);
     }
@@ -309,7 +318,7 @@ public class CandidatoServiceTest {
 
         CandidatoDTO candidatoDTO = candidatoService.findDtoById(1);
 
-        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+        assertEquals(candidatoDTO.getNome(), candidatoEntity.getNome());
     }
 
     @Test
@@ -321,7 +330,7 @@ public class CandidatoServiceTest {
 
         CandidatoDTO candidatoDTO = candidatoService.findByEmail("email@email");
 
-        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+        assertEquals(candidatoDTO.getNome(), candidatoEntity.getNome());
     }
 
     @Test
@@ -333,7 +342,7 @@ public class CandidatoServiceTest {
 
         CandidatoDTO candidatoDTO = candidatoService.findCandidatoDtoByEmail("email@email");
 
-        assertEquals(candidatoDTO.getNome(),candidatoEntity.getNome());
+        assertEquals(candidatoDTO.getNome(), candidatoEntity.getNome());
     }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -356,9 +365,75 @@ public class CandidatoServiceTest {
 
         CandidatoEntity candidatoRetorno = candidatoService.convertToEntity(candidatoDTO);
 
-        assertEquals(candidatoDTO.getNome(),candidatoRetorno.getNome());
+        assertEquals(candidatoDTO.getNome(), candidatoRetorno.getNome());
     }
 
+    @Test
+    public void deveTestarListCandidatosByTrilhaComSucesso() throws RegraDeNegocioException {
+        TrilhaEntity trilhaEntity = TrilhaFactory.getTrilhaEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        formulario.setTrilhaEntitySet(new HashSet<>(List.of(trilhaEntity)));
+        candidatoEntity.setFormularioEntity(formulario);
+        List<CandidatoEntity> listCandidato = new ArrayList<>();
+        listCandidato.add(candidatoEntity);
 
+        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
+        List<CandidatoDTO> candidatoDTOList = new ArrayList<>();
+        candidatoDTOList.add(candidatoDTO);
 
+        when(trilhaService.findByNome(anyString()))
+                .thenReturn(trilhaEntity);
+
+        when(candidatoRepository.findCandidatoEntitiesByFormularioEntity_TrilhaEntitySet(any(TrilhaEntity.class)))
+                .thenReturn(listCandidato);
+
+        List<CandidatoDTO> listaRetorno = candidatoService.listCandidatosByTrilha("frontend");
+
+        assertNotNull(listaRetorno);
+
+    }
+
+    @Test
+    public void deveTestarListCandidatosByEdicao() throws RegraDeNegocioException {
+
+        EdicaoEntity edicaoEntity = EdicaoFactory.getEdicaoEntity();
+        TrilhaEntity trilhaEntity = TrilhaFactory.getTrilhaEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        formulario.setTrilhaEntitySet(new HashSet<>(List.of(trilhaEntity)));
+        candidatoEntity.setFormularioEntity(formulario);
+        List<CandidatoEntity> listCandidato = new ArrayList<>();
+        listCandidato.add(candidatoEntity);
+
+        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
+        List<CandidatoDTO> candidatoDTOList = new ArrayList<>();
+        candidatoDTOList.add(candidatoDTO);
+
+        when(edicaoService.findByNome(anyString()))
+                .thenReturn(edicaoEntity);
+
+        when(candidatoRepository.findCandidatoEntitiesByEdicao(any(EdicaoEntity.class)))
+                .thenReturn(listCandidato);
+
+        List<CandidatoDTO> listaRetorno = candidatoService.listCandidatosByEdicao("VemSer12");
+
+        assertNotNull(listaRetorno);
+    }
+
+    @Test
+    public void deveTestarExportarCandidatoCSVComSucesso() throws RegraDeNegocioException {
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        List<CandidatoEntity> candidatoEntityList = new ArrayList<>();
+        candidatoEntityList.add(candidatoEntity);
+
+        BufferedWriter writer = mock(BufferedWriter.class);
+        OutputStreamWriter streamWriter = mock(OutputStreamWriter.class);
+        FileOutputStream fileOutputStream=mock(FileOutputStream.class);
+
+        when(candidatoRepository.findAll())
+                .thenReturn(candidatoEntityList);
+
+        candidatoService.exportarCandidatoCSV();
+    }
 }
