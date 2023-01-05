@@ -154,6 +154,9 @@ public class InscricaoService {
         InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
         inscricaoDto.setCandidato(candidatoService.converterEmDTO(inscricaoEntity.getCandidato()));
         inscricaoDto.getCandidato().setFormulario(objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class));
+
+        inscricaoDto.setAvaliacao(inscricaoEntity.getAvaliado() == TipoMarcacao.T ? TipoMarcacao.T : TipoMarcacao.F);
+
         return inscricaoDto;
     }
 
