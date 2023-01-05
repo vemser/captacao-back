@@ -45,34 +45,37 @@ public class AvaliacaoService {
 
 
     public AvaliacaoDTO create(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException {
-        if (avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao()).isEmpty()) {
-            AvaliacaoEntity avaliacaoEntity = new AvaliacaoEntity();
-            InscricaoEntity inscricao = inscricaoService.findById(avaliacaoCreateDTO.getIdInscricao());
-            avaliacaoEntity.setAprovado(avaliacaoCreateDTO.isAprovadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
-            avaliacaoEntity.setInscricao(inscricao);
-            GestorEntity gestor = gestorService.findByEmail(avaliacaoCreateDTO.getEmailGestor());
-            avaliacaoEntity.setAvaliador(gestor);
-            AvaliacaoEntity avaliacaoRetorno = avaliacaoRepository.save(avaliacaoEntity);
-            AvaliacaoDTO avaliacaoDto = convertToDTO(avaliacaoRetorno);
-            GestorDTO gestorDTO = objectMapper.convertValue(gestor, GestorDTO.class);
-            avaliacaoDto.setAvaliador(gestorDTO);
-            List<CargoDTO> cargoDTOList = new ArrayList<>();
-            for (CargoEntity cargo : gestor.getCargoEntity()) {
-                CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
-                cargoDTO.setId(cargo.getIdCargo());
-                cargoDTOList.add(cargoDTO);
-            }
-            gestorDTO.setCargosDto(cargoDTOList);
+        if (avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao() )!= null) {
+            throw new RegraDeNegocioException("Candidato já avaliado!");
+        }
 
-            FormularioDTO formularioDTO = objectMapper.convertValue(inscricao.getCandidato().getFormularioEntity(), FormularioDTO.class);
+        AvaliacaoEntity avaliacaoEntity = new AvaliacaoEntity();
+        InscricaoEntity inscricao = inscricaoService.findById(avaliacaoCreateDTO.getIdInscricao());
+        avaliacaoEntity.setAprovado(avaliacaoCreateDTO.isAprovadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        avaliacaoEntity.setInscricao(inscricao);
+        GestorEntity gestor = gestorService.findByEmail(avaliacaoCreateDTO.getEmailGestor());
+        avaliacaoEntity.setAvaliador(gestor);
+        AvaliacaoEntity avaliacaoRetorno = avaliacaoRepository.save(avaliacaoEntity);
+        AvaliacaoDTO avaliacaoDto = convertToDTO(avaliacaoRetorno);
+        GestorDTO gestorDTO = objectMapper.convertValue(gestor, GestorDTO.class);
+        avaliacaoDto.setAvaliador(gestorDTO);
+        List<CargoDTO> cargoDTOList = new ArrayList<>();
+        for (CargoEntity cargo : gestor.getCargoEntity()) {
+            CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
+            cargoDTO.setId(cargo.getIdCargo());
+            cargoDTOList.add(cargoDTO);
+        }
+        gestorDTO.setCargosDto(cargoDTOList);
 
-            List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
-            for (TrilhaEntity trilhaTemp : avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
-                trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
-            }
-            formularioDTO.setTrilhas(new HashSet<>(trilhaDTOList));
+        FormularioDTO formularioDTO = objectMapper.convertValue(inscricao.getCandidato().getFormularioEntity(), FormularioDTO.class);
 
-            avaliacaoDto.getInscricao().getCandidato().setFormulario(formularioDTO);
+        List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
+        for (TrilhaEntity trilhaTemp : avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
+            trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
+        }
+        formularioDTO.setTrilhas(new HashSet<>(trilhaDTOList));
+
+        avaliacaoDto.getInscricao().getCandidato().setFormulario(formularioDTO);
 
 //        SendEmailDTO sendEmailDTO = new SendEmailDTO();
 //        sendEmailDTO.setNome(avaliacaoDto.getInscricao().getCandidato().getNome());
@@ -82,18 +85,8 @@ public class AvaliacaoService {
 //        } else {
 //            emailService.sendEmail(sendEmailDTO, TipoEmail.REPROVADO);
 //        }
-            inscricaoService.setAvaliado(avaliacaoCreateDTO.getIdInscricao());
-            return avaliacaoDto;
-
-        } else {
-            throw new RegraDeNegocioException("Candidato já avaliado!");
-        }
-
-//        if (!avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao()).isEmpty()) {
-//            throw new RegraDeNegocioException("Candidato já avaliado!");
-//        }
-
-
+        inscricaoService.setAvaliado(avaliacaoCreateDTO.getIdInscricao());
+        return avaliacaoDto;
     }
 
 

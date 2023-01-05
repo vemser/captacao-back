@@ -12,7 +12,8 @@ import java.util.Optional;
 @Repository
 public interface AvaliacaoRepository extends JpaRepository<AvaliacaoEntity, Integer> {
 
-    Optional<AvaliacaoEntity> findAvaliacaoEntitiesByInscricao_IdInscricao(Integer idInscricao);
+    AvaliacaoEntity findAvaliacaoEntitiesByInscricao_IdInscricao(Integer idInscricao);
+
 
     List<AvaliacaoEntity> findAvaliacaoEntitiesByInscricao_Candidato_Email(String email);
 
