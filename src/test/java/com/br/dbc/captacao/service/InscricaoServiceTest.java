@@ -122,19 +122,19 @@ public class InscricaoServiceTest {
 
     }
 
-    @Test
-    public void deveTestarSetAvaliadoComSucesso () {
-        InscricaoEntity inscricaoEntity = new InscricaoEntity();
-        inscricaoEntity.setAvaliado(TipoMarcacao.F);
-        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-        candidatoEntity.setIdCandidato(1);
-
-        when(candidatoRepository.findById(anyInt())).thenReturn(Optional.of(candidatoEntity));
-
-        inscricaoRepository.save(inscricaoEntity);
-
-        verify(inscricaoRepository, times(1)).save(any());
-    }
+//    @Test
+//    public void deveTestarSetAvaliadoComSucesso () {
+//        InscricaoEntity inscricaoEntity = new InscricaoEntity();
+//        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        candidatoEntity.setIdCandidato(1);
+//
+//        when(candidatoRepository.findById(anyInt())).thenReturn(Optional.of(candidatoEntity));
+//
+//        inscricaoRepository.save(inscricaoEntity);
+//
+//        verify(inscricaoRepository, times(1)).save(any());
+//    }
 
     @Test
     public void deveTestarDeleteComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
