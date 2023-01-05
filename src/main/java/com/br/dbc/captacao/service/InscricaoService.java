@@ -78,7 +78,7 @@ public class InscricaoService {
         if(inscricaoEntity == null){
             throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
         }
-        return objectMapper.convertValue(inscricaoEntity,InscricaoDTO.class);
+        return converterParaDTO(inscricaoEntity);
     }
 
     public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
