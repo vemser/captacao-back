@@ -51,8 +51,8 @@ public class InscricaoController implements InscricaoControllerInterface {
     }
 
     @GetMapping("/list-by-trilha")
-    public ResponseEntity<List<InscricaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
-        List<InscricaoDTO> listByTrilha = inscricaoService.listInscricoesByTrilha(trilha);
+    public ResponseEntity<PageDTO<InscricaoDTO>> listByTrilha(Integer pagina, Integer tamanho, @RequestParam("trilha")String trilha) throws RegraDeNegocioException {
+        PageDTO<InscricaoDTO> listByTrilha = inscricaoService.listInscricoesByTrilha(pagina, tamanho, trilha);
 
         return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
     }
@@ -86,4 +86,13 @@ public class InscricaoController implements InscricaoControllerInterface {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/filtro-inscricao")
+    public ResponseEntity<PageDTO<InscricaoDTO>> filtroInscricao(@RequestParam Integer pagina,
+                                                              @RequestParam Integer tamanho,
+                                                              @RequestParam (required = false) String email,
+                                                              @RequestParam (required = false) String edicao,
+                                                              @RequestParam (required = false) String trilha) throws RegraDeNegocioException {
+        PageDTO<InscricaoDTO> filtroInscricaoList = inscricaoService.filtroInscricao(pagina, tamanho, email, edicao, trilha);
+        return new ResponseEntity<>(filtroInscricaoList, HttpStatus.OK);
+    }
 }

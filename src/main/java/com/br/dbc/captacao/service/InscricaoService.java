@@ -73,20 +73,6 @@ public class InscricaoService {
         return inscricao;
     }
 
-    public InscricaoDTO findInscricaoPorEmail(String email) throws RegraDeNegocioException {
-        InscricaoEntity inscricaoEntity = inscricaoRepository.findInscricaoByEmail(email);
-
-        if(inscricaoEntity == null){
-            throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
-        }
-
-        InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-        CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
-        inscricaoDTO.setCandidato(candidatoDTO);
-        inscricaoDTO.setAvaliado(inscricaoEntity.getAvaliado());
-        return inscricaoDTO;
-    }
-
     public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
@@ -173,11 +159,28 @@ public class InscricaoService {
         return inscricaoEntity;
     }
 
-    public List<InscricaoDTO> listInscricoesByTrilha(String trilha) throws RegraDeNegocioException {
+    public InscricaoDTO findInscricaoPorEmail(String email) throws RegraDeNegocioException {
+        InscricaoEntity inscricaoEntity = inscricaoRepository.findInscricaoByEmail(email);
+
+        if(inscricaoEntity == null){
+            throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
+        }
+
+        InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
+        CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
+        inscricaoDTO.setCandidato(candidatoDTO);
+        inscricaoDTO.setAvaliado(inscricaoEntity.getAvaliado());
+        return inscricaoDTO;
+    }
+
+    public PageDTO<InscricaoDTO> listInscricoesByTrilha(Integer pagina, Integer tamanho, String trilha) throws RegraDeNegocioException {
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
         TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
 
-        List<InscricaoDTO> inscricaoDTOListByTrilha = inscricaoRepository.findInscricaoEntitiesByCandidato_FormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
+        Page<InscricaoEntity> inscricaoDTOListByTrilha = inscricaoRepository.findInscricaoEntitiesByCandidato_FormularioEntity_TrilhaEntitySet(pageRequest, trilhaEntity);
+
+        List<InscricaoDTO> inscricaoDTOS = inscricaoDTOListByTrilha.stream()
                 .map(inscricaoEntity -> {
                     InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
 
@@ -203,7 +206,12 @@ public class InscricaoService {
                 })
                 .toList();
 
-        return inscricaoDTOListByTrilha;
+
+        return new PageDTO<>(inscricaoDTOListByTrilha.getTotalElements(),
+                inscricaoDTOListByTrilha.getTotalPages(),
+                pagina,
+                tamanho,
+                inscricaoDTOS);
     }
 
     public List<InscricaoDTO> listInscricoesByEdicao(String edicao) throws RegraDeNegocioException {
@@ -241,4 +249,24 @@ public class InscricaoService {
         return inscricaoDTOListByEdicao;
     }
 
+    public PageDTO<InscricaoDTO> filtroInscricao(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException {
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
+
+        Page<InscricaoEntity> inscricaoEntityPage = inscricaoRepository.filtrarInscricoes(pageRequest, email, edicao, trilha);
+
+        List<InscricaoDTO> inscricaoDTOS = inscricaoEntityPage.stream()
+                .map(inscricao -> {
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricao, InscricaoDTO.class);
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricao.getCandidato(), CandidatoDTO.class);
+                    inscricaoDTO.setCandidato(candidatoDTO);
+                    inscricaoDTO.setAvaliado(inscricao.getAvaliado());
+                    return inscricaoDTO;
+                }).toList();
+
+        return new PageDTO<>(inscricaoEntityPage.getTotalElements(),
+                inscricaoEntityPage.getTotalPages(),
+                pagina,
+                tamanho,
+                inscricaoDTOS);
+    }
 }

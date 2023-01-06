@@ -59,7 +59,7 @@ public interface InscricaoControllerInterface {
             }
     )
     @GetMapping
-    ResponseEntity<List<InscricaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException;
+    ResponseEntity<PageDTO<InscricaoDTO>> listByTrilha(Integer pagina, Integer tamanho, @RequestParam("trilha") String trilha) throws RegraDeNegocioException;
 
     @Operation(summary = "Busca lista de inscrições por EDIÇAO", description = "Busca lista de inscrições por EDIÇAO")
     @ApiResponses(
@@ -104,4 +104,19 @@ public interface InscricaoControllerInterface {
     )
     @GetMapping
     ResponseEntity<Void> exportarCandidatosParaCsv() throws RegraDeNegocioException;
+
+    @Operation(summary = "Busca inscricao por filtro", description = "Busca inscrição por filtro")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Retorna lista de inscrições"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @GetMapping
+    ResponseEntity<PageDTO<InscricaoDTO>> filtroInscricao(@RequestParam Integer pagina,
+                                                       @RequestParam Integer tamanho,
+                                                       @RequestParam String email,
+                                                       @RequestParam String edicao,
+                                                       @RequestParam (required = false) String trilha) throws RegraDeNegocioException;
 }

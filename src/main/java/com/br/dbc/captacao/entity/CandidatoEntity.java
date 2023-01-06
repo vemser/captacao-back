@@ -1,11 +1,10 @@
 package com.br.dbc.captacao.entity;
 
-import com.br.dbc.captacao.enums.Parecer;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -21,6 +20,9 @@ public class CandidatoEntity {
         @SequenceGenerator(name = "SEQ_CANDIDATO", sequenceName = "SEQ_CANDIDATO", allocationSize = 1)
         @Column(name = "id_candidato")
         private Integer idCandidato;
+
+        @Column(name = "id_edicao", insertable = false, updatable = false)
+        private Integer idEdicao;
 
         @Column(name = "nome")
         private String nome;
