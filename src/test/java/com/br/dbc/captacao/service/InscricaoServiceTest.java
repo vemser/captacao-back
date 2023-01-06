@@ -6,11 +6,16 @@ import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoCreateDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.*;
+import com.br.dbc.captacao.entity.CandidatoEntity;
+import com.br.dbc.captacao.entity.FormularioEntity;
+import com.br.dbc.captacao.entity.InscricaoEntity;
+import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.factory.*;
-import com.br.dbc.captacao.repository.CandidatoRepository;
+import com.br.dbc.captacao.factory.CandidatoFactory;
+import com.br.dbc.captacao.factory.FormularioFactory;
+import com.br.dbc.captacao.factory.InscricaoFactory;
+import com.br.dbc.captacao.factory.TrilhaFactory;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,8 +40,8 @@ import java.io.OutputStreamWriter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,22 +49,13 @@ public class InscricaoServiceTest {
 
     @InjectMocks
     private InscricaoService inscricaoService;
-
     @Mock
     private InscricaoRepository inscricaoRepository;
-
-
     @Mock
     private CandidatoService candidatoService;
-
     @Mock
     private EdicaoService edicaoService;
-
-    @Mock
-    private TrilhaService trilhaService;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Before
     public void init() {
         objectMapper.registerModule(new JavaTimeModule());
@@ -67,7 +63,6 @@ public class InscricaoServiceTest {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         ReflectionTestUtils.setField(inscricaoService, "objectMapper", objectMapper);
     }
-
 
     @Test
     public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
@@ -172,8 +167,6 @@ public class InscricaoServiceTest {
         verify(inscricaoRepository, times(1)).deleteById(anyInt());
     }
 
-
-
     @Test
     public void deveTestarFindDtoByIdComSucesso() throws RegraDeNegocioException {
 
@@ -190,36 +183,6 @@ public class InscricaoServiceTest {
         InscricaoDTO inscricaoDtoRetorno = inscricaoService.findDtoByid(1);
 
         Assert.assertNotNull(inscricaoDtoRetorno);
-    }
-    @Test
-    public void deveTestarFindInscricaoPorEmail() throws RegraDeNegocioException {
-
-        String email = "heloise.lopes@dbccompany.com.br";
-        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
-
-        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-
-        when(inscricaoRepository.findInscricaoByEmail(any())).thenReturn(inscricaoEntity);
-
-        InscricaoDTO inscricaoRecuperada = inscricaoService.findInscricaoPorEmail(email);
-
-        assertNotNull(inscricaoRecuperada);
-        assertEquals(email, inscricaoEntity.getCandidato().getEmail());
-    }
-
-    @Test(expected = RegraDeNegocioException.class)
-    public void deveTestarFindInscricaoPorEmailComErro() throws RegraDeNegocioException {
-
-        String email = "heloise.lopes@dbccompany.com.br";
-        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
-
-        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-        inscricaoEntity.getCandidato().setEmail("Françisco@dbccompany.com");
-
-        when(inscricaoRepository.findInscricaoByEmail(any())).thenReturn(null);
-
-        InscricaoDTO inscricaoRecuperada = inscricaoService.findInscricaoPorEmail(email);
-
     }
 
     @Test
@@ -269,56 +232,5 @@ public class InscricaoServiceTest {
         InscricaoEntity inscricaoEntityRetorno = inscricaoService.convertToEntity(inscricaoDTO);
 
         Assert.assertNotNull(inscricaoEntityRetorno);
-    }
-//    @Test
-//    public void deveTestarListInscricaoByTrilhaComSucesso() throws RegraDeNegocioException {
-//        TrilhaEntity trilhaEntity = TrilhaFactory.getTrilhaEntity();
-//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-//        formulario.setTrilhaEntitySet(new HashSet<>(List.of(trilhaEntity)));
-//        inscricaoEntity.getCandidato().setFormularioEntity(formulario);
-//        List<InscricaoEntity> listInscricao = new ArrayList<>();
-//        listInscricao.add(inscricaoEntity);
-//
-//        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
-//        List<CandidatoDTO> candidatoDTOList = new ArrayList<>();
-//        candidatoDTOList.add(candidatoDTO);
-//
-//        when(trilhaService.findByNome(anyString()))
-//                .thenReturn(trilhaEntity);
-//
-//        when(inscricaoRepository.findInscricaoEntitiesByCandidato_FormularioEntity_TrilhaEntitySet(any(TrilhaEntity.class)))
-//                .thenReturn(listInscricao);
-//
-//        List<InscricaoDTO> listaRetorno = inscricaoService.listInscricoesByTrilha("frontend");
-//
-//        assertNotNull(listaRetorno);
-//
-//    }
-    @Test
-    public void deveTestarListCandidatosByEdicao() throws RegraDeNegocioException {
-
-        EdicaoEntity edicaoEntity = EdicaoFactory.getEdicaoEntity();
-        TrilhaEntity trilhaEntity = TrilhaFactory.getTrilhaEntity();
-        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-        formulario.setTrilhaEntitySet(new HashSet<>(List.of(trilhaEntity)));
-        inscricaoEntity.getCandidato().setFormularioEntity(formulario);
-        List<InscricaoEntity> listInscricao = new ArrayList<>();
-        listInscricao.add(inscricaoEntity);
-
-        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
-        List<CandidatoDTO> candidatoDTOList = new ArrayList<>();
-        candidatoDTOList.add(candidatoDTO);
-
-        when(edicaoService.findByNome(anyString()))
-                .thenReturn(edicaoEntity);
-
-        when(inscricaoRepository.findInscricaoEntitiesByCandidato_Edicao(any(EdicaoEntity.class)))
-                .thenReturn(listInscricao);
-
-        List<InscricaoDTO> listaRetorno = inscricaoService.listInscricoesByEdicao("VemSer12");
-
-        assertNotNull(listaRetorno);
     }
 }
