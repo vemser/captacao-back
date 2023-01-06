@@ -93,14 +93,11 @@ public class InscricaoServiceTest {
 
         when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDto);
 
-        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt()))
-                .thenReturn(Optional.empty());
 
-        when(candidatoService.findDtoById(any()))
-                .thenReturn(candidatoDto);
 
-        when(candidatoService.convertToEntity(any(CandidatoCreateDTO.class)))
-                .thenReturn(candidatoEntity);
+
+
+
 
         inscricaoService.create(inscricaoCreateDTO.getIdCandidato());
 
@@ -152,9 +149,7 @@ public class InscricaoServiceTest {
         Sort odernacao = Sort.by(sort).descending();
         PageImpl<InscricaoEntity> inscricaoEntities = new PageImpl<>(List.of(InscricaoFactory.getInscricaoEntity()),
                 PageRequest.of(pagina, tamanho, odernacao), 0);
-
-        when(inscricaoRepository.findAll(any(Pageable.class))).thenReturn(inscricaoEntities);
-        when(candidatoService.converterEmDTO(any())).thenReturn(CandidatoFactory.getCandidatoDTO());
+        
 
         PageDTO<InscricaoDTO> page = inscricaoService.listar(-1, -1, sort, order);
 
