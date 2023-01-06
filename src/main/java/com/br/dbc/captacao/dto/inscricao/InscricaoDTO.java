@@ -15,7 +15,7 @@ public class InscricaoDTO {
 
     private LocalDate dataInscricao;
 
-    private TipoMarcacao avaliacao;
+    private TipoMarcacao avaliado;
 
 
 }

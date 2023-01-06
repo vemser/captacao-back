@@ -1,17 +1,17 @@
 package com.br.dbc.captacao.service;
 
 
-import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
-import com.br.dbc.captacao.dto.inscricao.InscricaoCreateDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
-import com.br.dbc.captacao.entity.*;
-import com.br.dbc.captacao.enums.TipoEmail;
+import com.br.dbc.captacao.entity.EdicaoEntity;
+import com.br.dbc.captacao.entity.InscricaoEntity;
+import com.br.dbc.captacao.entity.LinguagemEntity;
+import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -74,11 +74,17 @@ public class InscricaoService {
     }
 
     public InscricaoDTO findInscricaoPorEmail(String email) throws RegraDeNegocioException {
-        InscricaoEntity inscricaoEntity = inscricaoRepository.findInscricaoEntitiesByCandidato_Email(email);
+        InscricaoEntity inscricaoEntity = inscricaoRepository.findInscricaoByEmail(email);
+
         if(inscricaoEntity == null){
             throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
         }
-        return converterParaDTO(inscricaoEntity);
+
+        InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
+        CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
+        inscricaoDTO.setCandidato(candidatoDTO);
+        inscricaoDTO.setAvaliado(inscricaoEntity.getAvaliado());
+        return inscricaoDTO;
     }
 
     public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
@@ -155,7 +161,7 @@ public class InscricaoService {
         inscricaoDto.setCandidato(candidatoService.converterEmDTO(inscricaoEntity.getCandidato()));
         inscricaoDto.getCandidato().setFormulario(objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class));
 
-        inscricaoDto.setAvaliacao(inscricaoEntity.getAvaliado() == TipoMarcacao.T ? TipoMarcacao.T : TipoMarcacao.F);
+        inscricaoDto.setAvaliado(inscricaoEntity.getAvaliado() == TipoMarcacao.T ? TipoMarcacao.T : TipoMarcacao.F);
 
         return inscricaoDto;
     }
@@ -226,7 +232,7 @@ public class InscricaoService {
                     candidatoDTO.setLinguagens(linguagemDTOArrayList);
 
                     inscricaoDTO.setCandidato(candidatoDTO);
-                    inscricaoDTO.setAvaliacao(inscricaoEntity.getAvaliado());
+                    inscricaoDTO.setAvaliado(inscricaoEntity.getAvaliado());
                     return inscricaoDTO;
                 })
                 .toList();
