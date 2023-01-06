@@ -25,9 +25,9 @@ public class AvaliacaoController implements AvaliacaoControllerInterface {
     private final AvaliacaoService avaliacaoService;
 
     @PostMapping
-    public ResponseEntity<AvaliacaoDTO> create(@RequestBody AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
+    public ResponseEntity<AvaliacaoDTO> create(@RequestBody AvaliacaoCreateDTO avaliacaoCreateDto, @RequestParam String token) throws RegraDeNegocioException {
 
-        AvaliacaoDTO avaliacaoDto = avaliacaoService.create(avaliacaoCreateDto);
+        AvaliacaoDTO avaliacaoDto = avaliacaoService.create(avaliacaoCreateDto, token);
 
         return new ResponseEntity<>(avaliacaoDto, HttpStatus.OK);
     }

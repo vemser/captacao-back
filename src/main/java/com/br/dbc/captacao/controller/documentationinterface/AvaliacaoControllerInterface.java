@@ -22,7 +22,7 @@ public interface AvaliacaoControllerInterface {
             }
     )
     @PostMapping
-    public ResponseEntity<AvaliacaoDTO> create(@RequestBody AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException;
+    public ResponseEntity<AvaliacaoDTO> create(@RequestBody AvaliacaoCreateDTO avaliacaoCreateDto, @RequestParam String token) throws RegraDeNegocioException;
 
 
     @Operation(summary = "Listar todas Avaliações", description = "Retorna uma lista com todas avaliações")

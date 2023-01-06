@@ -1,3 +1,4 @@
+
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.candidato.*;
@@ -18,14 +19,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,8 +33,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.internal.util.MockUtil.createMock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CandidatoServiceTest {
@@ -75,6 +74,9 @@ public class CandidatoServiceTest {
         EdicaoEntity edicaoEntity = EdicaoFactory.getEdicaoEntity();
         FormularioDTO formularioDTO = FormularioFactory.getFormularioDto();
         LinguagemEntity linguagemEntity = LinguagemFactory.getLinguagemEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
 
         when(candidatoRepository.findByEmail(anyString()))
                 .thenReturn(Optional.empty());
@@ -86,7 +88,7 @@ public class CandidatoServiceTest {
                 .thenReturn(edicaoEntity);
 
         when(candidatoRepository.save(any(CandidatoEntity.class)))
-                .thenReturn(CandidatoFactory.getCandidatoEntity());
+                .thenReturn(candidatoEntity);
 
         CandidatoDTO candidatoDTO = candidatoService.create(candidatoCreateDTO);
 
@@ -125,8 +127,11 @@ public class CandidatoServiceTest {
         String sort = "idCandidato";
         Integer orderDescendente = 1;
         Sort ordenacao = Sort.by(sort).descending();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
 
-        PageImpl<CandidatoEntity> candidatoEntities = new PageImpl<>(List.of(CandidatoFactory.getCandidatoEntity()),
+        PageImpl<CandidatoEntity> candidatoEntities = new PageImpl<>(List.of(candidatoEntity),
                 PageRequest.of(pagina, tamanho, ordenacao), 0);
 
         when(candidatoRepository.findAll(any(Pageable.class)))
@@ -159,8 +164,11 @@ public class CandidatoServiceTest {
         String sort = "idCandidato";
         Integer orderDescendente = 1;
         Sort ordenacao = Sort.by(sort).descending();
+        CandidatoEntity candidato = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidato.setFormularioEntity(formulario);
 
-        PageImpl<CandidatoEntity> candidatoEntities = new PageImpl<>(List.of(CandidatoFactory.getCandidatoEntity()),
+        PageImpl<CandidatoEntity> candidatoEntities = new PageImpl<>(List.of(candidato),
                 PageRequest.of(pagina, tamanho, ordenacao), 0);
 
         candidatoEntities.stream()
@@ -204,6 +212,8 @@ public class CandidatoServiceTest {
     @Test
     public void deveTestarUpdateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
         CandidatoCreateDTO candidatoCreateDTO = CandidatoFactory.getCandidatoCreateDTO();
         EdicaoEntity edicaoEntity = EdicaoFactory.getEdicaoEntity();
 
@@ -237,6 +247,8 @@ public class CandidatoServiceTest {
     @Test
     public void deveTestarUpdateTecnicoComSucesso() throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
         CandidatoTecnicoNotaDTO candidatoTecnicoNotaDTO = new CandidatoTecnicoNotaDTO();
         candidatoTecnicoNotaDTO.setNotaTecnico(80.0);
         candidatoTecnicoNotaDTO.setParecerTecnico("observacao");
@@ -258,6 +270,8 @@ public class CandidatoServiceTest {
         candidatoEntity.setNotaProva(80.0);
         candidatoEntity.setNotaEntrevistaTecnica(90.0);
         candidatoEntity.setNotaEntrevistaComportamental(70.0);
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
 
         when(candidatoRepository.findById(anyInt()))
                 .thenReturn(Optional.of(candidatoEntity));
@@ -274,6 +288,8 @@ public class CandidatoServiceTest {
     @Test
     public void deveTestarUpdateNota() throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
         CandidatoNotaDTO candidatoNotaDTO = new CandidatoNotaDTO();
         candidatoNotaDTO.setNotaProva(80.0);
 
@@ -291,6 +307,8 @@ public class CandidatoServiceTest {
     @Test
     public void deveTestarUpdateComportamental() throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
         CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO = new CandidatoNotaComportamentalDTO();
         candidatoNotaComportamentalDTO.setParecerComportamental("observacoes");
         candidatoNotaComportamentalDTO.setNotaComportamental(80.0);
@@ -309,6 +327,8 @@ public class CandidatoServiceTest {
     @Test
     public void deveTestarFindDtoByIdComSucesso() throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
 
         when(candidatoRepository.findById(anyInt()))
                 .thenReturn(Optional.of(candidatoEntity));
@@ -321,6 +341,8 @@ public class CandidatoServiceTest {
     @Test
     public void deveTestarFindByEmailComSucesso() throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
 
         when(candidatoRepository.findByEmail(anyString()))
                 .thenReturn(Optional.of(candidatoEntity));
@@ -333,6 +355,8 @@ public class CandidatoServiceTest {
     @Test
     public void deveTestarFindCandidatoDtoByEmailComSucesso() throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        candidatoEntity.setFormularioEntity(formulario);
 
         when(candidatoRepository.findCandidatoEntitiesByEmail(anyString()))
                 .thenReturn(candidatoEntity);
@@ -426,7 +450,7 @@ public class CandidatoServiceTest {
 
         BufferedWriter writer = mock(BufferedWriter.class);
         OutputStreamWriter streamWriter = mock(OutputStreamWriter.class);
-        FileOutputStream fileOutputStream=mock(FileOutputStream.class);
+        FileOutputStream fileOutputStream = mock(FileOutputStream.class);
 
         when(candidatoRepository.findAll())
                 .thenReturn(candidatoEntityList);
@@ -448,7 +472,7 @@ public class CandidatoServiceTest {
         when(candidatoRepository.findByNota(any(PageRequest.class)))
                 .thenReturn(page);
 
-        PageDTO<CandidatoDTO> listCandidatoPage = candidatoService.listCandidatosByNota(0,1);
+        PageDTO<CandidatoDTO> listCandidatoPage = candidatoService.listCandidatosByNota(0, 1);
 
         assertNotNull(listCandidatoPage);
     }

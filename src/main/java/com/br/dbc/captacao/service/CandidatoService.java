@@ -5,6 +5,8 @@ import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoCadastroDTO;
+import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoMarcacao;
@@ -22,7 +24,6 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,15 +83,8 @@ public class CandidatoService {
         Page<CandidatoEntity> paginaCandidatoEntity = candidatoRepository.findAll(pageRequest);
 
         List<CandidatoDTO> candidatoDtos = paginaCandidatoEntity.getContent().stream()
-                .map(candidatoEntity -> {
-                    CandidatoDTO candidatoDto = converterEmDTO(candidatoEntity);
-                    if (candidatoEntity.getImageEntity() != null) {
-                        candidatoDto.setImagem(candidatoEntity.getImageEntity().getIdImagem());
-                    }
-                    candidatoDto.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
-                    candidatoDto.setIdCandidato(candidatoEntity.getIdCandidato());
-                    return candidatoDto;
-                }).toList();
+                .map(candidatoEntity -> converterEmDTO(candidatoEntity))
+                .toList();
 
         return new PageDTO<>(paginaCandidatoEntity.getTotalElements(),
                 paginaCandidatoEntity.getTotalPages(),
@@ -230,59 +224,60 @@ public class CandidatoService {
         }
     }
 
-//    public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao) throws RegraDeNegocioException {
-//        Sort ordenacao = Sort.by("notaProva");
-//        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-//        Page<RelatorioCandidatoPaginaPrincipalDTO> candidatoEntityPage =
-//                candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(
-//                        nomeCompleto,
-//                        nomeTrilha,
-//                        nomeEdicao,
-//                        pageRequest);
-//        if (candidatoEntityPage.isEmpty()) {
-//            throw new RegraDeNegocioException("Candidato com dados especificados não existe");
-//        }
-//        List<RelatorioCandidatoCadastroDTO> relatorioCandidatoCadastroDTOPage = candidatoEntityPage
-//                .stream()
-//                .map(relatorioCandidatoPaginaPrincipalDTO ->
-//                        objectMapper.convertValue(relatorioCandidatoPaginaPrincipalDTO, RelatorioCandidatoCadastroDTO.class))
-//                .toList();
-//        for (RelatorioCandidatoCadastroDTO candidato : relatorioCandidatoCadastroDTOPage) {
-//            CandidatoEntity candidatoEntity = findByEmailEntity(candidato.getEmail());
-//            List<String> linguagemList = candidatoEntity.getLinguagens()
-//                    .stream()
-//                    .map(LinguagemEntity::getNome)
-//                    .toList();
-//            candidato.setLinguagemList(linguagemList);
-//            candidato.setEdicao(candidatoEntity.getEdicao().getNome());
-//            candidato.setCidade(candidatoEntity.getCidade());
-//            candidato.setEstado(candidatoEntity.getEstado());
-//            candidato.setObservacoes(candidatoEntity.getObservacoes());
-//            if (candidatoEntity.getFormularioEntity().getCurriculoEntity() == null) {
-//                throw new RegraDeNegocioException("O candidato com o email " + candidatoEntity.getEmail() + " não possui currículo cadastrado!");
-//            }
-//            candidato.setDado(candidatoEntity.getFormularioEntity().getCurriculoEntity().getData());
-//        }
-//        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
-//                candidatoEntityPage.getTotalPages(),
-//                pagina,
-//                tamanho,
-//                relatorioCandidatoCadastroDTOPage);
-//    }
+    public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
+        Sort ordenacao = Sort.by("notaProva");
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+        Page<RelatorioCandidatoPaginaPrincipalDTO> candidatoEntityPage =
+                candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(
+                        nomeCompleto,
+                        nomeTrilha,
+                        nomeEdicao,
+                        pageRequest,
+                        emailCandidato);
+        if (candidatoEntityPage.isEmpty()) {
+            throw new RegraDeNegocioException("Candidato com dados especificados não existe");
+        }
+        List<RelatorioCandidatoCadastroDTO> relatorioCandidatoCadastroDTOPage = candidatoEntityPage
+                .stream()
+                .map(relatorioCandidatoPaginaPrincipalDTO ->
+                        objectMapper.convertValue(relatorioCandidatoPaginaPrincipalDTO, RelatorioCandidatoCadastroDTO.class))
+                .toList();
+        for (RelatorioCandidatoCadastroDTO candidato : relatorioCandidatoCadastroDTOPage) {
+            CandidatoEntity candidatoEntity = findByEmailEntity(candidato.getEmail());
+            List<String> linguagemList = candidatoEntity.getLinguagens()
+                    .stream()
+                    .map(LinguagemEntity::getNome)
+                    .toList();
+            candidato.setLinguagemList(linguagemList);
+            candidato.setEdicao(candidatoEntity.getEdicao().getNome());
+            candidato.setCidade(candidatoEntity.getCidade());
+            candidato.setEstado(candidatoEntity.getEstado());
+            candidato.setObservacoes(candidatoEntity.getObservacoes());
+            if (candidatoEntity.getFormularioEntity().getCurriculoEntity() == null) {
+                throw new RegraDeNegocioException("O candidato com o email " + candidatoEntity.getEmail() + " não possui currículo cadastrado!");
+            }
+            candidato.setDado(candidatoEntity.getFormularioEntity().getCurriculoEntity().getData());
+        }
+        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
+                candidatoEntityPage.getTotalPages(),
+                pagina,
+                tamanho,
+                relatorioCandidatoCadastroDTOPage);
+    }
 
-//    public PageDTO<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao) throws RegraDeNegocioException {
-//        Sort ordenacao = Sort.by("notaProva");
-//        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-//        Page<RelatorioCandidatoPaginaPrincipalDTO> candidatoEntityPage = candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nomeCompleto, nomeTrilha, nomeEdicao, pageRequest);
-//        if (candidatoEntityPage.isEmpty()) {
-//            throw new RegraDeNegocioException("Candidato com dados especificados não existe");
-//        }
-//        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
-//                candidatoEntityPage.getTotalPages(),
-//                pagina,
-//                tamanho,
-//                candidatoEntityPage.toList());
-//    }
+    public PageDTO<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
+        Sort ordenacao = Sort.by("notaProva");
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
+        Page<RelatorioCandidatoPaginaPrincipalDTO> candidatoEntityPage = candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nomeCompleto, nomeTrilha, nomeEdicao, pageRequest, emailCandidato);
+        if (candidatoEntityPage.isEmpty()) {
+            throw new RegraDeNegocioException("Candidato com dados especificados não existe");
+        }
+        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
+                candidatoEntityPage.getTotalPages(),
+                pagina,
+                tamanho,
+                candidatoEntityPage.toList());
+    }
 
     public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocio404Exception {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
@@ -304,6 +299,35 @@ public class CandidatoService {
 
     public CandidatoDTO converterEmDTO(CandidatoEntity candidatoEntity) {
         CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
+
+        if (candidatoEntity.getImageEntity() != null) {
+            candidatoDTO.setImagem(candidatoEntity.getImageEntity().getIdImagem());
+        }
+        candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
+        if (candidatoEntity.getFormularioEntity().getCurriculoEntity() != null) {
+            candidatoDTO.getFormulario().setCurriculo(candidatoEntity.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
+        }
+        List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
+        for (TrilhaEntity trilha : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
+            trilhaDTOList.add(objectMapper.convertValue(trilha, TrilhaDTO.class));
+        }
+        candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
+        if (candidatoEntity.getFormularioEntity().getImagemConfigPc() != null) {
+            candidatoDTO.getFormulario().setImagemConfigPc(candidatoEntity.getFormularioEntity().getImagemConfigPc().getIdImagem());
+        }
+        if (candidatoEntity.getObservacoes() != null) {
+            candidatoDTO.setObservacoes(candidatoEntity.getObservacoes());
+        }
+        if (candidatoEntity.getParecerComportamental() != null) {
+            candidatoDTO.setParecerComportamental(candidatoEntity.getParecerComportamental());
+        }
+        if (candidatoEntity.getParecerTecnico() != null) {
+            candidatoDTO.setParecerTecnico(candidatoEntity.getParecerTecnico());
+        }
+        if (candidatoEntity.getMedia() != null) {
+            candidatoDTO.setMedia(candidatoEntity.getMedia());
+        }
+        candidatoDTO.setIdCandidato(candidatoEntity.getIdCandidato());
         candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
         candidatoDTO.setLinguagens(candidatoEntity.getLinguagens()
                 .stream()
@@ -376,7 +400,7 @@ public class CandidatoService {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, orderBy);
         Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByNota(pageRequest);
         List<CandidatoDTO> candidatoDTOList = paginaDoRepositorio.getContent().stream()
-                .map(candidato -> objectMapper.convertValue(candidato, CandidatoDTO.class))
+                .map(candidato -> converterEmDTO(candidato))
                 .toList();
         return new PageDTO<>(paginaDoRepositorio.getTotalElements(),
                 paginaDoRepositorio.getTotalPages(),
