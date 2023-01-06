@@ -24,7 +24,6 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,38 +83,8 @@ public class CandidatoService {
         Page<CandidatoEntity> paginaCandidatoEntity = candidatoRepository.findAll(pageRequest);
 
         List<CandidatoDTO> candidatoDtos = paginaCandidatoEntity.getContent().stream()
-                .map(candidatoEntity ->
-                    converterEmDTO(candidatoEntity)
-//                    if (candidatoEntity.getImageEntity() != null) {
-//                        candidatoDto.setImagem(candidatoEntity.getImageEntity().getIdImagem());
-//                    }
-//                    candidatoDto.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
-//                    if(candidatoEntity.getFormularioEntity().getCurriculoEntity() != null){
-//                        candidatoDto.getFormulario().setCurriculo(candidatoEntity.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
-//                    }
-//                    List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
-//                    for (TrilhaEntity trilha: candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
-//                        trilhaDTOList.add(objectMapper.convertValue(trilha, TrilhaDTO.class));
-//                    }
-//                    candidatoDto.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
-//                    if (candidatoEntity.getFormularioEntity().getImagemConfigPc() != null){
-//                        candidatoDto.getFormulario().setImagemConfigPc(candidatoEntity.getFormularioEntity().getImagemConfigPc().getIdImagem());
-//                    }
-//                    if (candidatoEntity.getObservacoes() != null){
-//                        candidatoDto.setObservacoes(candidatoEntity.getObservacoes());
-//                    }
-//                    if(candidatoEntity.getParecerComportamental() != null){
-//                        candidatoDto.setParecerComportamental(candidatoEntity.getParecerComportamental());
-//                    }
-//                    if(candidatoEntity.getParecerTecnico() != null){
-//                        candidatoDto.setParecerTecnico(candidatoEntity.getParecerTecnico());
-//                    }
-//                    if(candidatoEntity.getMedia() != null){
-//                        candidatoDto.setMedia(candidatoEntity.getMedia());
-//                    }
-//                    candidatoDto.setIdCandidato(candidatoEntity.getIdCandidato());
-//                    return candidatoDto;
-                ).toList();
+                .map(candidatoEntity -> converterEmDTO(candidatoEntity))
+                .toList();
 
         return new PageDTO<>(paginaCandidatoEntity.getTotalElements(),
                 paginaCandidatoEntity.getTotalPages(),
@@ -335,27 +304,27 @@ public class CandidatoService {
             candidatoDTO.setImagem(candidatoEntity.getImageEntity().getIdImagem());
         }
         candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
-        if(candidatoEntity.getFormularioEntity().getCurriculoEntity() != null){
+        if (candidatoEntity.getFormularioEntity().getCurriculoEntity() != null) {
             candidatoDTO.getFormulario().setCurriculo(candidatoEntity.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
         }
         List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
-        for (TrilhaEntity trilha: candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
+        for (TrilhaEntity trilha : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
             trilhaDTOList.add(objectMapper.convertValue(trilha, TrilhaDTO.class));
         }
         candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
-        if (candidatoEntity.getFormularioEntity().getImagemConfigPc() != null){
+        if (candidatoEntity.getFormularioEntity().getImagemConfigPc() != null) {
             candidatoDTO.getFormulario().setImagemConfigPc(candidatoEntity.getFormularioEntity().getImagemConfigPc().getIdImagem());
         }
-        if (candidatoEntity.getObservacoes() != null){
+        if (candidatoEntity.getObservacoes() != null) {
             candidatoDTO.setObservacoes(candidatoEntity.getObservacoes());
         }
-        if(candidatoEntity.getParecerComportamental() != null){
+        if (candidatoEntity.getParecerComportamental() != null) {
             candidatoDTO.setParecerComportamental(candidatoEntity.getParecerComportamental());
         }
-        if(candidatoEntity.getParecerTecnico() != null){
+        if (candidatoEntity.getParecerTecnico() != null) {
             candidatoDTO.setParecerTecnico(candidatoEntity.getParecerTecnico());
         }
-        if(candidatoEntity.getMedia() != null){
+        if (candidatoEntity.getMedia() != null) {
             candidatoDTO.setMedia(candidatoEntity.getMedia());
         }
         candidatoDTO.setIdCandidato(candidatoEntity.getIdCandidato());
