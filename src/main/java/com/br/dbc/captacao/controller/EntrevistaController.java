@@ -8,7 +8,6 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.EntrevistaService;
-import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,11 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
 import javax.validation.Valid;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @Validated
@@ -31,6 +26,13 @@ public class EntrevistaController implements EntrevistaControllerInterface {
 
     private final EntrevistaService entrevistaService;
 
+    @PutMapping("/atualizar-observacao-entrevista/{idEntrevista}")
+    public ResponseEntity<Void> atualizarEntrevista(@PathVariable ("idEntrevista") Integer id,
+                                                    String observacao) throws RegraDeNegocioException {
+        entrevistaService.atualizarObservacaoEntrevista(id, observacao);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/atualizar-entrevista/{idEntrevista}")
     public ResponseEntity<EntrevistaDTO> updateEntrevista(@Valid @RequestBody EntrevistaAtualizacaoDTO entrevistaCreateDTO,
                                                           @PathVariable("idEntrevista") Integer id,
@@ -39,19 +41,13 @@ public class EntrevistaController implements EntrevistaControllerInterface {
     }
 
     @PostMapping("/marcar-entrevista")
-    public ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO) throws RegraDeNegocioException, MessagingException, TemplateException, IOException {
+    public ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO) throws RegraDeNegocioException {
         return new ResponseEntity<>(entrevistaService.createEntrevista(entrevistaCreateDTO), HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{idEntrevista}")
-    public ResponseEntity<Void> deletarEntrevista(@PathVariable("idEntrevista") Integer id) throws RegraDeNegocioException {
-        entrevistaService.deletarEntrevista(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<PageDTO<EntrevistaDTO>> list(@RequestParam(defaultValue = "0") Integer pagina,
-                                                            @RequestParam(defaultValue = "20") Integer tamanho) throws RegraDeNegocioException {
+                                                       @RequestParam(defaultValue = "20") Integer tamanho) throws RegraDeNegocioException {
         return new ResponseEntity<>(entrevistaService.list(pagina, tamanho), HttpStatus.OK);
     }
 
@@ -63,10 +59,9 @@ public class EntrevistaController implements EntrevistaControllerInterface {
         return new ResponseEntity<>(entrevistaService.listMes(pagina, tamanho, mes, ano), HttpStatus.OK);
     }
 
-    @PutMapping("/atualizar-observacao-entrevista/{idEntrevista}")
-    public ResponseEntity<Void> atualizarEntrevista(@PathVariable ("idEntrevista") Integer id,
-                                                     String observacao) throws RegraDeNegocioException {
-        entrevistaService.atualizarObservacaoEntrevista(id, observacao);
+    @GetMapping("/exportar-entrevista-para-csv")
+    public ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException {
+        entrevistaService.exportarEntrevistaCSV();
         return ResponseEntity.noContent().build();
     }
 
@@ -75,14 +70,14 @@ public class EntrevistaController implements EntrevistaControllerInterface {
         return new ResponseEntity<>(entrevistaService.buscarPorEmailCandidato(email), HttpStatus.OK);
     }
 
-    @GetMapping("/exportar-entrevista-para-csv")
-    public ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException, FileNotFoundException, UnsupportedEncodingException {
-        entrevistaService.exportarEntrevistaCSV();
+    @DeleteMapping("/{idEntrevista}")
+    public ResponseEntity<Void> deletarEntrevista(@PathVariable("idEntrevista") Integer id) throws RegraDeNegocioException {
+        entrevistaService.deletarEntrevista(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/deletar-entrevista-email-candidato/{email}")
-    public ResponseEntity<Void> deletarEntrevistaEmailCandidato(@PathVariable ("email") String email) throws RegraDeNegocioException{
+    public ResponseEntity<Void> deletarEntrevistaEmailCandidato(@PathVariable ("email") String email) throws RegraDeNegocioException {
         entrevistaService.deletarEntrevistaEmail(email);
         return ResponseEntity.noContent().build();
     }

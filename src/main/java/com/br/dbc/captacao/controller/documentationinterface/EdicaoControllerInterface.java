@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 public interface EdicaoControllerInterface {
     @Operation(summary = "Deleta a edição no sistema", description = "Deleta a edição no sistema")
@@ -37,5 +38,14 @@ public interface EdicaoControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    public ResponseEntity<String> retornarEdicaoAtual() throws RegraDeNegocioException;
+    ResponseEntity<String> retornarEdicaoAtual() throws RegraDeNegocioException;
+
+    @Operation(summary = "Listar edições", description = "Lista todas as edições cadastradas")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Edições listadas com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @GetMapping
+    ResponseEntity<List<EdicaoDTO>> list();
 }

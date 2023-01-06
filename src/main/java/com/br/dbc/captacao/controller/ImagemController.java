@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.controller;
 
+import com.br.dbc.captacao.controller.documentationinterface.ImagemControllerInterface;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.ImagemService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/imagem")
-public class ImagemController {
+public class ImagemController implements ImagemControllerInterface {
 
     private final ImagemService imagemService;
 
