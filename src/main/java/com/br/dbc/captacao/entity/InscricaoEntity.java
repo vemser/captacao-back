@@ -2,12 +2,12 @@ package com.br.dbc.captacao.entity;
 
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Getter
@@ -22,6 +22,9 @@ public class InscricaoEntity {
     @SequenceGenerator(name = "SEQ_INSCRICAO", sequenceName = "SEQ_INSCRICAO", allocationSize = 1)
     @Column(name = "ID_INSCRICAO")
     private Integer idInscricao;
+
+    @Column(name = "ID_CANDIDATO", insertable = false, updatable = false)
+    private Integer idCandidato;
 
     @Column(name = "DATA_INSCRICAO")
     private LocalDate dataInscricao;

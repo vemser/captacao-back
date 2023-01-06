@@ -13,7 +13,7 @@ public class InscricaoFactory {
         InscricaoDTO inscricaoDTO = new InscricaoDTO();
         inscricaoDTO.setIdInscricao(1);
         inscricaoDTO.setDataInscricao(LocalDate.now());
-        inscricaoDTO.setAvaliacao(AvaliacaoFactory.getAvaliacaoEntityAprovado().getAprovado());
+        inscricaoDTO.setAvaliado(AvaliacaoFactory.getAvaliacaoEntityAprovado().getAprovado());
         inscricaoDTO.setCandidato(CandidatoFactory.getCandidatoDTO());
         return inscricaoDTO;
     }

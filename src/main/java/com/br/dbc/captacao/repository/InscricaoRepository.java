@@ -1,13 +1,9 @@
 package com.br.dbc.captacao.repository;
 
 
-import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.entity.EdicaoEntity;
-import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,7 +16,11 @@ public interface InscricaoRepository extends JpaRepository<InscricaoEntity, Inte
 
     Optional<InscricaoEntity> findInscricaoEntitiesByCandidato_IdCandidato(Integer idCandidato);
 
-    InscricaoEntity findInscricaoEntitiesByCandidato_Email(String email);
+    @Query("SELECT i FROM INSCRICAO i " +
+            " INNER JOIN CANDIDATO c " +
+            " ON UPPER(c.email) = UPPER(:email) AND " +
+            " i.idCandidato = c.idCandidato ")
+    InscricaoEntity findInscricaoByEmail(String email);
 
     List<InscricaoEntity> findInscricaoEntitiesByCandidato_FormularioEntity_TrilhaEntitySet(TrilhaEntity trilhaEntity);
 

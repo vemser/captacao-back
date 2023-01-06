@@ -30,18 +30,20 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth.antMatchers("/", "/auth/**").permitAll()
 
-                        .antMatchers("/formulario/upload-curriculo/**", "/formulario/upload-print-config-pc/**").permitAll()
+                        .antMatchers(HttpMethod.PUT, "/formulario/**").permitAll()
                         .antMatchers(HttpMethod.POST, "/formulario/**").permitAll()
-                        .antMatchers(HttpMethod.PUT, "/fomulario/**").permitAll()
+
                         .antMatchers(HttpMethod.GET, "/formulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.DELETE, "/fomulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers(HttpMethod.POST, "/inscricao/**").permitAll()
+
                         .antMatchers(HttpMethod.GET, "/inscricao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.PUT, "/incricao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.DELETE, "/inscricao").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers(HttpMethod.POST, "/candidato/**").permitAll()
+
                         .antMatchers(HttpMethod.GET, "/candidato/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.PUT, "/candidato/nota-prova/**", "/candidato/nota-parecer-tecnico/**", "/candidato/nota-comportamental/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.PUT, "/candidato/**").hasAnyRole( "GESTAO_DE_PESSOAS", "ADMIN")
@@ -58,6 +60,7 @@ public class SecurityConfiguration {
                         .antMatchers("/avaliacao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers(HttpMethod.GET , "/trilha/**").permitAll()
+
                         .antMatchers("/trilha/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers("/edicao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")

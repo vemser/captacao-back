@@ -8,10 +8,8 @@ import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.factory.AvaliacaoFactory;
-import com.br.dbc.captacao.factory.GestorFactory;
 import com.br.dbc.captacao.factory.InscricaoFactory;
 import com.br.dbc.captacao.repository.AvaliacaoRepository;
-import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -29,12 +27,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.Assert;
-import java.util.*;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static com.br.dbc.captacao.factory.AvaliacaoFactory.getAvaliacaoCreateDto;
+import static com.br.dbc.captacao.factory.AvaliacaoFactory.getAvaliacaoEntityAprovado;
 import static com.br.dbc.captacao.factory.CandidatoFactory.getCandidatoEntity;
 import static com.br.dbc.captacao.factory.CargoFactory.getCargoEntity;
+import static com.br.dbc.captacao.factory.EdicaoFactory.getEdicaoEntity;
 import static com.br.dbc.captacao.factory.FormularioFactory.getFormularioEntity;
 import static com.br.dbc.captacao.factory.GestorFactory.getGestorEntity;
+import static com.br.dbc.captacao.factory.InscricaoFactory.getInscricaoEntity;
 import static com.br.dbc.captacao.factory.TrilhaFactory.getTrilhaEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,18 +59,16 @@ public class AvaliacaoServiceTest {
     private EmailService emailService;
     @Mock
     private GestorService gestorService;
-    @Mock
-    private FormularioService formularioService;
 
-    @Mock
-    private InscricaoRepository inscricaoRepository;
-    @Mock
-    private CargoService cargoService;
-
-    @Mock
-    private CandidatoService candidatoService;
     @Mock
     private AvaliacaoRepository avaliacaoRepository;
+
+    @Mock
+    private TrilhaService trilhaService;
+
+    @Mock
+    private EdicaoService edicaoService;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
@@ -80,21 +83,21 @@ public class AvaliacaoServiceTest {
     public void deveTestarCreateComSucessoAprovado() throws RegraDeNegocioException, RegraDeNegocio404Exception {
         AvaliacaoCreateDTO avaliacaoCreateDTO = AvaliacaoFactory.getAvaliacaoCreateDto();
 
-        AvaliacaoEntity avaliacaoEntity = AvaliacaoFactory.getAvaliacaoEntityAprovado();
-        avaliacaoEntity.setInscricao(InscricaoFactory.getInscricaoEntity());
+        AvaliacaoEntity avaliacaoEntity = getAvaliacaoEntityAprovado();
+        avaliacaoEntity.setInscricao(getInscricaoEntity());
 
         FormularioEntity formularioEntity = getFormularioEntity();
         CandidatoEntity candidatoEntity = getCandidatoEntity();
         candidatoEntity.setFormularioEntity(formularioEntity);
 
-        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        InscricaoEntity inscricaoEntity = getInscricaoEntity();
         inscricaoEntity.setCandidato(candidatoEntity);
 
         when(inscricaoService.findById(anyInt())).thenReturn(inscricaoEntity);
-        when(gestorService.findByEmail(any())).thenReturn(AvaliacaoFactory.getAvaliacaoEntityAprovado().getAvaliador());
+        when(gestorService.findByEmail(any())).thenReturn(getAvaliacaoEntityAprovado().getAvaliador());
         when(avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(anyInt())).thenReturn(null);
         when(inscricaoService.converterParaDTO((any()))).thenReturn(InscricaoFactory.getInscricaoDto());
-        when(avaliacaoRepository.save(any())).thenReturn(AvaliacaoFactory.getAvaliacaoEntityAprovado());
+        when(avaliacaoRepository.save(any())).thenReturn(getAvaliacaoEntityAprovado());
 
         AvaliacaoDTO avaliacaoDtoRetorno = avaliacaoService.create(avaliacaoCreateDTO);
 
@@ -104,16 +107,16 @@ public class AvaliacaoServiceTest {
     }
 
     @Test
-    public void deveTestarFindByDtoComSucesso() throws RegraDeNegocioException{
+    public void deveTestarFindByDtoComSucesso() throws RegraDeNegocioException {
         int id = 1;
-        AvaliacaoEntity avaliacaoEntity = AvaliacaoFactory.getAvaliacaoEntityAprovado();
+        AvaliacaoEntity avaliacaoEntity = getAvaliacaoEntityAprovado();
 
         when(avaliacaoRepository.findById(anyInt()))
                 .thenReturn(Optional.of(avaliacaoEntity));
 
         AvaliacaoDTO avaliacaoDto = avaliacaoService.findDtoById(id);
 
-        assertEquals(id,avaliacaoDto.getIdAvaliacao());
+        assertEquals(id, avaliacaoDto.getIdAvaliacao());
     }
 
     @Test
@@ -124,7 +127,7 @@ public class AvaliacaoServiceTest {
         CandidatoEntity candidatoEntity = getCandidatoEntity();
         candidatoEntity.setFormularioEntity(formularioEntity);
 
-        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        InscricaoEntity inscricaoEntity = getInscricaoEntity();
         inscricaoEntity.setCandidato(candidatoEntity);
 
         CargoEntity cargo = getCargoEntity();
@@ -147,7 +150,7 @@ public class AvaliacaoServiceTest {
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarCreateComException() throws RegraDeNegocioException {
         AvaliacaoCreateDTO avaliacaoCreateDto = AvaliacaoFactory.getAvaliacaoCreateDto();
-        AvaliacaoEntity avaliacaoEntity = AvaliacaoFactory.getAvaliacaoEntityAprovado();
+        AvaliacaoEntity avaliacaoEntity = getAvaliacaoEntityAprovado();
 
         when(avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(anyInt())).thenReturn(avaliacaoEntity);
 
@@ -163,7 +166,7 @@ public class AvaliacaoServiceTest {
         String sort = "idAvaliacao";
         Integer order = 1;//DESCENDING
         Sort odernacao = Sort.by(sort).descending();
-        PageImpl<AvaliacaoEntity> pageImpl = new PageImpl<>(List.of(AvaliacaoFactory.getAvaliacaoEntityAprovado()),
+        PageImpl<AvaliacaoEntity> pageImpl = new PageImpl<>(List.of(getAvaliacaoEntityAprovado()),
                 PageRequest.of(pagina, tamanho, odernacao), 0);
 
         when(avaliacaoRepository.findAll(any(Pageable.class))).thenReturn(pageImpl);
@@ -192,8 +195,8 @@ public class AvaliacaoServiceTest {
 
     @Test
     public void deveTestarUpdateComSucesso() throws RegraDeNegocioException {
-        when(avaliacaoRepository.findById(anyInt())).thenReturn(Optional.of(AvaliacaoFactory.getAvaliacaoEntityAprovado()));
-        when(avaliacaoRepository.save(any())).thenReturn(AvaliacaoFactory.getAvaliacaoEntityAprovado());
+        when(avaliacaoRepository.findById(anyInt())).thenReturn(Optional.of(getAvaliacaoEntityAprovado()));
+        when(avaliacaoRepository.save(any())).thenReturn(getAvaliacaoEntityAprovado());
         when(inscricaoService.converterParaDTO(any())).thenReturn(InscricaoFactory.getInscricaoDto());
         AvaliacaoDTO avaliacaoRetorno = avaliacaoService.update(1, AvaliacaoFactory.getAvaliacaoCreateDto());
 
@@ -202,11 +205,63 @@ public class AvaliacaoServiceTest {
 
     @Test
     public void deveTestarDeleteByIdComSucesso() throws RegraDeNegocioException {
-
-        AvaliacaoEntity avaliacaoEntity = AvaliacaoFactory.getAvaliacaoEntityAprovado();
+        AvaliacaoEntity avaliacaoEntity = getAvaliacaoEntityAprovado();
 
         when(avaliacaoRepository.findById(anyInt())).thenReturn(Optional.of(avaliacaoEntity));
 
         avaliacaoService.deleteById(10);
+    }
+
+    @Test
+    public void deveListarAvaliacaoPorTrilha() throws RegraDeNegocioException {
+        final String trilhaNome = "BACKEND";
+        TrilhaEntity trilha = getTrilhaEntity();
+
+        FormularioEntity formularioEntity = getFormularioEntity();
+        CandidatoEntity candidatoEntity = getCandidatoEntity();
+        candidatoEntity.setFormularioEntity(formularioEntity);
+        InscricaoEntity inscricaoEntity = getInscricaoEntity();
+        inscricaoEntity.setCandidato(candidatoEntity);
+        AvaliacaoEntity avaliacaoEntity = getAvaliacaoEntityAprovado();
+        avaliacaoEntity.setInscricao(inscricaoEntity);
+
+        when(trilhaService.findByNome(anyString())).thenReturn(trilha);
+        when(avaliacaoRepository.findAvaliacaoEntitiesByInscricao_Candidato_FormularioEntity_TrilhaEntitySet(trilha))
+                .thenReturn(List.of(avaliacaoEntity));
+        List<AvaliacaoDTO> list = avaliacaoService.listByTrilha(trilhaNome);
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    public void deveListarAvaliacaoPorEdicao() throws RegraDeNegocioException {
+        final String edicaoNome = "Edição 10";
+        EdicaoEntity edicaoEntity = getEdicaoEntity();
+
+        FormularioEntity formularioEntity = getFormularioEntity();
+        CandidatoEntity candidatoEntity = getCandidatoEntity();
+        candidatoEntity.setFormularioEntity(formularioEntity);
+        InscricaoEntity inscricaoEntity = getInscricaoEntity();
+        inscricaoEntity.setCandidato(candidatoEntity);
+        AvaliacaoEntity avaliacaoEntity = getAvaliacaoEntityAprovado();
+        avaliacaoEntity.setInscricao(inscricaoEntity);
+
+        when(edicaoService.findByNome(anyString())).thenReturn(edicaoEntity);
+        when(avaliacaoRepository.findAvaliacaoEntitiesByInscricao_Candidato_Edicao(edicaoEntity))
+                .thenReturn(List.of(avaliacaoEntity));
+        List<AvaliacaoDTO> list = avaliacaoService.listByEdicao(edicaoNome);
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    public void deveConverterAvaliacaoDTOParaEntity() throws RegraDeNegocio404Exception, RegraDeNegocioException {
+        AvaliacaoCreateDTO avaliacaoCreateDTO = getAvaliacaoCreateDto();
+
+        AvaliacaoEntity avaliacaoEntity = avaliacaoService.convertToEntity(avaliacaoCreateDTO);
+
+        assertEquals(TipoMarcacao.T, avaliacaoEntity.getAprovado());
     }
 }
