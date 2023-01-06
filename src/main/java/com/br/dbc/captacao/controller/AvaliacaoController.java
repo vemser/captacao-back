@@ -3,6 +3,7 @@ package com.br.dbc.captacao.controller;
 import com.br.dbc.captacao.controller.documentationinterface.AvaliacaoControllerInterface;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
+import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.AvaliacaoService;
@@ -76,5 +77,15 @@ public class AvaliacaoController implements AvaliacaoControllerInterface {
         List<AvaliacaoDTO> listByEdicao = avaliacaoService.listByEdicao(edicao);
 
         return new ResponseEntity<>(listByEdicao, HttpStatus.OK);
+    }
+
+    @GetMapping("/filtro-avaliacao")
+    public ResponseEntity<PageDTO<AvaliacaoDTO>> filtroAvaliacao(@RequestParam Integer pagina,
+                                                                 @RequestParam Integer tamanho,
+                                                                 @RequestParam (required = false) String email,
+                                                                 @RequestParam (required = false) String edicao,
+                                                                 @RequestParam (required = false) String trilha) throws RegraDeNegocioException {
+        PageDTO<AvaliacaoDTO> filtroAvaliacaoList = avaliacaoService.filtroAvaliacao(pagina, tamanho, email, edicao, trilha);
+        return new ResponseEntity<>(filtroAvaliacaoList, HttpStatus.OK);
     }
 }

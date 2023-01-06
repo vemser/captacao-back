@@ -300,5 +300,29 @@ public class AvaliacaoService {
         return avaliacaoDTOListByEdicao;
     }
 
+    public PageDTO<AvaliacaoDTO> filtroAvaliacao(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException{
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
+
+        Page<AvaliacaoEntity> avaliacaoEntityPage = avaliacaoRepository.filtrarAvaliacoes(pageRequest, email, edicao, trilha);
+
+        List<AvaliacaoDTO> avaliacaoDTOS = avaliacaoEntityPage.stream()
+                .map(avaliacaoEntity -> {
+                    AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao(), InscricaoDTO.class);
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato(), CandidatoDTO.class);
+                    inscricaoDTO.setCandidato(candidatoDTO);
+                    avaliacaoDTO.setInscricao(inscricaoDTO);
+                    avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
+                    avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
+                    avaliacaoDTO.setAvaliador(objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class));
+                    return avaliacaoDTO;
+                }).toList();
+
+        return new PageDTO<>(avaliacaoEntityPage.getTotalElements(),
+                avaliacaoEntityPage.getTotalPages(),
+                pagina,
+                tamanho,
+                avaliacaoDTOS);
+    }
 
 }
