@@ -30,6 +30,7 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth.antMatchers("/", "/auth/**").permitAll()
 
+                        .antMatchers("/formulario/upload-curriculo/**", "/formulario/upload-print-config-pc/**").permitAll()
                         .antMatchers(HttpMethod.POST, "/formulario/**").permitAll()
                         .antMatchers(HttpMethod.PUT, "/fomulario/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/formulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
