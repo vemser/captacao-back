@@ -31,8 +31,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((auth) -> auth.antMatchers("/", "/auth/**").permitAll()
 
                         .antMatchers(HttpMethod.POST, "/formulario/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/formulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.PUT, "/fomulario/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/formulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
                         .antMatchers(HttpMethod.DELETE, "/fomulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers(HttpMethod.POST, "/inscricao/**").permitAll()
