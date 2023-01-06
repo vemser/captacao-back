@@ -400,7 +400,7 @@ public class CandidatoService {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, orderBy);
         Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByNota(pageRequest);
         List<CandidatoDTO> candidatoDTOList = paginaDoRepositorio.getContent().stream()
-                .map(candidato -> objectMapper.convertValue(candidato, CandidatoDTO.class))
+                .map(candidato -> converterEmDTO(candidato))
                 .toList();
         return new PageDTO<>(paginaDoRepositorio.getTotalElements(),
                 paginaDoRepositorio.getTotalPages(),
