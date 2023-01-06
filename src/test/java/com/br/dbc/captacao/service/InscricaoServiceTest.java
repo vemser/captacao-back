@@ -1,20 +1,16 @@
 package com.br.dbc.captacao.service;
 
 
-import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
-import com.br.dbc.captacao.dto.formulario.FormularioCreateDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoCreateDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.*;
-import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.factory.*;
 import com.br.dbc.captacao.repository.CandidatoRepository;
-import com.br.dbc.captacao.repository.FormularioRepository;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +32,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,8 +48,6 @@ public class InscricaoServiceTest {
     @Mock
     private InscricaoRepository inscricaoRepository;
 
-    @Mock
-    private CandidatoRepository candidatoRepository;
 
     @Mock
     private CandidatoService candidatoService;
@@ -88,15 +81,9 @@ public class InscricaoServiceTest {
         InscricaoCreateDTO inscricaoCreateDTO = InscricaoFactory.getInscricaoCreateDto();
         inscricaoCreateDTO.setIdCandidato(CandidatoFactory.getCandidatoDTO().getIdCandidato());
 
-
         when(inscricaoRepository.save(any())).thenReturn(InscricaoFactory.getInscricaoEntity());
 
         when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDto);
-
-
-
-
-
 
 
         inscricaoService.create(inscricaoCreateDTO.getIdCandidato());
@@ -149,10 +136,9 @@ public class InscricaoServiceTest {
         Sort odernacao = Sort.by(sort).descending();
         PageImpl<InscricaoEntity> inscricaoEntities = new PageImpl<>(List.of(InscricaoFactory.getInscricaoEntity()),
                 PageRequest.of(pagina, tamanho, odernacao), 0);
-        
+
 
         PageDTO<InscricaoDTO> page = inscricaoService.listar(-1, -1, sort, order);
-
 
     }
 
