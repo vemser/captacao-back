@@ -32,7 +32,7 @@ public class SecurityConfiguration {
 
                         .antMatchers(HttpMethod.POST, "/formulario/**").permitAll()
                         .antMatchers(HttpMethod.GET, "/formulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
-                        .antMatchers(HttpMethod.PUT, "/fomulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
+                        .antMatchers(HttpMethod.PUT, "/fomulario/**").permitAll()
                         .antMatchers(HttpMethod.DELETE, "/fomulario/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers(HttpMethod.POST, "/inscricao/**").permitAll()
