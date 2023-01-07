@@ -13,7 +13,7 @@ import lombok.Setter;
 public class CargoDTO {
 
     @Schema(description = "id do Cargo.", example = "1")
-    private Integer id;
+    private Integer idCargo;
 
     @Schema(description = "Nome do cargo do gestor.", example = "ROLE_INSTRUTOR")
     private String nome;

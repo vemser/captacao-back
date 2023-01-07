@@ -66,7 +66,7 @@ public class GestorService {
                     gestorEntity.getCargoEntity().stream()
                             .forEach(cargoEntity -> {
                                 CargoDTO cargoDTO = objectMapper.convertValue(cargoEntity, CargoDTO.class);
-                                cargoDTO.setId(cargoEntity.getIdCargo());
+                                cargoDTO.setIdCargo(cargoEntity.getIdCargo());
                                 lista.add(cargoDTO);
                             });
                     gestorDTO.setCargosDto(new ArrayList<>(lista));
@@ -121,7 +121,7 @@ public class GestorService {
         if (gestorEmailNomeCargoDTO.getNome().isBlank() && gestorEmailNomeCargoDTO.getEmail().isBlank()) {
             return Collections.emptyList();
         }
-        CargoEntity cargo = cargoService.findById(gestorEmailNomeCargoDTO.getCargo().getId());
+        CargoEntity cargo = cargoService.findById(gestorEmailNomeCargoDTO.getCargo().getIdCargo());
         List<GestorEntity> lista = gestorRepository.findGestorEntitiesByCargoEntityAndNomeIgnoreCaseOrCargoEntityAndEmailIgnoreCase(cargo, gestorEmailNomeCargoDTO.getNome(), cargo, gestorEmailNomeCargoDTO.getEmail());
         return lista.stream()
                 .map(gestorEntity -> convertoToDTO(gestorEntity))
@@ -184,12 +184,12 @@ public class GestorService {
         return getGestorDTO(gestorEntity);
     }
 
-    private GestorDTO getGestorDTO(GestorEntity gestorEntity) {
+    public GestorDTO getGestorDTO(GestorEntity gestorEntity) {
         GestorDTO gestorDTO = objectMapper.convertValue(gestorEntity, GestorDTO.class);
         List<CargoDTO> listaCargos = gestorEntity.getCargoEntity().stream()
                 .map(cargoEntity -> {
                     CargoDTO cargoDTO = objectMapper.convertValue(cargoEntity, CargoDTO.class);
-                    cargoDTO.setId(cargoEntity.getIdCargo());
+                    cargoDTO.setIdCargo(cargoEntity.getIdCargo());
                     return cargoDTO;
                 }).toList();
         gestorDTO.setCargosDto(listaCargos);

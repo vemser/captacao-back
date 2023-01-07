@@ -3,7 +3,6 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.CargoDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
@@ -68,7 +67,7 @@ public class AvaliacaoService {
         List<CargoDTO> cargoDTOList = new ArrayList<>();
         for (CargoEntity cargo : gestor.getCargoEntity()) {
             CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
-            cargoDTO.setId(cargo.getIdCargo());
+            cargoDTO.setIdCargo(cargo.getIdCargo());
             cargoDTOList.add(cargoDTO);
         }
         gestorDTO.setCargosDto(cargoDTOList);
@@ -159,13 +158,18 @@ public class AvaliacaoService {
         List<AvaliacaoDTO> avaliacaoDTOS = avaliacaoEntityPage.stream()
                 .map(avaliacaoEntity -> {
                     AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
-                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao(), InscricaoDTO.class);
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato(), CandidatoDTO.class);
-                    inscricaoDTO.setCandidato(candidatoDTO);
+                    InscricaoDTO inscricaoDTO = inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao());
+                    GestorDTO gestorDTO = objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class);
+                    List<CargoDTO> cargosDTO = avaliacaoEntity.getAvaliador().getCargoEntity().stream()
+                            .map(cargo -> objectMapper.convertValue(cargo, CargoDTO.class))
+                            .toList();
+
+                    gestorDTO.setCargosDto(cargosDTO);
+                    avaliacaoDTO.setAvaliador(gestorDTO);
                     avaliacaoDTO.setInscricao(inscricaoDTO);
                     avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
                     avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
-                    avaliacaoDTO.setAvaliador(objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class));
+
                     return avaliacaoDTO;
                 }).toList();
 
@@ -189,7 +193,7 @@ public class AvaliacaoService {
         AvaliacaoDTO avaliacaoDTO = new AvaliacaoDTO();
         avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
         avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
-        avaliacaoDTO.setAvaliador(objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class));
+        avaliacaoDTO.setAvaliador(gestorService.getGestorDTO(avaliacaoEntity.getAvaliador()));
         avaliacaoDTO.setInscricao(inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao()));
         return avaliacaoDTO;
     }
