@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -57,5 +59,26 @@ public class AvaliacaoController implements AvaliacaoControllerInterface {
     public ResponseEntity<Void> delete(@PathVariable("idAvaliacao") Integer idAvaliacao) throws RegraDeNegocioException {
         avaliacaoService.deleteById(idAvaliacao);
         return ResponseEntity.noContent().build();
+    }
+
+
+
+    // ENDPOINTS ANTIGOS DE FILTRO. EXCLUIR APÓS O FRONTEND FIZER INTEGRAÇÃO COM O NOVO ENDPOINT DE FILTROS UNIFICADO
+
+    @GetMapping("/buscar-by-email")
+    public ResponseEntity<List<AvaliacaoDTO>> findInscricaoPorEmail(@RequestParam String email) {
+        return null;
+    }
+
+    @GetMapping("/list-by-trilha")
+    public ResponseEntity<List<AvaliacaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
+
+        return null;
+    }
+
+    @GetMapping("/list-by-edicao")
+    public ResponseEntity<List<AvaliacaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
+
+        return null;
     }
 }
