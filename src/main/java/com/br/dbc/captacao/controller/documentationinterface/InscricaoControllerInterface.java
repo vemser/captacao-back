@@ -69,10 +69,10 @@ public interface InscricaoControllerInterface {
     )
     @GetMapping
     ResponseEntity<PageDTO<InscricaoDTO>> filtrarInscricoes(@RequestParam Integer pagina,
-                                                       @RequestParam Integer tamanho,
-                                                       @RequestParam String email,
-                                                       @RequestParam String edicao,
-                                                       @RequestParam (required = false) String trilha) throws RegraDeNegocioException;
+                                                            @RequestParam Integer tamanho,
+                                                            @RequestParam (required = false) String email,
+                                                            @RequestParam (required = false) String edicao,
+                                                            @RequestParam (required = false) String trilha) throws RegraDeNegocioException;
 
     @Operation(summary = "Deleta inscrição por ID", description = "Deleta inscrição por ID")
     @ApiResponses(

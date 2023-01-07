@@ -145,4 +145,16 @@ public class CandidatoController implements CandidatoControllerInterface {
 
         return new ResponseEntity<>(candidatoDTOListByNota,HttpStatus.OK);
     }
+
+
+    @GetMapping("/filtro-candidato")
+    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
+                                                                    @RequestParam Integer tamanho,
+                                                                    @RequestParam (required = false) String nome,
+                                                                    @RequestParam (required = false) String email,
+                                                                    @RequestParam (required = false) String edicao,
+                                                                    @RequestParam (required = false) String trilha) {
+        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatos(pagina, tamanho, nome, email, edicao, trilha);
+        return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
+    }
 }

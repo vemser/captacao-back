@@ -58,10 +58,10 @@ public class InscricaoController implements InscricaoControllerInterface {
 
     @GetMapping("/filtro-inscricao")
     public ResponseEntity<PageDTO<InscricaoDTO>> filtrarInscricoes(@RequestParam Integer pagina,
-                                                              @RequestParam Integer tamanho,
-                                                              @RequestParam (required = false) String email,
-                                                              @RequestParam (required = false) String edicao,
-                                                              @RequestParam (required = false) String trilha) throws RegraDeNegocioException {
+                                                                   @RequestParam Integer tamanho,
+                                                                   @RequestParam (required = false) String email,
+                                                                   @RequestParam (required = false) String edicao,
+                                                                   @RequestParam (required = false) String trilha) throws RegraDeNegocioException {
         PageDTO<InscricaoDTO> filtroInscricaoList = inscricaoService.filtrarInscricoes(pagina, tamanho, email, edicao, trilha);
         return new ResponseEntity<>(filtroInscricaoList, HttpStatus.OK);
     }

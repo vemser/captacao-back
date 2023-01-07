@@ -59,8 +59,8 @@ public interface AvaliacaoControllerInterface {
     @GetMapping
     ResponseEntity<PageDTO<AvaliacaoDTO>> filtrarAvaliacoes(@RequestParam Integer pagina,
                                                             @RequestParam Integer tamanho,
-                                                            @RequestParam String email,
-                                                            @RequestParam String edicao,
+                                                            @RequestParam (required = false) String email,
+                                                            @RequestParam (required = false) String edicao,
                                                             @RequestParam (required = false) String trilha) throws RegraDeNegocioException;
 
     @Operation(summary = "Deletar Avaliacao", description = "Deletar uma avaliacao por ID")
