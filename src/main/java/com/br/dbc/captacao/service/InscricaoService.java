@@ -2,9 +2,12 @@ package com.br.dbc.captacao.service;
 
 
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
+import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
+import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
@@ -13,6 +16,7 @@ import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,8 @@ import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,14 +71,13 @@ public class InscricaoService {
             PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
             Page<InscricaoEntity> paginaInscricaoEntities = inscricaoRepository.findAll(pageRequest);
 
-            List<InscricaoDTO> inscricaoDtos = paginaInscricaoEntities.getContent().stream()
-                    .map(inscricaoEntity -> converterParaDTO(inscricaoEntity)).toList();
+            List<InscricaoDTO> inscricoesDTO = getInscricoesDTO(paginaInscricaoEntities);
 
             return new PageDTO<>(paginaInscricaoEntities.getTotalElements(),
                     paginaInscricaoEntities.getTotalPages(),
                     pagina,
                     tamanho,
-                    inscricaoDtos);
+                    inscricoesDTO);
         }
         List<InscricaoDTO> listaVazia = new ArrayList<>();
         return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
@@ -110,14 +115,7 @@ public class InscricaoService {
 
         Page<InscricaoEntity> inscricaoEntityPage = inscricaoRepository.filtrarInscricoes(pageRequest, email, edicao, trilha);
 
-        List<InscricaoDTO> inscricaoDTOS = inscricaoEntityPage.stream()
-                .map(inscricao -> {
-                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricao, InscricaoDTO.class);
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricao.getCandidato(), CandidatoDTO.class);
-                    inscricaoDTO.setCandidato(candidatoDTO);
-                    inscricaoDTO.setAvaliado(inscricao.getAvaliado());
-                    return inscricaoDTO;
-                }).toList();
+        List<InscricaoDTO> inscricaoDTOS = getInscricoesDTO(inscricaoEntityPage);
 
         return new PageDTO<>(inscricaoEntityPage.getTotalElements(),
                 inscricaoEntityPage.getTotalPages(),
@@ -129,6 +127,32 @@ public class InscricaoService {
     public void delete(Integer id) throws RegraDeNegocioException {
         findById(id);
         inscricaoRepository.deleteById(id);
+    }
+
+    private List<InscricaoDTO> getInscricoesDTO(Page<InscricaoEntity> inscricaoEntityPage) {
+        List<InscricaoDTO> inscricaoDTOS = inscricaoEntityPage.stream()
+                .map(inscricao -> {
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricao, InscricaoDTO.class);
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricao.getCandidato(), CandidatoDTO.class);
+                    FormularioDTO formularioDTO = objectMapper.convertValue(inscricao.getCandidato().getFormularioEntity(), FormularioDTO.class);
+                    List<LinguagemDTO> linguagensDTO = inscricao.getCandidato().getLinguagens().stream()
+                            .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class)).toList();
+                    EdicaoDTO edicaoDTO = objectMapper.convertValue(inscricao.getCandidato().getEdicao(), EdicaoDTO.class);
+                    Set<TrilhaDTO> trilhasDTO = inscricao.getCandidato().getFormularioEntity().getTrilhaEntitySet().stream()
+                            .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class)).collect(Collectors.toSet());
+
+                    formularioDTO.setTrilhas(trilhasDTO);
+
+                    candidatoDTO.setFormulario(formularioDTO);
+                    candidatoDTO.setLinguagens(linguagensDTO);
+                    candidatoDTO.setEdicao(edicaoDTO);
+
+                    inscricaoDTO.setCandidato(candidatoDTO);
+                    inscricaoDTO.setAvaliado(inscricao.getAvaliado());
+
+                    return inscricaoDTO;
+                }).toList();
+        return inscricaoDTOS;
     }
 
     public InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
@@ -143,13 +167,9 @@ public class InscricaoService {
     }
 
     public InscricaoDTO converterParaDTO(InscricaoEntity inscricaoEntity) {
-        InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-        inscricaoDto.setCandidato(candidatoService.converterEmDTO(inscricaoEntity.getCandidato()));
-        inscricaoDto.getCandidato().setFormulario(objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class));
-
-        inscricaoDto.setAvaliado(inscricaoEntity.getAvaliado() == TipoMarcacao.T ? TipoMarcacao.T : TipoMarcacao.F);
-
-        return inscricaoDto;
+        Page<InscricaoEntity> inscricaoPage = new PageImpl<>(List.of(inscricaoEntity));
+        List<InscricaoDTO> inscricoesDTO = getInscricoesDTO(inscricaoPage);
+        return inscricoesDTO.get(0);
     }
 
     public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
