@@ -59,7 +59,7 @@ public interface InscricaoControllerInterface {
     @GetMapping
     ResponseEntity<Void> exportarCandidatosParaCsv() throws RegraDeNegocioException;
 
-    @Operation(summary = "Busca inscricao por filtro", description = "Busca inscrição por filtro")
+    @Operation(summary = "Buscar inscrições por filtro", description = "Busca inscrições por filtro")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Retorna lista de inscrições"),
