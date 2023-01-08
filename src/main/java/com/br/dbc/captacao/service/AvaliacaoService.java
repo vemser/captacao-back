@@ -125,7 +125,8 @@ public class AvaliacaoService {
             ordenacao = Sort.by(sort).descending();
         }
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-        Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findAll(pageRequest);
+//        Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findAll(pageRequest);
+        Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findByAprovado(pageRequest, TipoMarcacao.T);
 
         List<AvaliacaoDTO> avaliacaoDtos = paginaAvaliacaoEntities.getContent().stream()
                 .map(this::convertToDTO).toList();
@@ -136,7 +137,6 @@ public class AvaliacaoService {
                 tamanho,
                 avaliacaoDtos);
     }
-
 
     public AvaliacaoDTO update(Integer idAvaliacao, AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
         AvaliacaoEntity avaliacaoEntity = findById(idAvaliacao);

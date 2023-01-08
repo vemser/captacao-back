@@ -1,6 +1,7 @@
 package com.br.dbc.captacao.repository;
 
 import com.br.dbc.captacao.entity.AvaliacaoEntity;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface AvaliacaoRepository extends JpaRepository<AvaliacaoEntity, Integer> {
 
     AvaliacaoEntity findAvaliacaoEntitiesByInscricao_IdInscricao(Integer idInscricao);
+
+    Page<AvaliacaoEntity> findByAprovado(Pageable pageable, TipoMarcacao tipo);
 
     @Query("SELECT DISTINCT a FROM AVALIACAO a " +
             " INNER JOIN CANDIDATO c " +

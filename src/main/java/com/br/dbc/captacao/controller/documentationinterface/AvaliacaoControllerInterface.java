@@ -48,7 +48,7 @@ public interface AvaliacaoControllerInterface {
                                                   @RequestParam(defaultValue = "idAvaliacao", required = false) String sort,
                                                   @RequestParam(defaultValue = "0", required = false) int order);
 
-    @Operation(summary = "Buscar avalizações por filtro", description = "Busca avaliações por filtro")
+    @Operation(summary = "Buscar avaliações por filtro", description = "Busca avaliações por filtro")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Retorna lista de avaliações"),
