@@ -149,7 +149,7 @@ public class AvaliacaoServiceTest {
         PageImpl<AvaliacaoEntity> pageImpl = new PageImpl<>(List.of(getAvaliacaoEntityAprovado()),
                 PageRequest.of(pagina, tamanho, odernacao), 0);
 
-        when(avaliacaoRepository.findAll(any(Pageable.class))).thenReturn(pageImpl);
+        when(avaliacaoRepository.findByAprovado(any(Pageable.class), any())).thenReturn(pageImpl);
 
         PageDTO<AvaliacaoDTO> page = avaliacaoService.list(pagina, tamanho, sort, order);
 
