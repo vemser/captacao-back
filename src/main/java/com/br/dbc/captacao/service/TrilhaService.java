@@ -9,10 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,13 +20,15 @@ public class TrilhaService {
     private final TrilhaRepository trilhaRepository;
 
     public TrilhaDTO create(TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException {
-
-        TrilhaEntity trilha = objectMapper.convertValue(trilhaCreateDTO, TrilhaEntity.class);
-        if (!trilha.getNome().isEmpty()) {
-            trilhaRepository.save(trilha);
-            return convertToDTO(trilha);
+        Optional<TrilhaEntity> trilha = trilhaRepository.trilhaExists(trilhaCreateDTO.getNome().trim());
+        if(trilha.isPresent()) {
+            throw new RegraDeNegocioException("Trilha já existe!");
         }
-        throw new RegraDeNegocioException("Nome não pode ser nulo!");
+
+        TrilhaEntity trilhaEntity = objectMapper.convertValue(trilhaCreateDTO, TrilhaEntity.class);
+        trilhaEntity.setNome(trilhaEntity.getNome().trim());
+        TrilhaEntity trilhaSalva = trilhaRepository.save(trilhaEntity);
+        return convertToDTO(trilhaSalva);
     }
 
     public List<TrilhaDTO> list() {
@@ -44,7 +43,7 @@ public class TrilhaService {
     }
 
     public TrilhaEntity findByNome(String nome) throws RegraDeNegocioException {
-        nome = nome.trim().toUpperCase();
+        nome = nome.trim();
         return trilhaRepository.findByNome(nome)
                 .orElseThrow(() -> new RegraDeNegocioException("Trilha não encontrada!"));
     }
