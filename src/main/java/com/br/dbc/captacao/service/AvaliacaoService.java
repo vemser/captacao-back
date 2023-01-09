@@ -50,10 +50,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AvaliacaoService {
 
-    private static final String CHAVE_CARGOS = "cargos";
-    private static final String CHAVE_LOGIN = "username";
-    @Value("${jwt.secret}")
-    private String secret;
     private static final int DESCENDING = 1;
     private final ObjectMapper objectMapper;
     private final AvaliacaoRepository avaliacaoRepository;
@@ -63,10 +59,8 @@ public class AvaliacaoService {
 
     private final EdicaoService edicaoService;
 
-    private final GestorRepository gestorRepository;
     private final GestorService gestorService;
 
-    private final CargoService cargoService;
 
 
     public AvaliacaoDTO create(AvaliacaoCreateDTO avaliacaoCreateDTO, String token) throws RegraDeNegocioException {
@@ -79,7 +73,7 @@ public class AvaliacaoService {
         avaliacaoEntity.setAprovado(avaliacaoCreateDTO.isAprovadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
         avaliacaoEntity.setInscricao(inscricao);
 
-        GestorEntity gestor = getUser(token);
+        GestorEntity gestor = gestorService.getUser(token);
         avaliacaoEntity.setAvaliador(gestor);
         AvaliacaoEntity avaliacaoRetorno = avaliacaoRepository.save(avaliacaoEntity);
         AvaliacaoDTO avaliacaoDto = convertToDTO(avaliacaoRetorno);
@@ -107,42 +101,6 @@ public class AvaliacaoService {
         inscricaoService.setAvaliado(avaliacaoCreateDTO.getIdInscricao());
         return avaliacaoDto;
     }
-
-    protected GestorEntity getUser(String token) {
-
-        token = token.replace("Bearer ", "");
-
-        Claims chaves = Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-
-        String email = chaves.get(CHAVE_LOGIN , String.class);
-        List<String> cargos = chaves.get(CHAVE_CARGOS, List.class);
-
-        Set<CargoEntity> lista = cargos.stream().map(x -> {
-            try {
-                return cargoService.findByNome(x);
-            } catch (RegraDeNegocioException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toSet());
-
-
-        GestorEntity gestor = gestorRepository.findByEmail(email);
-        if (gestor != null){
-            gestor.setEmail(email);
-            gestor.setNome(email.replace(".", " "));
-            gestor.setSenha("123456789");
-            gestor.setAtivo(TipoMarcacao.T);
-            gestor.setCargoEntity(lista);
-
-            gestor = gestorRepository.save(gestor);
-        }
-
-        return gestor;
-    }
-
 
     public PageDTO<AvaliacaoDTO> list(Integer pagina, Integer tamanho, String sort, int order) {
         Sort ordenacao = Sort.by(sort).ascending();

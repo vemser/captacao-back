@@ -11,7 +11,10 @@ import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.GestorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,10 +22,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class GestorService {
+
+    private static final String CHAVE_CARGOS = "cargos";
+    private static final String CHAVE_LOGIN = "username";
+    @Value("${jwt.secret}")
+    private String secret;
 
     private static final int DESCENDING = 1;
     private final GestorRepository gestorRepository;
@@ -124,7 +133,7 @@ public class GestorService {
         CargoEntity cargo = cargoService.findById(gestorEmailNomeCargoDTO.getCargo().getId());
         List<GestorEntity> lista = gestorRepository.findGestorEntitiesByCargoEntityAndNomeIgnoreCaseOrCargoEntityAndEmailIgnoreCase(cargo, gestorEmailNomeCargoDTO.getNome(), cargo, gestorEmailNomeCargoDTO.getEmail());
         return lista.stream()
-                .map(gestorEntity -> convertoToDTO(gestorEntity))
+                .map(this::convertoToDTO)
                 .toList();
 
     }
@@ -137,6 +146,41 @@ public class GestorService {
     public GestorEntity findByEmail(String email) throws RegraDeNegocioException {
         return gestorRepository.findGestorEntityByEmailEqualsIgnoreCase(email)
                 .orElseThrow(() -> new RegraDeNegocioException("Email não encontrado"));
+    }
+
+    protected GestorEntity getUser(String token) {
+
+        token = token.replace("Bearer ", "");
+
+        Claims chaves = Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        String email = chaves.get(CHAVE_LOGIN , String.class);
+        List<String> cargos = chaves.get(CHAVE_CARGOS, List.class);
+
+        Set<CargoEntity> lista = cargos.stream().map(x -> {
+            try {
+                return cargoService.findByNome(x);
+            } catch (RegraDeNegocioException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toSet());
+
+
+        GestorEntity gestor = gestorRepository.findByEmail(email);
+        if (gestor != null){
+            gestor.setEmail(email);
+            gestor.setNome(email.replace(".", " "));
+            gestor.setSenha("123456789");
+            gestor.setAtivo(TipoMarcacao.T);
+            gestor.setCargoEntity(lista);
+
+            gestor = gestorRepository.save(gestor);
+        }
+
+        return gestor;
     }
 
 //    public void forgotPassword(GestorEmailDTO gestorEmailDto) throws RegraDeNegocioException {
