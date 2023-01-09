@@ -240,14 +240,6 @@ public class GestorService {
         return gestorDTO;
     }
 
-    private GestorEntity convertToEntity(GestorCreateDTO gestorCreateDTO) throws RegraDeNegocioException {
-        GestorEntity gestorEntity = objectMapper.convertValue(gestorCreateDTO, GestorEntity.class);
-        Set<CargoEntity> cargo = new HashSet<>();
-        cargo.add(cargoService.findById(gestorCreateDTO.getTipoCargo()));
-        gestorEntity.setCargoEntity(cargo);
-        return gestorEntity;
-    }
-
     public GestorEntity convertToEntity(GestorDTO gestorDTO) {
         GestorEntity gestorEntity = objectMapper.convertValue(gestorDTO, GestorEntity.class);
         Set<CargoEntity> cargo = new HashSet<>();
