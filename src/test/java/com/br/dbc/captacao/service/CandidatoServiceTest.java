@@ -497,6 +497,28 @@ public class CandidatoServiceTest {
 //    }
 
     @Test
+    public void deveTestarListRelatorioCandidatoPaginaPrincipalComSucesso() throws RegraDeNegocioException {
+        Integer pagina = 1;
+        Integer tamanho = 4;
+        Sort orderBy = Sort.by("notaProva");
+        String nome = "kaio";
+        String nomeTrilha = "123";
+        String nomeEdicao = "Vemser12";
+        String email = "kaio@gmail.com";
+        RelatorioCandidatoPaginaPrincipalDTO relatorioCandidatoPaginaPrincipalDTO = CandidatoFactory.getRelatorioCandidato();
+        Page<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOS = new PageImpl<>(List.of(relatorioCandidatoPaginaPrincipalDTO));
+
+        when(candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(anyString(),
+                anyString(), anyString(), any(Pageable.class), anyString())).thenReturn(relatorioCandidatoPaginaPrincipalDTOS);
+
+        PageDTO<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOPageDTO = candidatoService.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nome, pagina, tamanho,
+                nomeTrilha, nomeEdicao, email);
+
+        assertNotNull(relatorioCandidatoPaginaPrincipalDTOPageDTO);
+
+    }
+
+    @Test
     public void deveTestarFiltarCandidatosComSucesso(){
         Integer pagina = 10;
         Integer quatidade = 4;
@@ -512,6 +534,25 @@ public class CandidatoServiceTest {
 
         assertNotNull(candidatoDTOPageDTO);
 
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestaListRelatorioCandidatoPaginadoComErroCandidatoEmpty() throws RegraDeNegocioException {
+        Integer pagina = 1;
+        Integer tamanho = 4;
+        Sort orderBy = Sort.by("notaProva");
+        String nome = "kaio";
+        String nomeTrilha = "123";
+        String nomeEdicao = "Vemser12";
+        String email = "kaio@gmail.com";
+        RelatorioCandidatoPaginaPrincipalDTO relatorioCandidatoPaginaPrincipalDTO = CandidatoFactory.getRelatorioCandidato();
+        Page<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOS = new PageImpl<>(List.of());
+
+        when(candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(anyString(),
+                anyString(), anyString(), any(Pageable.class), anyString())).thenReturn(relatorioCandidatoPaginaPrincipalDTOS);
+
+        PageDTO<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOPageDTO = candidatoService.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nome, pagina, tamanho,
+                nomeTrilha, nomeEdicao, email);
     }
 
 }

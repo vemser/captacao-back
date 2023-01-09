@@ -3,6 +3,7 @@ package com.br.dbc.captacao.factory;
 import com.br.dbc.captacao.dto.candidato.CandidatoCreateDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
+import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.LinguagemEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
@@ -68,5 +69,17 @@ public class CandidatoFactory {
         candidatoDTO.setAtivo(TipoMarcacao.T);
 
         return candidatoDTO;
+    }
+
+    public static RelatorioCandidatoPaginaPrincipalDTO getRelatorioCandidato(){
+        RelatorioCandidatoPaginaPrincipalDTO relatorioCandidatoPaginaPrincipalDTO = new RelatorioCandidatoPaginaPrincipalDTO();
+        relatorioCandidatoPaginaPrincipalDTO.setIdCandidato(1);
+        relatorioCandidatoPaginaPrincipalDTO.setTrilha("123");
+        relatorioCandidatoPaginaPrincipalDTO.setNomeCompleto("Kaio");
+        relatorioCandidatoPaginaPrincipalDTO.setEdicao("Vemser12");
+        relatorioCandidatoPaginaPrincipalDTO.setNotaProva(10.0);
+        relatorioCandidatoPaginaPrincipalDTO.setEdicao("kaio@gmail.com");
+
+        return relatorioCandidatoPaginaPrincipalDTO;
     }
 }
