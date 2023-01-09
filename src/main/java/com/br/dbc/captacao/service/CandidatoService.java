@@ -408,4 +408,38 @@ public class CandidatoService {
                 tamanho,
                 candidatoDTOList);
     }
+
+
+    public PageDTO<CandidatoDTO> filtrarCandidatos(Integer pagina, Integer tamanho, String nome, String email, String edicao, String trilha) {
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
+
+        Page<CandidatoEntity> candidatoEntityPage = candidatoRepository.filtrarCandidatos(pageRequest, nome, email, edicao, trilha);
+
+        List<CandidatoDTO> candidatosDTO = candidatoEntityPage.stream()
+                .map(candidato -> {
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidato, CandidatoDTO.class);
+                    FormularioDTO formularioDTO = objectMapper.convertValue(candidato.getFormularioEntity(), FormularioDTO.class);
+                    List<LinguagemDTO> linguagensDTO = candidato.getLinguagens().stream()
+                            .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class)).toList();
+                    EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
+                    Set<TrilhaDTO> trilhasDTO = candidato.getFormularioEntity().getTrilhaEntitySet().stream()
+                            .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class)).collect(Collectors.toSet());
+
+                    formularioDTO.setTrilhas(trilhasDTO);
+
+                    candidatoDTO.setFormulario(formularioDTO);
+                    candidatoDTO.setLinguagens(linguagensDTO);
+                    candidatoDTO.setEdicao(edicaoDTO);
+
+                    return candidatoDTO;
+                }).toList();
+
+//        List<InscricaoDTO> inscricaoDTOS = getInscricoesDTO(inscricaoEntityPage);
+
+        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
+                candidatoEntityPage.getTotalPages(),
+                pagina,
+                tamanho,
+                candidatosDTO);
+    }
 }

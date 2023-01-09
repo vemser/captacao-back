@@ -46,7 +46,7 @@ public class TrilhaServiceTest {
 
     @Test
     public void deveTestarCriarComSucesso() throws RegraDeNegocioException {
-    final String trilhaNova = "Fullstack";
+    final String trilhaNova = "BACKEND";
     TrilhaEntity trilha = getTrilhaEntity();
     TrilhaCreateDTO trilhaCreateDTO = getTrilhaDTO();
     trilhaCreateDTO.setNome("Fullstack");
@@ -56,7 +56,6 @@ public class TrilhaServiceTest {
     TrilhaDTO novaTrilha = trilhaService.create(trilhaCreateDTO);
 
     assertEquals(trilhaNova, novaTrilha.getNome());
-
     }
 
     @Test

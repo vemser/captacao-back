@@ -36,7 +36,7 @@ public class InscricaoController implements InscricaoControllerInterface {
     @GetMapping("/find-by-idInscricao")
     public ResponseEntity<InscricaoDTO> findById(@RequestParam("id") Integer id) throws RegraDeNegocioException {
         log.info("Buscando inscrição por id...");
-        InscricaoDTO inscricaoDTO = inscricaoService.findDtoByid(id);
+        InscricaoDTO inscricaoDTO = inscricaoService.findDtoById(id);
         log.info("Inscrição encontrada");
         return new ResponseEntity<>(inscricaoDTO, HttpStatus.OK);
     }
@@ -50,26 +50,20 @@ public class InscricaoController implements InscricaoControllerInterface {
         return new ResponseEntity<>(inscricaoService.listar(pagina, tamanho, sort, order), HttpStatus.OK);
     }
 
-    @GetMapping("/list-by-trilha")
-    public ResponseEntity<PageDTO<InscricaoDTO>> listByTrilha(Integer pagina, Integer tamanho, @RequestParam("trilha")String trilha) throws RegraDeNegocioException {
-        PageDTO<InscricaoDTO> listByTrilha = inscricaoService.listInscricoesByTrilha(pagina, tamanho, trilha);
-
-        return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
+    @GetMapping("/exportar-candidatos-para-csv")
+    public ResponseEntity<Void> exportarCandidatosParaCsv() throws RegraDeNegocioException {
+        inscricaoService.exportarCandidatoCSV();
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/list-by-edicao")
-    public ResponseEntity<List<InscricaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
-        List<InscricaoDTO> listByEdicao = inscricaoService.listInscricoesByEdicao(edicao);
-
-        return new ResponseEntity<>(listByEdicao, HttpStatus.OK);
-    }
-
-    @GetMapping("/find-by-email")
-    public ResponseEntity<InscricaoDTO> findInscricaoPorEmail(@RequestParam String email) throws RegraDeNegocioException {
-        log.info("Buscando Inscrição por email...");
-        InscricaoDTO inscricaoPorEmail = inscricaoService.findInscricaoPorEmail(email);
-        log.info("Retornando inscrição encontrada.");
-        return new ResponseEntity<>(inscricaoPorEmail, HttpStatus.OK);
+    @GetMapping("/filtro-inscricao")
+    public ResponseEntity<PageDTO<InscricaoDTO>> filtrarInscricoes(@RequestParam Integer pagina,
+                                                                   @RequestParam Integer tamanho,
+                                                                   @RequestParam (required = false) String email,
+                                                                   @RequestParam (required = false) String edicao,
+                                                                   @RequestParam (required = false) String trilha) throws RegraDeNegocioException {
+        PageDTO<InscricaoDTO> filtroInscricaoList = inscricaoService.filtrarInscricoes(pagina, tamanho, email, edicao, trilha);
+        return new ResponseEntity<>(filtroInscricaoList, HttpStatus.OK);
     }
 
     @DeleteMapping("/{idInscricao}")
@@ -80,19 +74,24 @@ public class InscricaoController implements InscricaoControllerInterface {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/exportar-candidatos-para-csv")
-    public ResponseEntity<Void> exportarCandidatosParaCsv() throws RegraDeNegocioException {
-        inscricaoService.exportarCandidatoCSV();
-        return ResponseEntity.noContent().build();
+
+    // ENDPOINTS ANTIGOS DE FILTRO. EXCLUIR APÓS O FRONTEND FIZER INTEGRAÇÃO COM O NOVO ENDPOINT DE FILTROS UNIFICADO
+
+
+    @GetMapping("/list-by-trilha")
+    public ResponseEntity<PageDTO<InscricaoDTO>> listByTrilha(Integer pagina, Integer tamanho, @RequestParam("trilha")String trilha) throws RegraDeNegocioException {
+
+        return null;
     }
 
-    @GetMapping("/filtro-inscricao")
-    public ResponseEntity<PageDTO<InscricaoDTO>> filtroInscricao(@RequestParam Integer pagina,
-                                                              @RequestParam Integer tamanho,
-                                                              @RequestParam (required = false) String email,
-                                                              @RequestParam (required = false) String edicao,
-                                                              @RequestParam (required = false) String trilha) throws RegraDeNegocioException {
-        PageDTO<InscricaoDTO> filtroInscricaoList = inscricaoService.filtroInscricao(pagina, tamanho, email, edicao, trilha);
-        return new ResponseEntity<>(filtroInscricaoList, HttpStatus.OK);
+    @GetMapping("/list-by-edicao")
+    public ResponseEntity<List<InscricaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
+
+        return null;
+    }
+
+    @GetMapping("/find-by-email")
+    public ResponseEntity<InscricaoDTO> findInscricaoPorEmail(@RequestParam String email) throws RegraDeNegocioException {
+        return null;
     }
 }

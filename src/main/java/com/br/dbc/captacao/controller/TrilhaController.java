@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -24,7 +25,7 @@ public class TrilhaController implements TrilhaControllerInterface {
     private final TrilhaService trilhaService;
 
     @PostMapping
-    public ResponseEntity<TrilhaDTO> create(@RequestBody TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException {
+    public ResponseEntity<TrilhaDTO> create(@Valid @RequestBody TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException {
         TrilhaDTO trilhaDTO = trilhaService.create(trilhaCreateDTO);
         return new ResponseEntity<>(trilhaDTO, HttpStatus.OK);
     }

@@ -117,7 +117,7 @@ public class CandidatoController implements CandidatoControllerInterface {
 
     @PutMapping("/nota-parecer-tecnico/{idCandidato}")
     public ResponseEntity<CandidatoDTO> updateNotaEParecerTecnico(@PathVariable("idCandidato") Integer id,
-                                                   @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
+                                                                  @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
         CandidatoDTO candidatoDTO = candidatoService.updateTecnico(id, candidatoNotaDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
@@ -144,5 +144,17 @@ public class CandidatoController implements CandidatoControllerInterface {
         PageDTO<CandidatoDTO> candidatoDTOListByNota = candidatoService.listCandidatosByNota(pagina, tamanho);
 
         return new ResponseEntity<>(candidatoDTOListByNota,HttpStatus.OK);
+    }
+
+
+    @GetMapping("/filtro-candidato")
+    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
+                                                                    @RequestParam Integer tamanho,
+                                                                    @RequestParam (required = false) String nome,
+                                                                    @RequestParam (required = false) String email,
+                                                                    @RequestParam (required = false) String edicao,
+                                                                    @RequestParam (required = false) String trilha) {
+        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatos(pagina, tamanho, nome, email, edicao, trilha);
+        return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
     }
 }

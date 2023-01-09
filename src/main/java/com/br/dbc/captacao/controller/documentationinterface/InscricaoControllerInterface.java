@@ -9,8 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 public interface InscricaoControllerInterface {
 
     @Operation(summary = "Criar uma inscrição", description = "Criar uma inscrição com o ID do candidate e ID do formulario.")
@@ -50,50 +48,6 @@ public interface InscricaoControllerInterface {
                                                         @RequestParam(defaultValue = "idInscricao", required = false) String sort,
                                                         @RequestParam(defaultValue = "0", required = false) int order) throws RegraDeNegocioException;
 
-    @Operation(summary = "Busca lista de inscrições por TRILHA", description = "Busca lista de inscrições por TRILHA")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Retornou lista de inscrições com sucesso"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @GetMapping
-    ResponseEntity<PageDTO<InscricaoDTO>> listByTrilha(Integer pagina, Integer tamanho, @RequestParam("trilha") String trilha) throws RegraDeNegocioException;
-
-    @Operation(summary = "Busca lista de inscrições por EDIÇAO", description = "Busca lista de inscrições por EDIÇAO")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Retornou lista de inscrições com sucesso"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @GetMapping
-    ResponseEntity<List<InscricaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException;
-
-    @Operation(summary = "Busca inscricao por EMAIL", description = "Busca inscrição por ID")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Retorna uma inscrição."),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @GetMapping
-    ResponseEntity<InscricaoDTO> findInscricaoPorEmail(@RequestParam String email) throws RegraDeNegocioException;
-
-    @Operation(summary = "Deleta inscrição por ID", description = "Deleta inscrição por ID")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Deletou inscrição com sucesso"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @DeleteMapping
-    ResponseEntity<Void> delete(@PathVariable("idInscricao") Integer idInscricao) throws RegraDeNegocioException;
-
     @Operation(summary = "Exportar candidatos para csv", description = "Exporta lista de candidatos para um arquivo csv")
     @ApiResponses(
             value = {
@@ -105,7 +59,7 @@ public interface InscricaoControllerInterface {
     @GetMapping
     ResponseEntity<Void> exportarCandidatosParaCsv() throws RegraDeNegocioException;
 
-    @Operation(summary = "Busca inscricao por filtro", description = "Busca inscrição por filtro")
+    @Operation(summary = "Buscar inscrições por filtro", description = "Busca inscrições por filtro")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Retorna lista de inscrições"),
@@ -114,9 +68,20 @@ public interface InscricaoControllerInterface {
             }
     )
     @GetMapping
-    ResponseEntity<PageDTO<InscricaoDTO>> filtroInscricao(@RequestParam Integer pagina,
-                                                       @RequestParam Integer tamanho,
-                                                       @RequestParam String email,
-                                                       @RequestParam String edicao,
-                                                       @RequestParam (required = false) String trilha) throws RegraDeNegocioException;
+    ResponseEntity<PageDTO<InscricaoDTO>> filtrarInscricoes(@RequestParam Integer pagina,
+                                                            @RequestParam Integer tamanho,
+                                                            @RequestParam (required = false) String email,
+                                                            @RequestParam (required = false) String edicao,
+                                                            @RequestParam (required = false) String trilha) throws RegraDeNegocioException;
+
+    @Operation(summary = "Deleta inscrição por ID", description = "Deleta inscrição por ID")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Deletou inscrição com sucesso"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @DeleteMapping
+    ResponseEntity<Void> delete(@PathVariable("idInscricao") Integer idInscricao) throws RegraDeNegocioException;
 }

@@ -3,43 +3,27 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.CargoDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
-import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
-import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
-import com.br.dbc.captacao.dto.gestor.GestorCreateDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
-import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.*;
-import com.br.dbc.captacao.enums.Genero;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.AvaliacaoRepository;
-import com.br.dbc.captacao.repository.CargoRepository;
 import com.br.dbc.captacao.repository.GestorRepository;
-import com.br.dbc.captacao.security.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,13 +38,7 @@ public class AvaliacaoService {
     private final ObjectMapper objectMapper;
     private final AvaliacaoRepository avaliacaoRepository;
     private final InscricaoService inscricaoService;
-
-    private final TrilhaService trilhaService;
-
-    private final EdicaoService edicaoService;
-
     private final GestorService gestorService;
-
 
 
     public AvaliacaoDTO create(AvaliacaoCreateDTO avaliacaoCreateDTO, String token) throws RegraDeNegocioException {
@@ -83,7 +61,7 @@ public class AvaliacaoService {
         List<CargoDTO> cargoDTOList = new ArrayList<>();
         for (CargoEntity cargo : gestor.getCargoEntity()) {
             CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
-            cargoDTO.setId(cargo.getIdCargo());
+            cargoDTO.setIdCargo(cargo.getIdCargo());
             cargoDTOList.add(cargoDTO);
         }
         gestorDTO.setCargosDto(cargoDTOList);
@@ -108,7 +86,8 @@ public class AvaliacaoService {
             ordenacao = Sort.by(sort).descending();
         }
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-        Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findAll(pageRequest);
+//        Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findAll(pageRequest);
+        Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findByAprovado(pageRequest, TipoMarcacao.T);
 
         List<AvaliacaoDTO> avaliacaoDtos = paginaAvaliacaoEntities.getContent().stream()
                 .map(this::convertToDTO).toList();
@@ -120,7 +99,6 @@ public class AvaliacaoService {
                 avaliacaoDtos);
     }
 
-
     public AvaliacaoDTO update(Integer idAvaliacao, AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
         AvaliacaoEntity avaliacaoEntity = findById(idAvaliacao);
         avaliacaoEntity.setAprovado(avaliacaoCreateDto.isAprovadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
@@ -128,13 +106,39 @@ public class AvaliacaoService {
         return avaliacaoRetorno;
     }
 
-    public AvaliacaoDTO findDtoById(Integer idAvaliacao) throws RegraDeNegocioException {
-        return convertToDTO(findById(idAvaliacao));
-    }
-
     public void deleteById(Integer idAvaliacao) throws RegraDeNegocioException {
         findById(idAvaliacao);
         avaliacaoRepository.deleteById(idAvaliacao);
+    }
+
+    public PageDTO<AvaliacaoDTO> filtrarAvaliacoes(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException{
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
+
+        Page<AvaliacaoEntity> avaliacaoEntityPage = avaliacaoRepository.filtrarAvaliacoes(pageRequest, email, edicao, trilha);
+
+        List<AvaliacaoDTO> avaliacaoDTOS = avaliacaoEntityPage.stream()
+                .map(avaliacaoEntity -> {
+                    AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
+                    InscricaoDTO inscricaoDTO = inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao());
+                    GestorDTO gestorDTO = objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class);
+                    List<CargoDTO> cargosDTO = avaliacaoEntity.getAvaliador().getCargoEntity().stream()
+                            .map(cargo -> objectMapper.convertValue(cargo, CargoDTO.class))
+                            .toList();
+
+                    gestorDTO.setCargosDto(cargosDTO);
+                    avaliacaoDTO.setAvaliador(gestorDTO);
+                    avaliacaoDTO.setInscricao(inscricaoDTO);
+                    avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
+                    avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
+
+                    return avaliacaoDTO;
+                }).toList();
+
+        return new PageDTO<>(avaliacaoEntityPage.getTotalElements(),
+                avaliacaoEntityPage.getTotalPages(),
+                pagina,
+                tamanho,
+                avaliacaoDTOS);
     }
 
     private AvaliacaoEntity findById(Integer idAvaliacao) throws RegraDeNegocioException {
@@ -142,121 +146,25 @@ public class AvaliacaoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Avaliação não encontrada!"));
     }
 
-    public List<AvaliacaoDTO> findAvaliacaoByCanditadoEmail(String email) {
-        List<AvaliacaoEntity> lista = avaliacaoRepository.findAvaliacaoEntitiesByInscricao_Candidato_Email(email);
-        return lista.stream().map(avaliacaoEntity -> convertToDTO(avaliacaoEntity))
-                .toList();
+    public AvaliacaoDTO findDtoById(Integer idAvaliacao) throws RegraDeNegocioException {
+        return convertToDTO(findById(idAvaliacao));
     }
-
 
     public AvaliacaoDTO convertToDTO(AvaliacaoEntity avaliacaoEntity) {
         AvaliacaoDTO avaliacaoDTO = new AvaliacaoDTO();
         avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
         avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
-        avaliacaoDTO.setAvaliador(objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class));
+        avaliacaoDTO.setAvaliador(gestorService.getGestorDTO(avaliacaoEntity.getAvaliador()));
         avaliacaoDTO.setInscricao(inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao()));
         return avaliacaoDTO;
     }
 
     public AvaliacaoEntity convertToEntity(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         AvaliacaoEntity avaliacaoEntity = objectMapper.convertValue(avaliacaoCreateDTO, AvaliacaoEntity.class);
-        InscricaoEntity inscricaoEntity = inscricaoService.convertToEntity(inscricaoService.findDtoByid(avaliacaoCreateDTO.getIdInscricao()));
+        InscricaoEntity inscricaoEntity = inscricaoService.convertToEntity(inscricaoService.findDtoById(avaliacaoCreateDTO.getIdInscricao()));
         avaliacaoEntity.setInscricao(inscricaoEntity);
         avaliacaoEntity.setAprovado(avaliacaoCreateDTO.isAprovadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
         avaliacaoEntity.setAvaliador(gestorService.convertToEntity(gestorService.findDtoById(1)));
         return avaliacaoEntity;
     }
-
-    public List<AvaliacaoDTO> listByTrilha(String trilha) throws RegraDeNegocioException {
-
-        TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
-
-        List<AvaliacaoDTO> avaliacaoDTOListByTrilha = avaliacaoRepository.findAvaliacaoEntitiesByInscricao_Candidato_FormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
-                .map(avaliacaoEntity -> {
-
-                    AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
-                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao(), InscricaoDTO.class);
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato(), CandidatoDTO.class);
-
-                    List<CargoDTO> cargoDTOList = new ArrayList<>();
-                    for (CargoEntity cargo : avaliacaoEntity.getAvaliador().getCargoEntity()) {
-                        CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
-                        cargoDTO.setId(cargo.getIdCargo());
-                        cargoDTOList.add(cargoDTO);
-                    }
-                    avaliacaoDTO.getAvaliador().setCargosDto(cargoDTOList);
-
-                    List<LinguagemDTO> linguagemDTOList = new ArrayList<>();
-                    for (LinguagemEntity linguagem : avaliacaoEntity.getInscricao().getCandidato().getLinguagens()) {
-                        linguagemDTOList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
-                    }
-                    candidatoDTO.setLinguagens(linguagemDTOList);
-
-                    candidatoDTO.setFormulario(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity(), FormularioDTO.class));
-
-                    List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
-                    for (TrilhaEntity trilhaTemp : avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
-                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
-                    }
-                    candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
-
-                    candidatoDTO.setEdicao(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getEdicao(), EdicaoDTO.class));
-                    inscricaoDTO.setCandidato(candidatoDTO);
-
-                    avaliacaoDTO.setInscricao(inscricaoDTO);
-
-                    return avaliacaoDTO;
-                })
-                .toList();
-
-        return avaliacaoDTOListByTrilha;
-    }
-
-
-    public List<AvaliacaoDTO> listByEdicao(String edicao) throws RegraDeNegocioException {
-
-        EdicaoEntity edicaoEntity = edicaoService.findByNome(edicao);
-
-        List<AvaliacaoDTO> avaliacaoDTOListByEdicao = avaliacaoRepository.findAvaliacaoEntitiesByInscricao_Candidato_Edicao(edicaoEntity).stream()
-                .map(avaliacaoEntity -> {
-
-                    AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
-                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao(), InscricaoDTO.class);
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato(), CandidatoDTO.class);
-
-                    List<CargoDTO> cargoDTOList = new ArrayList<>();
-                    for (CargoEntity cargo : avaliacaoEntity.getAvaliador().getCargoEntity()) {
-                        CargoDTO cargoDTO = objectMapper.convertValue(cargo, CargoDTO.class);
-                        cargoDTO.setId(cargo.getIdCargo());
-                        cargoDTOList.add(cargoDTO);
-                    }
-                    avaliacaoDTO.getAvaliador().setCargosDto(cargoDTOList);
-
-                    List<LinguagemDTO> linguagemDTOList = new ArrayList<>();
-                    for (LinguagemEntity linguagem : avaliacaoEntity.getInscricao().getCandidato().getLinguagens()) {
-                        linguagemDTOList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
-                    }
-                    candidatoDTO.setLinguagens(linguagemDTOList);
-
-                    candidatoDTO.setFormulario(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity(), FormularioDTO.class));
-
-                    List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
-                    for (TrilhaEntity trilhaTemp : avaliacaoEntity.getInscricao().getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
-                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
-                    }
-                    candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
-
-                    candidatoDTO.setEdicao(objectMapper.convertValue(avaliacaoEntity.getInscricao().getCandidato().getEdicao(), EdicaoDTO.class));
-                    inscricaoDTO.setCandidato(candidatoDTO);
-
-                    avaliacaoDTO.setInscricao(inscricaoDTO);
-
-                    return avaliacaoDTO;
-                })
-                .toList();
-
-        return avaliacaoDTOListByEdicao;
-    }
-
-
 }

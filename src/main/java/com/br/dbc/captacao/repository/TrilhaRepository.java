@@ -2,6 +2,7 @@ package com.br.dbc.captacao.repository;
 
 import com.br.dbc.captacao.entity.TrilhaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -10,4 +11,7 @@ import java.util.Optional;
 public interface TrilhaRepository extends JpaRepository<TrilhaEntity, Integer> {
     Optional<TrilhaEntity> findByNome(String nome);
 
+    @Query(" SELECT t FROM TRILHA t " +
+            " WHERE UPPER(t.nome) = UPPER(:nomeTrilha)")
+    Optional<TrilhaEntity> trilhaExists(String nomeTrilha);
 }

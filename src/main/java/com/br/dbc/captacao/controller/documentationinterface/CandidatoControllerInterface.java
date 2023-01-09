@@ -195,4 +195,18 @@ public interface CandidatoControllerInterface {
 //                                                                             @RequestParam(defaultValue = "20") Integer tamanho,
 //                                                                             @RequestParam(required = false) String nomeTrilha,
 //                                                                             @RequestParam(required = false) String nomeEdicao) throws RegraDeNegocioException;
+
+    @Operation(summary = "Buscar candidatos por filtro", description = "Busca candidatos por filtro")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @GetMapping
+    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
+                                                             @RequestParam Integer tamanho,
+                                                             @RequestParam (required = false) String nome,
+                                                             @RequestParam (required = false) String email,
+                                                             @RequestParam (required = false) String edicao,
+                                                             @RequestParam (required = false) String trilha);
 }

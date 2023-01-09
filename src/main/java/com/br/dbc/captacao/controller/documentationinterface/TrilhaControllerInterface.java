@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface TrilhaControllerInterface {
@@ -21,7 +22,7 @@ public interface TrilhaControllerInterface {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             })
     @PostMapping
-    ResponseEntity<TrilhaDTO> create(@RequestBody TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException;
+    ResponseEntity<TrilhaDTO> create(@Valid @RequestBody TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException;
 
     @Operation(summary = "Listar Trilhas", description = "Lista todas Trilhas do banco de dados")
     @ApiResponses(

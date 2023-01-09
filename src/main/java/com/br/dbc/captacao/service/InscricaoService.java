@@ -8,10 +8,7 @@ import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
-import com.br.dbc.captacao.entity.EdicaoEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
-import com.br.dbc.captacao.entity.LinguagemEntity;
-import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -19,6 +16,7 @@ import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -29,9 +27,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +38,6 @@ public class InscricaoService {
     private static final int DESCENDING = 1;
     private final InscricaoRepository inscricaoRepository;
     private final CandidatoService candidatoService;
-
-    private final EmailService emailService;
-
-    private final EdicaoService edicaoService;
-    private final TrilhaService trilhaService;
     private final ObjectMapper objectMapper;
 
     public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
@@ -62,15 +55,7 @@ public class InscricaoService {
 //        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
 //        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
 //        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
-
         return inscricaoDto;
-    }
-
-    public InscricaoEntity setAvaliado(Integer idInscricao) throws RegraDeNegocioException {
-        InscricaoEntity inscricaoEntity = findById(idInscricao);
-        inscricaoEntity.setAvaliado(TipoMarcacao.T);
-        InscricaoEntity inscricao = inscricaoRepository.save(inscricaoEntity);
-        return inscricao;
     }
 
     public PageDTO<InscricaoDTO> listar(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
@@ -85,22 +70,16 @@ public class InscricaoService {
             PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
             Page<InscricaoEntity> paginaInscricaoEntities = inscricaoRepository.findAll(pageRequest);
 
-            List<InscricaoDTO> inscricaoDtos = paginaInscricaoEntities.getContent().stream()
-                    .map(inscricaoEntity -> converterParaDTO(inscricaoEntity)).toList();
+            List<InscricaoDTO> inscricoesDTO = getInscricoesDTO(paginaInscricaoEntities);
 
             return new PageDTO<>(paginaInscricaoEntities.getTotalElements(),
                     paginaInscricaoEntities.getTotalPages(),
                     pagina,
                     tamanho,
-                    inscricaoDtos);
+                    inscricoesDTO);
         }
         List<InscricaoDTO> listaVazia = new ArrayList<>();
         return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
-    }
-
-    public InscricaoDTO findDtoByid(Integer idInscricao) throws RegraDeNegocioException {
-        InscricaoDTO inscricaoDto = converterParaDTO(findById(idInscricao));
-        return inscricaoDto;
     }
 
     public void exportarCandidatoCSV() throws RegraDeNegocioException {
@@ -130,11 +109,50 @@ public class InscricaoService {
         }
     }
 
+    public PageDTO<InscricaoDTO> filtrarInscricoes(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException {
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
+
+        Page<InscricaoEntity> inscricaoEntityPage = inscricaoRepository.filtrarInscricoes(pageRequest, email, edicao, trilha);
+
+        List<InscricaoDTO> inscricaoDTOS = getInscricoesDTO(inscricaoEntityPage);
+
+        return new PageDTO<>(inscricaoEntityPage.getTotalElements(),
+                inscricaoEntityPage.getTotalPages(),
+                pagina,
+                tamanho,
+                inscricaoDTOS);
+    }
+
     public void delete(Integer id) throws RegraDeNegocioException {
         findById(id);
         inscricaoRepository.deleteById(id);
     }
 
+    private List<InscricaoDTO> getInscricoesDTO(Page<InscricaoEntity> inscricaoEntityPage) {
+        List<InscricaoDTO> inscricaoDTOS = inscricaoEntityPage.stream()
+                .map(inscricao -> {
+                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricao, InscricaoDTO.class);
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricao.getCandidato(), CandidatoDTO.class);
+                    FormularioDTO formularioDTO = objectMapper.convertValue(inscricao.getCandidato().getFormularioEntity(), FormularioDTO.class);
+                    List<LinguagemDTO> linguagensDTO = inscricao.getCandidato().getLinguagens().stream()
+                            .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class)).toList();
+                    EdicaoDTO edicaoDTO = objectMapper.convertValue(inscricao.getCandidato().getEdicao(), EdicaoDTO.class);
+                    Set<TrilhaDTO> trilhasDTO = inscricao.getCandidato().getFormularioEntity().getTrilhaEntitySet().stream()
+                            .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class)).collect(Collectors.toSet());
+
+                    formularioDTO.setTrilhas(trilhasDTO);
+
+                    candidatoDTO.setFormulario(formularioDTO);
+                    candidatoDTO.setLinguagens(linguagensDTO);
+                    candidatoDTO.setEdicao(edicaoDTO);
+
+                    inscricaoDTO.setCandidato(candidatoDTO);
+                    inscricaoDTO.setAvaliado(inscricao.getAvaliado());
+
+                    return inscricaoDTO;
+                }).toList();
+        return inscricaoDTOS;
+    }
 
     public InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
         return inscricaoRepository.findById(idInscricao)
@@ -142,16 +160,16 @@ public class InscricaoService {
 
     }
 
-    public InscricaoDTO converterParaDTO(InscricaoEntity inscricaoEntity) {
-        InscricaoDTO inscricaoDto = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-        inscricaoDto.setCandidato(candidatoService.converterEmDTO(inscricaoEntity.getCandidato()));
-        inscricaoDto.getCandidato().setFormulario(objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class));
-
-        inscricaoDto.setAvaliado(inscricaoEntity.getAvaliado() == TipoMarcacao.T ? TipoMarcacao.T : TipoMarcacao.F);
-
+    public InscricaoDTO findDtoById(Integer idInscricao) throws RegraDeNegocioException {
+        InscricaoDTO inscricaoDto = converterParaDTO(findById(idInscricao));
         return inscricaoDto;
     }
 
+    public InscricaoDTO converterParaDTO(InscricaoEntity inscricaoEntity) {
+        Page<InscricaoEntity> inscricaoPage = new PageImpl<>(List.of(inscricaoEntity));
+        List<InscricaoDTO> inscricoesDTO = getInscricoesDTO(inscricaoPage);
+        return inscricoesDTO.get(0);
+    }
 
     public InscricaoEntity convertToEntity(InscricaoDTO inscricaoDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         InscricaoEntity inscricaoEntity = objectMapper.convertValue(inscricaoDTO, InscricaoEntity.class);
@@ -159,114 +177,10 @@ public class InscricaoService {
         return inscricaoEntity;
     }
 
-    public InscricaoDTO findInscricaoPorEmail(String email) throws RegraDeNegocioException {
-        InscricaoEntity inscricaoEntity = inscricaoRepository.findInscricaoByEmail(email);
-
-        if(inscricaoEntity == null){
-            throw new RegraDeNegocioException("Candidato com o e-mail especificado não existe");
-        }
-
-        InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-        CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
-        inscricaoDTO.setCandidato(candidatoDTO);
-        inscricaoDTO.setAvaliado(inscricaoEntity.getAvaliado());
-        return inscricaoDTO;
-    }
-
-    public PageDTO<InscricaoDTO> listInscricoesByTrilha(Integer pagina, Integer tamanho, String trilha) throws RegraDeNegocioException {
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
-
-        TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
-
-        Page<InscricaoEntity> inscricaoDTOListByTrilha = inscricaoRepository.findInscricaoEntitiesByCandidato_FormularioEntity_TrilhaEntitySet(pageRequest, trilhaEntity);
-
-        List<InscricaoDTO> inscricaoDTOS = inscricaoDTOListByTrilha.stream()
-                .map(inscricaoEntity -> {
-                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
-                    candidatoDTO.setEdicao(objectMapper.convertValue(inscricaoEntity.getCandidato().getEdicao(), EdicaoDTO.class));
-
-                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
-                    for (TrilhaEntity trilhaTemp : inscricaoEntity.getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
-                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
-                    }
-                    FormularioDTO formularioDTO = objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class);
-                    formularioDTO.setTrilhas(trilhaDTOList);
-                    candidatoDTO.setFormulario(formularioDTO);
-
-                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
-                    for (LinguagemEntity linguagem : inscricaoEntity.getCandidato().getLinguagens()) {
-                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
-                    }
-                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
-
-                    inscricaoDTO.setCandidato(candidatoDTO);
-                    return inscricaoDTO;
-                })
-                .toList();
-
-
-        return new PageDTO<>(inscricaoDTOListByTrilha.getTotalElements(),
-                inscricaoDTOListByTrilha.getTotalPages(),
-                pagina,
-                tamanho,
-                inscricaoDTOS);
-    }
-
-    public List<InscricaoDTO> listInscricoesByEdicao(String edicao) throws RegraDeNegocioException {
-
-        EdicaoEntity edicaoEntity = edicaoService.findByNome(edicao);
-
-        List<InscricaoDTO> inscricaoDTOListByEdicao = inscricaoRepository.findInscricaoEntitiesByCandidato_Edicao(edicaoEntity).stream()
-                .map(inscricaoEntity -> {
-                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricaoEntity, InscricaoDTO.class);
-
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricaoEntity.getCandidato(), CandidatoDTO.class);
-                    candidatoDTO.setEdicao(objectMapper.convertValue(inscricaoEntity.getCandidato().getEdicao(), EdicaoDTO.class));
-
-                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
-                    for (TrilhaEntity trilhaTemp : inscricaoEntity.getCandidato().getFormularioEntity().getTrilhaEntitySet()) {
-                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
-                    }
-                    FormularioDTO formularioDTO = objectMapper.convertValue(inscricaoEntity.getCandidato().getFormularioEntity(), FormularioDTO.class);
-                    formularioDTO.setTrilhas(trilhaDTOList);
-                    candidatoDTO.setFormulario(formularioDTO);
-
-                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
-                    for (LinguagemEntity linguagem : inscricaoEntity.getCandidato().getLinguagens()) {
-                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
-                    }
-                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
-
-                    inscricaoDTO.setCandidato(candidatoDTO);
-                    inscricaoDTO.setAvaliado(inscricaoEntity.getAvaliado());
-                    return inscricaoDTO;
-                })
-                .toList();
-
-
-        return inscricaoDTOListByEdicao;
-    }
-
-    public PageDTO<InscricaoDTO> filtroInscricao(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException {
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
-
-        Page<InscricaoEntity> inscricaoEntityPage = inscricaoRepository.filtrarInscricoes(pageRequest, email, edicao, trilha);
-
-        List<InscricaoDTO> inscricaoDTOS = inscricaoEntityPage.stream()
-                .map(inscricao -> {
-                    InscricaoDTO inscricaoDTO = objectMapper.convertValue(inscricao, InscricaoDTO.class);
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(inscricao.getCandidato(), CandidatoDTO.class);
-                    inscricaoDTO.setCandidato(candidatoDTO);
-                    inscricaoDTO.setAvaliado(inscricao.getAvaliado());
-                    return inscricaoDTO;
-                }).toList();
-
-        return new PageDTO<>(inscricaoEntityPage.getTotalElements(),
-                inscricaoEntityPage.getTotalPages(),
-                pagina,
-                tamanho,
-                inscricaoDTOS);
+    public InscricaoEntity setAvaliado(Integer idInscricao) throws RegraDeNegocioException {
+        InscricaoEntity inscricaoEntity = findById(idInscricao);
+        inscricaoEntity.setAvaliado(TipoMarcacao.T);
+        InscricaoEntity inscricao = inscricaoRepository.save(inscricaoEntity);
+        return inscricao;
     }
 }

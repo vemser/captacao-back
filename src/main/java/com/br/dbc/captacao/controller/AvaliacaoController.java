@@ -26,10 +26,15 @@ public class AvaliacaoController implements AvaliacaoControllerInterface {
 
     @PostMapping
     public ResponseEntity<AvaliacaoDTO> create(@RequestBody AvaliacaoCreateDTO avaliacaoCreateDto, @RequestParam String token) throws RegraDeNegocioException {
-
         AvaliacaoDTO avaliacaoDto = avaliacaoService.create(avaliacaoCreateDto, token);
-
         return new ResponseEntity<>(avaliacaoDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{idAvaliacao}")
+    public ResponseEntity<AvaliacaoDTO> update(@PathVariable("idAvaliacao") Integer idAvaliacao,
+                                               @RequestBody AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
+        AvaliacaoDTO avaliacaoDtoRetorno = avaliacaoService.update(idAvaliacao, avaliacaoCreateDto);
+        return new ResponseEntity<>(avaliacaoDtoRetorno, HttpStatus.OK);
     }
 
     @GetMapping
@@ -40,41 +45,40 @@ public class AvaliacaoController implements AvaliacaoControllerInterface {
         return new ResponseEntity<>(avaliacaoService.list(pagina, tamanho, sort, order), HttpStatus.OK);
     }
 
-
-    @PutMapping("/update/{idAvaliacao}")
-    public ResponseEntity<AvaliacaoDTO> update(@PathVariable("idAvaliacao") Integer idAvaliacao,
-                                               @RequestBody AvaliacaoCreateDTO avaliacaoCreateDto) throws RegraDeNegocioException {
-
-        AvaliacaoDTO avaliacaoDtoRetorno = avaliacaoService.update(idAvaliacao, avaliacaoCreateDto);
-
-        return new ResponseEntity<>(avaliacaoDtoRetorno, HttpStatus.OK);
+    @GetMapping("/filtro-avaliacao")
+    public ResponseEntity<PageDTO<AvaliacaoDTO>> filtrarAvaliacoes(@RequestParam Integer pagina,
+                                                                   @RequestParam Integer tamanho,
+                                                                   @RequestParam (required = false) String email,
+                                                                   @RequestParam (required = false) String edicao,
+                                                                   @RequestParam (required = false) String trilha) throws RegraDeNegocioException {
+        PageDTO<AvaliacaoDTO> filtroAvaliacaoList = avaliacaoService.filtrarAvaliacoes(pagina, tamanho, email, edicao, trilha);
+        return new ResponseEntity<>(filtroAvaliacaoList, HttpStatus.OK);
     }
-
 
     @DeleteMapping("/{idAvaliacao}")
     public ResponseEntity<Void> delete(@PathVariable("idAvaliacao") Integer idAvaliacao) throws RegraDeNegocioException {
         avaliacaoService.deleteById(idAvaliacao);
-
         return ResponseEntity.noContent().build();
     }
 
 
+
+    // ENDPOINTS ANTIGOS DE FILTRO. EXCLUIR APÓS O FRONTEND FIZER INTEGRAÇÃO COM O NOVO ENDPOINT DE FILTROS UNIFICADO
+
     @GetMapping("/buscar-by-email")
     public ResponseEntity<List<AvaliacaoDTO>> findInscricaoPorEmail(@RequestParam String email) {
-        return new ResponseEntity<>(avaliacaoService.findAvaliacaoByCanditadoEmail(email), HttpStatus.OK);
+        return null;
     }
 
     @GetMapping("/list-by-trilha")
     public ResponseEntity<List<AvaliacaoDTO>> listByTrilha(@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
-        List<AvaliacaoDTO> listByTrilha = avaliacaoService.listByTrilha(trilha);
 
-        return new ResponseEntity<>(listByTrilha, HttpStatus.OK);
+        return null;
     }
 
     @GetMapping("/list-by-edicao")
     public ResponseEntity<List<AvaliacaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
-        List<AvaliacaoDTO> listByEdicao = avaliacaoService.listByEdicao(edicao);
 
-        return new ResponseEntity<>(listByEdicao, HttpStatus.OK);
+        return null;
     }
 }
