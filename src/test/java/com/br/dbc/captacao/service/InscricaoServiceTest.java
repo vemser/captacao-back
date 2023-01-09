@@ -250,4 +250,45 @@ public class InscricaoServiceTest {
 
         Assert.assertNotNull(inscricaoEntityRetorno);
     }
+
+    @Test
+    public void deveBuscarPorIdComSucesso() throws RegraDeNegocioException{
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        inscricaoEntity.setIdInscricao(1);
+
+        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.of(inscricaoEntity));
+
+        InscricaoEntity inscricao = inscricaoService.findById(inscricaoEntity.getIdInscricao());
+
+        assertEquals(inscricao, inscricaoEntity);
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveBuscarOPorIdComErro() throws RegraDeNegocioException{
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        inscricaoEntity.setIdInscricao(1);
+
+        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        inscricaoService.findById(inscricaoEntity.getIdInscricao());
+    }
+    @Test
+    public void deveBuscarDTOPorIdComSucesso() throws RegraDeNegocioException{
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+
+        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.of(inscricaoEntity));
+
+        InscricaoDTO inscricaoDTO = inscricaoService.findDtoById(1);
+
+        assertEquals(inscricaoDTO.getIdInscricao(), inscricaoEntity.getIdInscricao());
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveBuscarDTOPorIdComErro() throws RegraDeNegocioException{
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+
+        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.of(inscricaoEntity));
+
+        inscricaoService.findDtoById(1);
+    }
 }
