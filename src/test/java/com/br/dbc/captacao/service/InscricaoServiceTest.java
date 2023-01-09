@@ -10,6 +10,7 @@ import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.factory.CandidatoFactory;
@@ -33,10 +34,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.awt.print.Pageable;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -62,27 +71,37 @@ public class InscricaoServiceTest {
         ReflectionTestUtils.setField(inscricaoService, "objectMapper", objectMapper);
     }
 
-//    @Test
-//    public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
+    @Test
+    public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
 //        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-//
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        formulario.setCandidato(candidatoEntity);
+//        candidatoEntity.setFormularioEntity(formulario);
 //        CandidatoDTO candidatoDto = CandidatoFactory.getCandidatoDTO();
 //        candidatoDto.setEmail("email@email.com");
-//
-//        FormularioEntity formularioEntity = FormularioFactory.getFormularioEntity();
-//
+//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+//        inscricaoEntity.setCandidato(candidatoEntity);
+//        inscricaoEntity.setAvaliado(TipoMarcacao.F);
 //        InscricaoCreateDTO inscricaoCreateDTO = InscricaoFactory.getInscricaoCreateDto();
 //        inscricaoCreateDTO.setIdCandidato(CandidatoFactory.getCandidatoDTO().getIdCandidato());
-//
-//        when(inscricaoRepository.save(any())).thenReturn(InscricaoFactory.getInscricaoEntity());
-//
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        formulario.setCandidato(candidatoEntity);
+        candidatoEntity.setFormularioEntity(formulario);
+        inscricaoEntity.setCandidato(CandidatoFactory.getCandidatoEntity());
+        inscricaoEntity.setDataInscricao(LocalDate.now());
+        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+
+        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt())).thenReturn(Optional.empty());
+        when(inscricaoRepository.save(any())).thenReturn(InscricaoFactory.getInscricaoEntity());
 //        when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDto);
-//
-//
-//        inscricaoService.create(inscricaoCreateDTO.getIdCandidato());
-//
-//        verify(inscricaoRepository, times(1)).save(any());
-//    }
+
+
+        InscricaoDTO inscricaoDTO = inscricaoService.create(inscricaoEntity.getIdCandidato());
+
+        assertEquals(inscricaoDTO.getIdInscricao(), 1);
+    }
 
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarCreateComException() throws RegraDeNegocioException {

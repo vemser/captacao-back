@@ -200,7 +200,7 @@ public class AvaliacaoService {
 
     public AvaliacaoEntity convertToEntity(AvaliacaoCreateDTO avaliacaoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         AvaliacaoEntity avaliacaoEntity = objectMapper.convertValue(avaliacaoCreateDTO, AvaliacaoEntity.class);
-        InscricaoEntity inscricaoEntity = inscricaoService.convertToEntity(inscricaoService.findDtoByid(avaliacaoCreateDTO.getIdInscricao()));
+        InscricaoEntity inscricaoEntity = inscricaoService.convertToEntity(inscricaoService.findDtoById(avaliacaoCreateDTO.getIdInscricao()));
         avaliacaoEntity.setInscricao(inscricaoEntity);
         avaliacaoEntity.setAprovado(avaliacaoCreateDTO.isAprovadoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
         avaliacaoEntity.setAvaliador(gestorService.convertToEntity(gestorService.findDtoById(1)));
