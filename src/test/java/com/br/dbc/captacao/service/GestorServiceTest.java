@@ -3,9 +3,11 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.CargoDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.gestor.GestorEmailNomeCargoDTO;
+import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CargoEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.entity.LinguagemEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.factory.CargoFactory;
 import com.br.dbc.captacao.factory.GestorFactory;
@@ -29,6 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.br.dbc.captacao.factory.GestorFactory.getGestorDTO;
+import static com.br.dbc.captacao.factory.GestorFactory.getGestorEntity;
+import static com.br.dbc.captacao.factory.LinguagemFactory.getLinguagemDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
@@ -63,7 +68,7 @@ public class GestorServiceTest {
         String sort = "a";
         int order = 1;
 
-        GestorEntity gestorEntity = GestorFactory.getGestorEntity();
+        GestorEntity gestorEntity = getGestorEntity();
         Page<GestorEntity> gestorEntityPage = new PageImpl<>(List.of(gestorEntity));
         when(gestorRepository.findAll(any(Pageable.class))).thenReturn(gestorEntityPage);
 
@@ -75,7 +80,7 @@ public class GestorServiceTest {
     @Test
     public void deveTestarFindDtoByIdComSucesso() throws RegraDeNegocioException {
         Integer id = 1;
-        GestorEntity gestorEntity = GestorFactory.getGestorEntity();
+        GestorEntity gestorEntity = getGestorEntity();
 
         when(gestorRepository.findById(anyInt())).thenReturn(Optional.of(gestorEntity));
         GestorDTO gestorDTO = gestorService.findDtoById(id);
@@ -86,7 +91,7 @@ public class GestorServiceTest {
     @Test
     public void deveTestarFindByIdComSucesso() throws RegraDeNegocioException {
         Integer id = 1;
-        GestorEntity gestorEntity = GestorFactory.getGestorEntity();
+        GestorEntity gestorEntity = getGestorEntity();
         when(gestorRepository.findById(id)).thenReturn(Optional.of(gestorEntity));
 
         GestorEntity gestor = gestorService.findById(id);
@@ -110,7 +115,7 @@ public class GestorServiceTest {
         GestorEmailNomeCargoDTO gestorEmailNomeCargoDTO = GestorFactory.getGestorNomeEmailCargoDTO();
         CargoEntity cargoEntity = CargoFactory.getCargoEntity();
         List<GestorEntity> lista = new ArrayList<>();
-        lista.add(GestorFactory.getGestorEntity());
+        lista.add(getGestorEntity());
         when(cargoService.findById(anyInt())).thenReturn(cargoEntity);
         when(gestorRepository.findGestorEntitiesByCargoEntityAndNomeIgnoreCaseOrCargoEntityAndEmailIgnoreCase(any(),anyString(),any(),anyString())).thenReturn(lista);
 
@@ -122,7 +127,7 @@ public class GestorServiceTest {
     @Test
     public void deveTestarRemoverComSucesso() throws RegraDeNegocioException {
         Integer id = 1;
-        GestorEntity gestorEntity = GestorFactory.getGestorEntity();
+        GestorEntity gestorEntity = getGestorEntity();
         when(gestorRepository.findById(anyInt())).thenReturn(Optional.of(gestorEntity));
 
         gestorService.remover(id);
@@ -134,7 +139,7 @@ public class GestorServiceTest {
     @Test
     public void deveTestarFindByEmailComSucesso() throws RegraDeNegocioException {
         String email = "dbc@dbccompany.com.br";
-        GestorEntity gestorEntity = GestorFactory.getGestorEntity();
+        GestorEntity gestorEntity = getGestorEntity();
         when(gestorRepository.findGestorEntityByEmailEqualsIgnoreCase(anyString())).thenReturn(Optional.of(gestorEntity));
 
         GestorEntity gestor = gestorService.findByEmail(email);
@@ -146,7 +151,7 @@ public class GestorServiceTest {
     @Test
     public void deveTestarDesativarContaComSucesso() throws RegraDeNegocioException {
         Integer id = 1;
-        GestorEntity gestorEntity = GestorFactory.getGestorEntity();
+        GestorEntity gestorEntity = getGestorEntity();
         when(gestorRepository.findById(anyInt())).thenReturn(Optional.of(gestorEntity));
         when(gestorRepository.save(any())).thenReturn(gestorEntity);
 
@@ -158,12 +163,25 @@ public class GestorServiceTest {
     @Test
     public void deveTestarContasInativasComSucesso() {
         List<GestorEntity> gestorEntities = new ArrayList<>();
-        gestorEntities.add(GestorFactory.getGestorEntity());
+        gestorEntities.add(getGestorEntity());
         when(gestorRepository.findByAtivo(any())).thenReturn(gestorEntities);
 
         List<GestorDTO> gestorDTOS = gestorService.contasInativas();
 
         assertNotNull(gestorDTOS);
     }
+
+    @Test
+    public void deveConverterGestorDTOParaEntityComSucesso() {
+        //Setup
+        GestorDTO gestorDTO = getGestorDTO();
+
+        // Act
+
+        GestorEntity gestorEntity = gestorService.convertToEntity(gestorDTO);
+        //Assert
+        assertEquals(gestorEntity.getNome(), gestorDTO.getNome());
+    }
+
 
 }
