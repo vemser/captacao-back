@@ -58,6 +58,19 @@ public class TrilhaServiceTest {
     assertEquals(trilhaNova, novaTrilha.getNome());
     }
 
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarCriarComErro() throws RegraDeNegocioException {
+        final String trilhaNova = "BACKEND";
+        TrilhaEntity trilha = new TrilhaEntity();
+        TrilhaCreateDTO trilhaCreateDTO = new TrilhaCreateDTO();
+        trilhaCreateDTO.setNome("Fullstack");
+
+        when(trilhaRepository.trilhaExists(any())).thenReturn(Optional.of(trilha));
+
+        TrilhaDTO novaTrilha = trilhaService.create(trilhaCreateDTO);
+
+    }
+
     @Test
     public void deveListarComSucesso(){
         TrilhaEntity trilha = getTrilhaEntity();
