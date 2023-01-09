@@ -36,7 +36,7 @@ public class InscricaoController implements InscricaoControllerInterface {
     @GetMapping("/find-by-idInscricao")
     public ResponseEntity<InscricaoDTO> findById(@RequestParam("id") Integer id) throws RegraDeNegocioException {
         log.info("Buscando inscrição por id...");
-        InscricaoDTO inscricaoDTO = inscricaoService.findDtoByid(id);
+        InscricaoDTO inscricaoDTO = inscricaoService.findDtoById(id);
         log.info("Inscrição encontrada");
         return new ResponseEntity<>(inscricaoDTO, HttpStatus.OK);
     }

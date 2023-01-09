@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -65,23 +66,33 @@ public class InscricaoServiceTest {
 //    @Test
 //    public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
 //        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-//
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        formulario.setCandidato(candidatoEntity);
+//        candidatoEntity.setFormularioEntity(formulario);
 //        CandidatoDTO candidatoDto = CandidatoFactory.getCandidatoDTO();
 //        candidatoDto.setEmail("email@email.com");
-//
-//        FormularioEntity formularioEntity = FormularioFactory.getFormularioEntity();
-//
+//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+//        inscricaoEntity.setCandidato(candidatoEntity);
+//        inscricaoEntity.setAvaliado(TipoMarcacao.F);
 //        InscricaoCreateDTO inscricaoCreateDTO = InscricaoFactory.getInscricaoCreateDto();
 //        inscricaoCreateDTO.setIdCandidato(CandidatoFactory.getCandidatoDTO().getIdCandidato());
+//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        formulario.setCandidato(candidatoEntity);
+//        candidatoEntity.setFormularioEntity(formulario);
+//        inscricaoEntity.setCandidato(CandidatoFactory.getCandidatoEntity());
+//        inscricaoEntity.setDataInscricao(LocalDate.now());
+//        inscricaoEntity.setAvaliado(TipoMarcacao.F);
 //
+//        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt())).thenReturn(Optional.empty());
 //        when(inscricaoRepository.save(any())).thenReturn(InscricaoFactory.getInscricaoEntity());
-//
 //        when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDto);
 //
 //
-//        inscricaoService.create(inscricaoCreateDTO.getIdCandidato());
+//        InscricaoDTO inscricaoDTO = inscricaoService.create(inscricaoEntity.getIdCandidato());
 //
-//        verify(inscricaoRepository, times(1)).save(any());
+//        assertEquals(inscricaoDTO.getIdInscricao(), 1);
 //    }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -231,4 +242,45 @@ public class InscricaoServiceTest {
 
         Assert.assertNotNull(inscricaoEntityRetorno);
     }
+
+    @Test
+    public void deveBuscarPorIdComSucesso() throws RegraDeNegocioException{
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        inscricaoEntity.setIdInscricao(1);
+
+        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.of(inscricaoEntity));
+
+        InscricaoEntity inscricao = inscricaoService.findById(inscricaoEntity.getIdInscricao());
+
+        assertEquals(inscricao, inscricaoEntity);
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveBuscarOPorIdComErro() throws RegraDeNegocioException{
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        inscricaoEntity.setIdInscricao(1);
+
+        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        inscricaoService.findById(inscricaoEntity.getIdInscricao());
+    }
+//    @Test
+//    public void deveBuscarDTOPorIdComSucesso() throws RegraDeNegocioException{
+//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+//
+//        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.of(inscricaoEntity));
+//
+//        InscricaoDTO inscricaoDTO = inscricaoService.findDtoById(1);
+//
+//        assertEquals(inscricaoDTO.getIdInscricao(), inscricaoEntity.getIdInscricao());
+//    }
+
+//    @Test(expected = RegraDeNegocioException.class)
+//    public void deveBuscarDTOPorIdComErro() throws RegraDeNegocioException{
+//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+//
+//        when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.of(inscricaoEntity));
+//
+//        inscricaoService.findDtoById(1);
+//    }
 }

@@ -22,10 +22,6 @@ public class EntrevistaCreateDTO {
     private String candidatoEmail;
 
     @NotNull
-    @Schema(description = "Usuário que irá realizar a entrevista.")
-    private String usuarioEmail;
-
-    @NotNull
     @Schema(description = "Dia/Mês/Ano que irá ocorrer a entrevista.")
     private LocalDateTime dataEntrevista;
 

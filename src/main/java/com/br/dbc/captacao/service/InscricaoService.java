@@ -55,7 +55,6 @@ public class InscricaoService {
 //        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
 //        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
 //        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
-
         return inscricaoDto;
     }
 
@@ -161,7 +160,7 @@ public class InscricaoService {
 
     }
 
-    public InscricaoDTO findDtoByid(Integer idInscricao) throws RegraDeNegocioException {
+    public InscricaoDTO findDtoById(Integer idInscricao) throws RegraDeNegocioException {
         InscricaoDTO inscricaoDto = converterParaDTO(findById(idInscricao));
         return inscricaoDto;
     }

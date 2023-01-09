@@ -41,8 +41,8 @@ public class EntrevistaController implements EntrevistaControllerInterface {
     }
 
     @PostMapping("/marcar-entrevista")
-    public ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO) throws RegraDeNegocioException {
-        return new ResponseEntity<>(entrevistaService.createEntrevista(entrevistaCreateDTO), HttpStatus.CREATED);
+    public ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO, @RequestParam String token) throws RegraDeNegocioException {
+        return new ResponseEntity<>(entrevistaService.createEntrevista(entrevistaCreateDTO, token), HttpStatus.CREATED);
     }
 
     @GetMapping

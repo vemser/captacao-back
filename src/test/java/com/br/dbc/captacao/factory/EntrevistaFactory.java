@@ -6,6 +6,7 @@ import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 import static com.br.dbc.captacao.factory.CandidatoFactory.getCandidatoDTO;
 import static com.br.dbc.captacao.factory.CandidatoFactory.getCandidatoEntity;
 import static com.br.dbc.captacao.factory.GestorFactory.getGestorDTO;
+import static com.br.dbc.captacao.factory.GestorFactory.getGestorEntity;
 
 public class EntrevistaFactory {
     public static EntrevistaEntity getEntrevistaEntity() {
@@ -24,6 +26,8 @@ public class EntrevistaFactory {
         entrevistaEntity.setObservacoes("Sem observações.");
         entrevistaEntity.setLegenda(Legenda.PENDENTE);
         entrevistaEntity.setCandidatoEntity(getCandidatoEntity());
+        entrevistaEntity.setGestorEntity(getGestorEntity());
+        entrevistaEntity.setAvaliado(TipoMarcacao.T);
 
         return entrevistaEntity;
     }
@@ -36,7 +40,6 @@ public class EntrevistaFactory {
         entrevistaDTO.setIdEntrevista(1);
         entrevistaDTO.setCandidatoDTO(candidatoDTO);
         entrevistaDTO.setGestorDTO(gestorDTO);
-        entrevistaDTO.setUsuarioEmail(gestorDTO.getEmail());
         entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
 
         return entrevistaDTO;
