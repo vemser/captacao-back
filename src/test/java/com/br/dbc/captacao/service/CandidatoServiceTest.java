@@ -4,6 +4,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.candidato.*;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
@@ -25,6 +26,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,8 +35,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CandidatoServiceTest {
@@ -476,4 +478,81 @@ public class CandidatoServiceTest {
 
         assertNotNull(listCandidatoPage);
     }
+
+//    @Test(expected = RegraDeNegocioException.class)
+//    public void deveTestarExportarCandidatoCSVComErro() throws RegraDeNegocioException {
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        List<CandidatoEntity> candidatoEntityList = new ArrayList<>();
+//        candidatoEntityList.add(candidatoEntity);
+//
+//        BufferedWriter writer = mock(BufferedWriter.class);
+//        OutputStreamWriter streamWriter = mock(OutputStreamWriter.class);
+//        FileOutputStream fileOutputStream = mock(FileOutputStream.class);
+//
+//        when(candidatoRepository.findAll())
+//                .thenReturn(candidatoEntityList);
+//
+//        doThrow(new RegraDeNegocioException()).when(candidatoService).exportarCandidatoCSV();
+//
+//    }
+
+    @Test
+    public void deveTestarListRelatorioCandidatoPaginaPrincipalComSucesso() throws RegraDeNegocioException {
+        Integer pagina = 1;
+        Integer tamanho = 4;
+        Sort orderBy = Sort.by("notaProva");
+        String nome = "kaio";
+        String nomeTrilha = "123";
+        String nomeEdicao = "Vemser12";
+        String email = "kaio@gmail.com";
+        RelatorioCandidatoPaginaPrincipalDTO relatorioCandidatoPaginaPrincipalDTO = CandidatoFactory.getRelatorioCandidato();
+        Page<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOS = new PageImpl<>(List.of(relatorioCandidatoPaginaPrincipalDTO));
+
+        when(candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(anyString(),
+                anyString(), anyString(), any(Pageable.class), anyString())).thenReturn(relatorioCandidatoPaginaPrincipalDTOS);
+
+        PageDTO<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOPageDTO = candidatoService.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nome, pagina, tamanho,
+                nomeTrilha, nomeEdicao, email);
+
+        assertNotNull(relatorioCandidatoPaginaPrincipalDTOPageDTO);
+
+    }
+
+    @Test
+    public void deveTestarFiltarCandidatosComSucesso(){
+        Integer pagina = 10;
+        Integer quatidade = 4;
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        String trilha = "back-end";
+        Page<CandidatoEntity> candidatoEntities = new PageImpl<>(List.of(candidatoEntity));
+
+        when(candidatoRepository.filtrarCandidatos(any(Pageable.class), anyString(), anyString(), any(), any()))
+                .thenReturn(candidatoEntities);
+
+        PageDTO<CandidatoDTO> candidatoDTOPageDTO = candidatoService.filtrarCandidatos(pagina, quatidade, candidatoEntity.getNome(),
+                candidatoEntity.getEmail(), candidatoEntity.getEdicao().getNome(), trilha);
+
+        assertNotNull(candidatoDTOPageDTO);
+
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestaListRelatorioCandidatoPaginadoComErroCandidatoEmpty() throws RegraDeNegocioException {
+        Integer pagina = 1;
+        Integer tamanho = 4;
+        Sort orderBy = Sort.by("notaProva");
+        String nome = "kaio";
+        String nomeTrilha = "123";
+        String nomeEdicao = "Vemser12";
+        String email = "kaio@gmail.com";
+        RelatorioCandidatoPaginaPrincipalDTO relatorioCandidatoPaginaPrincipalDTO = CandidatoFactory.getRelatorioCandidato();
+        Page<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOS = new PageImpl<>(List.of());
+
+        when(candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(anyString(),
+                anyString(), anyString(), any(Pageable.class), anyString())).thenReturn(relatorioCandidatoPaginaPrincipalDTOS);
+
+        PageDTO<RelatorioCandidatoPaginaPrincipalDTO> relatorioCandidatoPaginaPrincipalDTOPageDTO = candidatoService.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nome, pagina, tamanho,
+                nomeTrilha, nomeEdicao, email);
+    }
+
 }

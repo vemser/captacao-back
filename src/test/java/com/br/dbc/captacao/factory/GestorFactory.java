@@ -7,7 +7,9 @@ import com.br.dbc.captacao.entity.CargoEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GestorFactory {
@@ -27,11 +29,14 @@ public class GestorFactory {
     }
 
     public static GestorDTO getGestorDTO() {
+        List<CargoDTO> cargoEntitySet = new ArrayList<>();
+        cargoEntitySet.add(CargoFactory.getCargoDTO());
         GestorDTO usuarioDTO = new GestorDTO();
         usuarioDTO.setIdGestor(1);
         usuarioDTO.setNome("Débora Sophia da Silva");
         usuarioDTO.setEmail("julio.gabriel@dbccompany.com.br");
         usuarioDTO.setAtivo(TipoMarcacao.T);
+        usuarioDTO.setCargosDto(cargoEntitySet);
 
         return usuarioDTO;
     }
