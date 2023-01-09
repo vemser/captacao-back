@@ -43,13 +43,6 @@ public class AuthService {
         entrevistaRepository.save(entrevista);
     }
 
-//    public void trocarSenha(String email) throws RegraDeNegocioException {
-//        GestorEntity usuarioEntityOptional = usuarioService.findByEmail(email);
-//
-//        String tokenSenha = tokenService.getTokenSenha(usuarioEntityOptional);
-//        emailService.sendEmailRecuperacaoSenha(usuarioEntityOptional, tokenSenha);
-//    }
-
     public String procurarUsuario(String token) throws RegraDeNegocioException {
         String cpfByToken = tokenService.getEmailByToken(token);
         return usuarioService.findByEmail(cpfByToken).getEmail();
