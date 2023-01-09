@@ -13,10 +13,7 @@ import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.factory.CandidatoFactory;
-import com.br.dbc.captacao.factory.FormularioFactory;
-import com.br.dbc.captacao.factory.InscricaoFactory;
-import com.br.dbc.captacao.factory.TrilhaFactory;
+import com.br.dbc.captacao.factory.*;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,10 +28,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.awt.print.Pageable;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -71,38 +68,151 @@ public class InscricaoServiceTest {
         ReflectionTestUtils.setField(inscricaoService, "objectMapper", objectMapper);
     }
 
+    @Test
+    public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        TrilhaEntity trilha = TrilhaFactory.getTrilhaEntity();
+
+        Set<TrilhaEntity> listTrilha = new HashSet<>();
+        listTrilha.add(trilha);
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        formulario.setTrilhaEntitySet(listTrilha);
+        candidatoEntity.setFormularioEntity(formulario);
+        inscricaoEntity.setCandidato(candidatoEntity);
+        inscricaoEntity.setDataInscricao(LocalDate.now());
+        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+        inscricaoEntity.setIdCandidato(candidatoEntity.getIdCandidato());
+        inscricaoEntity.setAvaliacaoEntity(AvaliacaoFactory.getAvaliacaoEntityAprovado());
+        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt())).thenReturn(Optional.empty());
+        when(inscricaoRepository.save(any())).thenReturn(inscricaoEntity);
+
+        InscricaoDTO inscricaoDTO = inscricaoService.create(inscricaoEntity.getIdCandidato());
+
+        assertEquals(inscricaoDTO.getIdInscricao(), 1);
+    }
+
+    @Test
+    public void deveTestarListarAllPaginadoComSucesso() throws RegraDeNegocioException{
+        Integer pagina = 1;
+        Integer tamanho = 5;
+        String sort = "idCandidato";
+        Integer orderDescendente = 1;
+        Sort ordenacao = Sort.by(sort).descending();
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        TrilhaEntity trilha = TrilhaFactory.getTrilhaEntity();
+
+        Set<TrilhaEntity> listTrilha = new HashSet<>();
+        listTrilha.add(trilha);
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        formulario.setTrilhaEntitySet(listTrilha);
+        candidatoEntity.setFormularioEntity(formulario);
+        inscricaoEntity.setCandidato(candidatoEntity);
+        inscricaoEntity.setDataInscricao(LocalDate.now());
+        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+        PageImpl<InscricaoEntity> inscricaoEntities = new PageImpl<>(List.of(inscricaoEntity), PageRequest.of(pagina, tamanho, ordenacao), 0);
+
+        when(inscricaoRepository.findAll(any(Pageable.class)))
+                .thenReturn(inscricaoEntities);
+
+        PageDTO<InscricaoDTO> pages = inscricaoService.listar(pagina, tamanho, sort, orderDescendente);
+
+        assertEquals(pages.getTamanho(), tamanho);
+
+    }
+
 //    @Test
-//    public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
-//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-//        formulario.setCandidato(candidatoEntity);
-//        candidatoEntity.setFormularioEntity(formulario);
-//        CandidatoDTO candidatoDto = CandidatoFactory.getCandidatoDTO();
-//        candidatoDto.setEmail("email@email.com");
+//    public void deveTestarListarAllPaginadoVazioComSucesso() throws RegraDeNegocioException{
+//        Integer pagina = 1;
+//        Integer tamanho = 5;
+//        String sort = "idCandidato";
+//        Integer orderDescendente = 1;
+//        Sort ordenacao = Sort.by(sort).descending();
 //        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        TrilhaEntity trilha = TrilhaFactory.getTrilhaEntity();
+//
+//        Set<TrilhaEntity> listTrilha = new HashSet<>();
+//        listTrilha.add(trilha);
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        formulario.setTrilhaEntitySet(listTrilha);
+//        candidatoEntity.setFormularioEntity(formulario);
 //        inscricaoEntity.setCandidato(candidatoEntity);
-//        inscricaoEntity.setAvaliado(TipoMarcacao.F);
-//        InscricaoCreateDTO inscricaoCreateDTO = InscricaoFactory.getInscricaoCreateDto();
-//        inscricaoCreateDTO.setIdCandidato(CandidatoFactory.getCandidatoDTO().getIdCandidato());
-//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-//        formulario.setCandidato(candidatoEntity);
-//        candidatoEntity.setFormularioEntity(formulario);
-//        inscricaoEntity.setCandidato(CandidatoFactory.getCandidatoEntity());
 //        inscricaoEntity.setDataInscricao(LocalDate.now());
 //        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+//        List<InscricaoDTO> listaVazia = new ArrayList<>();
+//        PageImpl<InscricaoEntity> inscricaoEntities = new PageImpl<>(List.of(), PageRequest.of(pagina, tamanho, ordenacao), 0);
 //
-//        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt())).thenReturn(Optional.empty());
-//        when(inscricaoRepository.save(any())).thenReturn(InscricaoFactory.getInscricaoEntity());
-//        when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDto);
+//        when(inscricaoRepository.findAll(any(Pageable.class)))
+//                .thenReturn(inscricaoEntities);
 //
+//        PageDTO<InscricaoDTO> pages = inscricaoService.listar(pagina, tamanho, sort, orderDescendente);
 //
-//        InscricaoDTO inscricaoDTO = inscricaoService.create(inscricaoEntity.getIdCandidato());
+//        assertEquals(pages.getTamanho(), tamanho);
 //
-//        assertEquals(inscricaoDTO.getIdInscricao(), 1);
 //    }
 
+    @Test
+    public void deveFiltrarInscricoesComSucesso() throws RegraDeNegocioException{
+        Integer pagina = 1;
+        Integer tamanho = 5;
+        String sort = "idCandidato";
+        Integer orderDescendente = 1;
+        Sort ordenacao = Sort.by(sort).descending();
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        TrilhaEntity trilha = TrilhaFactory.getTrilhaEntity();
+        final String trilhaNome = "Frontend";
+        final String edicaoNome = "Edição 10";
+        Set<TrilhaEntity> listTrilha = new HashSet<>();
+        listTrilha.add(trilha);
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        formulario.setTrilhaEntitySet(listTrilha);
+        candidatoEntity.setFormularioEntity(formulario);
+        inscricaoEntity.setCandidato(candidatoEntity);
+        inscricaoEntity.setDataInscricao(LocalDate.now());
+        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+        PageImpl<InscricaoEntity> inscricaoEntities = new PageImpl<>(List.of(inscricaoEntity), PageRequest.of(pagina, tamanho, ordenacao), 0);
+
+        when(inscricaoRepository.filtrarInscricoes(any(Pageable.class), anyString(), anyString(), anyString()))
+                .thenReturn(inscricaoEntities);
+
+        PageDTO<InscricaoDTO> pages = inscricaoService.filtrarInscricoes(pagina, tamanho, inscricaoEntity.getCandidato().getEmail(), edicaoNome, trilhaNome);
+
+        assertEquals(pages.getTamanho(), tamanho);
+
+
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveFiltrarInscricoesComErro() throws RegraDeNegocioException{
+        Integer pagina = 1;
+        Integer tamanho = 5;
+        String sort = "idCandidato";
+        Integer orderDescendente = 1;
+        Sort ordenacao = Sort.by(sort).descending();
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+        TrilhaEntity trilha = TrilhaFactory.getTrilhaEntity();
+        final String trilhaNome = "Frontend";
+        final String edicaoNome = "Edição 10";
+        Set<TrilhaEntity> listTrilha = new HashSet<>();
+        listTrilha.add(trilha);
+        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+        formulario.setTrilhaEntitySet(listTrilha);
+        candidatoEntity.setFormularioEntity(formulario);
+        inscricaoEntity.setCandidato(candidatoEntity);
+        inscricaoEntity.setDataInscricao(LocalDate.now());
+        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+        PageImpl<InscricaoEntity> inscricaoEntities = new PageImpl<>(List.of(inscricaoEntity), PageRequest.of(pagina, tamanho, ordenacao), 0);
+
+        when(inscricaoRepository.filtrarInscricoes(any(Pageable.class), anyString(), anyString(), anyString()))
+                .thenReturn(inscricaoEntities);
+
+        inscricaoService.filtrarInscricoes(-1, -1, inscricaoEntity.getCandidato().getEmail(), edicaoNome, trilhaNome);
+
+    }
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarCreateComException() throws RegraDeNegocioException {
 
