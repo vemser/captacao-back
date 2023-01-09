@@ -45,7 +45,7 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     @Query(" SELECT obj " +
             " FROM CANDIDATO obj " +
-            " WHERE obj.notaProva > 1 ")
+            " WHERE obj.notaProva >= 0 ")
     Page<CandidatoEntity> findByNota(Pageable pageable);
 
     @Query("SELECT DISTINCT c FROM CANDIDATO c " +
@@ -57,6 +57,7 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " WHERE (:nome is null or UPPER(c.nome) LIKE UPPER(CONCAT('%', :nome, '%')))" +
             " AND (:email is null or UPPER(c.email) = UPPER(:email))" +
             " AND (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)" +
-            " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " )
+            " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " +
+            " AND (c.notaProva >= 0) " )
     Page<CandidatoEntity> filtrarCandidatos(Pageable pageable, String nome, String email, String edicao, String trilha);
 }

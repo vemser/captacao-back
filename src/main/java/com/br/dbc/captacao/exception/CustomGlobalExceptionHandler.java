@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.exception;
 
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,5 +60,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(FileSizeLimitExceededException.class)
+    public ResponseEntity<Object> handleExceptionFile(FileSizeLimitExceededException exception,
+                                                      HttpServletRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("errors", List.of(exception.getMessage()));
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 
 }

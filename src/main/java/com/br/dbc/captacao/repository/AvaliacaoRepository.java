@@ -25,6 +25,7 @@ public interface AvaliacaoRepository extends JpaRepository<AvaliacaoEntity, Inte
             " INNER JOIN f.trilhaEntitySet ts" +
             " WHERE (:email is null or UPPER(c.email) = UPPER(:email) AND a.inscricao.candidato.idCandidato = c.idCandidato) " +
             " AND (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.edicao.idEdicao) " +
-            " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) ")
+            " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " +
+            " AND (a.aprovado = 'T') ")
     Page<AvaliacaoEntity> filtrarAvaliacoes(Pageable pageable, String email, String edicao, String trilha);
 }
