@@ -40,7 +40,6 @@ public class EntrevistaFactory {
         entrevistaDTO.setIdEntrevista(1);
         entrevistaDTO.setCandidatoDTO(candidatoDTO);
         entrevistaDTO.setGestorDTO(gestorDTO);
-        entrevistaDTO.setUsuarioEmail(gestorDTO.getEmail());
         entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
 
         return entrevistaDTO;

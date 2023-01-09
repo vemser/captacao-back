@@ -9,6 +9,7 @@ import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +34,6 @@ public class EntrevistaService {
 
     private final ObjectMapper objectMapper;
 
-//    private final EmailService emailService;
-
-//    private final TokenService tokenService;
 
     public EntrevistaEntity findById(Integer id) throws RegraDeNegocioException {
         return entrevistaRepository.findById(id)
@@ -46,6 +44,8 @@ public class EntrevistaService {
         EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevistaEntity, EntrevistaDTO.class);
         entrevistaDTO.setGestorDTO(gestorService.convertoToDTO(entrevistaEntity.getGestorEntity()));
         entrevistaDTO.setCandidatoDTO(candidatoService.converterEmDTO(entrevistaEntity.getCandidatoEntity()));
+        entrevistaDTO.setCandidatoEmail(entrevistaDTO.getCandidatoDTO().getEmail());
+        entrevistaDTO.setAvaliado(entrevistaDTO.getAvaliado());
         return entrevistaDTO;
     }
 
@@ -77,8 +77,8 @@ public class EntrevistaService {
                 entrevistaDTOList);
     }
 
-    public EntrevistaDTO createEntrevista(EntrevistaCreateDTO entrevistaCreateDTO) throws RegraDeNegocioException {
-        GestorEntity gestor = gestorService.findByEmail(entrevistaCreateDTO.getUsuarioEmail());
+    public EntrevistaDTO createEntrevista(EntrevistaCreateDTO entrevistaCreateDTO, String token) throws RegraDeNegocioException {
+        GestorEntity gestor = gestorService.getUser(token);
 
         CandidatoEntity candidato = candidatoService.findByEmailEntity(entrevistaCreateDTO.getCandidatoEmail());
         if (entrevistaRepository.findByCandidatoEntity(candidato).isPresent()) {
@@ -95,16 +95,10 @@ public class EntrevistaService {
         entrevistaEntity.setGestorEntity(gestor);
         entrevistaEntity.setObservacoes(observacoes);
         entrevistaEntity.setLegenda(Legenda.PENDENTE);
-//        tokenConfirmacao(entrevistaEntity);
+        entrevistaEntity.setAvaliado(entrevistaCreateDTO.getAvaliado().equals("T") ? TipoMarcacao.T : TipoMarcacao.F);
         EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevistaEntity);
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
-
-//    public void tokenConfirmacao(EntrevistaEntity entrevistaEntity) throws RegraDeNegocioException {
-//        String tokenSenha = tokenService.getTokenConfirmacao(entrevistaEntity);
-//
-//        emailService.sendEmailConfirmacaoEntrevista(entrevistaEntity, entrevistaEntity.getCandidatoEntity().getEmail(), tokenSenha);
-//    }
 
     public EntrevistaEntity findByCandidatoEntity(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
         Optional<EntrevistaEntity> entrevistaEntityOptional = entrevistaRepository.findByCandidatoEntity(candidatoEntity);
@@ -205,7 +199,6 @@ public class EntrevistaService {
         EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevista, EntrevistaDTO.class);
         entrevistaDTO.setCandidatoDTO(candidatoDTO);
         entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
-        entrevistaDTO.setUsuarioEmail(entrevista.getGestorEntity().getEmail());
         entrevistaDTO.setAvaliado(entrevista.getAvaliado().toString());
         entrevistaDTO.setGestorDTO(objectMapper.convertValue(entrevista.getGestorEntity(), GestorDTO.class));
 
