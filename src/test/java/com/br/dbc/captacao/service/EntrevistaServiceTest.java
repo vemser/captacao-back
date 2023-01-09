@@ -283,20 +283,20 @@ public class EntrevistaServiceTest {
         entrevistaService.atualizarEntrevista(1, entrevistaAtualizacaoDTO, Legenda.CONFIRMADA);
     }
 
-//    @Test
-//    public void deveEnviarOTokenDeConfirmacaoQuandoAtualizarEntrevistaPendenteCorretamente() throws RegraDeNegocioException {
-//        EntrevistaAtualizacaoDTO entrevistaAtualizacaoDTO = getEntrevistaAtualizacaoDTO();
-//        EntrevistaEntity entrevistaEntity = getEntrevistaEntity();
-//
-//        when(entrevistaRepository.findById(anyInt())).thenReturn(Optional.of(entrevistaEntity));
-//        when(entrevistaRepository.findByDataEntrevista(any())).thenReturn(List.of());
-//        when(entrevistaRepository.save(any())).thenReturn(entrevistaEntity);
-//
-//        EntrevistaDTO entrevistaDTO =
-//                entrevistaService.atualizarEntrevista(1, entrevistaAtualizacaoDTO, Legenda.PENDENTE);
-//
-//        assertEquals(1, entrevistaDTO.getIdEntrevista());
-//    }
+    @Test
+    public void deveEnviarOTokenDeConfirmacaoQuandoAtualizarEntrevistaPendenteCorretamente() throws RegraDeNegocioException {
+        EntrevistaAtualizacaoDTO entrevistaAtualizacaoDTO = getEntrevistaAtualizacaoDTO();
+        EntrevistaEntity entrevistaEntity = getEntrevistaEntity();
+
+        when(entrevistaRepository.findById(anyInt())).thenReturn(Optional.of(entrevistaEntity));
+        when(entrevistaRepository.findByDataEntrevista(any())).thenReturn(List.of());
+        when(entrevistaRepository.save(any())).thenReturn(entrevistaEntity);
+
+        EntrevistaDTO entrevistaDTO =
+                entrevistaService.atualizarEntrevista(1, entrevistaAtualizacaoDTO, Legenda.PENDENTE);
+
+        assertEquals(1, entrevistaDTO.getIdEntrevista());
+    }
 
     @Test
     public void deveAtualizarObservacaoEntrevistaCorretamente() throws RegraDeNegocioException {
