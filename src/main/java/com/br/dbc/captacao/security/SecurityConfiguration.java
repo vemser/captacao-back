@@ -63,6 +63,8 @@ public class SecurityConfiguration {
 
                         .antMatchers("/trilha/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
+                        .antMatchers(HttpMethod.GET , "/edicao/edicao-atual").permitAll()
+
                         .antMatchers("/edicao/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")
 
                         .antMatchers("/linguagem/**").hasAnyRole("INSTRUTOR", "GESTAO_DE_PESSOAS", "ADMIN")

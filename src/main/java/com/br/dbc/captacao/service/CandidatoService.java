@@ -198,8 +198,8 @@ public class CandidatoService {
     }
 
     public void exportarCandidatoCSV() throws RegraDeNegocioException {
-        List<CandidatoEntity> candidatoEntityList = candidatoRepository.findAll();
         try {
+        List<CandidatoEntity> candidatoEntityList = candidatoRepository.findAll();
             BufferedWriter bw = new BufferedWriter
                     (new OutputStreamWriter(new FileOutputStream("candidatos.csv", false), "UTF-8"));
             for (CandidatoEntity candidato : candidatoEntityList) {

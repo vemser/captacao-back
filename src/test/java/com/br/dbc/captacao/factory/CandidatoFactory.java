@@ -30,6 +30,7 @@ public class CandidatoFactory {
         candidatoEntity.setEdicao(EdicaoFactory.getEdicaoEntity());
         candidatoEntity.setAtivo(TipoMarcacao.T);
         candidatoEntity.setPcd(TipoMarcacao.T);
+        candidatoEntity.setFormularioEntity(FormularioFactory.getFormularioEntity());
 
         return candidatoEntity;
     }
