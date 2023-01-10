@@ -123,7 +123,7 @@ public interface CandidatoControllerInterface {
     ResponseEntity<CandidatoDTO> updateNotaEParecerTecnico(@PathVariable("idCandidato") Integer id,
                                                            @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException;
 
-    @Operation(summary = "Busca lista de candidatos com nota da prova maior que 0", description = "Busca lista de candidatos com nota da prova maior que 0")
+    @Operation(summary = "Busca lista de candidatos com nota da prova a partir de 60", description = "Busca lista de candidatos com nota da prova a partir de 60")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
@@ -146,7 +146,7 @@ public interface CandidatoControllerInterface {
                                                              @RequestParam (required = false) String edicao,
                                                              @RequestParam (required = false) String trilha);
 
-    @Operation(summary = "Busca lista de candidatos com média maior que 60.", description = "Busca lista de candidatos com média maior que 60")
+    @Operation(summary = "Busca lista de candidatos com média a partir de 60.", description = "Busca lista de candidatos com média a partir de 60.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
