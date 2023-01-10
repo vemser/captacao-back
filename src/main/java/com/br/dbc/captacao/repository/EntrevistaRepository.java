@@ -24,4 +24,5 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
             " ORDER BY e.dataEntrevista ASC  ")
     Page<EntrevistaEntity> findAllByMes(Integer mes, Integer ano, PageRequest pageRequest);
 
+
 }

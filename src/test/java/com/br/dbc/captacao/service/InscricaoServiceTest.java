@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -370,23 +371,29 @@ public class InscricaoServiceTest {
         inscricaoService.exportarCandidatoCSV();
     }
 
-//    @Test(expected = IOException.class)
-//    public void deveTestarExportarCSVComIOException() throws RegraDeNegocioException, IOException {
-//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-//        List<InscricaoEntity> inscricaoEntityList = new ArrayList<>();
-//        inscricaoEntityList.add(inscricaoEntity);
-//
-//        BufferedWriter writer = (new OutputStreamWriter(new FileOutputStream("candidatos.csv", false), "UTF-8"));
-//        OutputStreamWriter streamWriter = mock(OutputStreamWriter.class);
-//        FileOutputStream fileOutputStream=mock(FileOutputStream.class);
-//
-//
-//        when(inscricaoRepository.listarInscricoesAprovadas())
-//                .thenReturn(inscricaoEntityList);
-//        when(writer.getClass()).thenThrow(new IOException("Teste"));
-//
-//        inscricaoService.exportarCandidatoCSV();
-//    }
+    @Test(expected = IOException.class)
+    public void deveTestarExportarCSVComIOException() throws RegraDeNegocioException, IOException {
+        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+        List<InscricaoEntity> inscricaoEntityList = new ArrayList<>();
+        inscricaoEntityList.add(inscricaoEntity);
+
+        final BufferedWriter writer = Mockito.mock(BufferedWriter.class, RETURNS_SMART_NULLS);
+        OutputStreamWriter streamWriter = mock(OutputStreamWriter.class, RETURNS_DEEP_STUBS);
+        FileOutputStream fileOutputStream=mock(FileOutputStream.class, RETURNS_DEEP_STUBS);
+
+
+        when(inscricaoRepository.listarInscricoesAprovadas())
+                .thenReturn(inscricaoEntityList);
+        when(writer.getClass()).thenThrow(new IOException("Teste"));
+        when(streamWriter.getEncoding()).thenThrow(new IOException("Teste"));
+        when(fileOutputStream.getClass()).thenThrow(new IOException("Teste"));
+//        doThrow(new IOException()).when(writer).getClass();
+//        when(writer.isOk()).thenReturn(true);
+//        when(writer.isOk()).thenThrow(new IOException("Teste"));
+//        doThrow(new IOException("Teste")).when(writer).
+
+        inscricaoService.exportarCandidatoCSV();
+    }
 
     @Test
     public void deveTestarConvertToEntity() throws RegraDeNegocioException, RegraDeNegocio404Exception {
