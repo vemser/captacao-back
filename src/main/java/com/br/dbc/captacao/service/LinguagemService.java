@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +46,10 @@ public class LinguagemService {
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
         findById(id);
         linguagemRepository.deleteById(id);
+    }
+
+    public List<LinguagemDTO> convertToDTO(Set<LinguagemEntity> linguagens) {
+        return linguagens.stream()
+                .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class)).toList();
     }
 }

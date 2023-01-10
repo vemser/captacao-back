@@ -5,7 +5,6 @@ import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
-import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.*;
@@ -13,12 +12,8 @@ import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.AvaliacaoRepository;
-import com.br.dbc.captacao.repository.GestorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -27,8 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -117,22 +110,7 @@ public class AvaliacaoService {
         Page<AvaliacaoEntity> avaliacaoEntityPage = avaliacaoRepository.filtrarAvaliacoes(pageRequest, email, edicao, trilha);
 
         List<AvaliacaoDTO> avaliacaoDTOS = avaliacaoEntityPage.stream()
-                .map(avaliacaoEntity -> {
-                    AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
-                    InscricaoDTO inscricaoDTO = inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao());
-                    GestorDTO gestorDTO = objectMapper.convertValue(avaliacaoEntity.getAvaliador(), GestorDTO.class);
-                    List<CargoDTO> cargosDTO = avaliacaoEntity.getAvaliador().getCargoEntity().stream()
-                            .map(cargo -> objectMapper.convertValue(cargo, CargoDTO.class))
-                            .toList();
-
-                    gestorDTO.setCargosDto(cargosDTO);
-                    avaliacaoDTO.setAvaliador(gestorDTO);
-                    avaliacaoDTO.setInscricao(inscricaoDTO);
-                    avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
-                    avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
-
-                    return avaliacaoDTO;
-                }).toList();
+                .map(this::convertToDTO).toList();
 
         return new PageDTO<>(avaliacaoEntityPage.getTotalElements(),
                 avaliacaoEntityPage.getTotalPages(),
@@ -151,8 +129,7 @@ public class AvaliacaoService {
     }
 
     public AvaliacaoDTO convertToDTO(AvaliacaoEntity avaliacaoEntity) {
-        AvaliacaoDTO avaliacaoDTO = new AvaliacaoDTO();
-        avaliacaoDTO.setIdAvaliacao(avaliacaoEntity.getIdAvaliacao());
+        AvaliacaoDTO avaliacaoDTO = objectMapper.convertValue(avaliacaoEntity, AvaliacaoDTO.class);
         avaliacaoDTO.setAprovado(avaliacaoEntity.getAprovado());
         avaliacaoDTO.setAvaliador(gestorService.getGestorDTO(avaliacaoEntity.getAvaliador()));
         avaliacaoDTO.setInscricao(inscricaoService.converterParaDTO(avaliacaoEntity.getInscricao()));

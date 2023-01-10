@@ -5,8 +5,10 @@ import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
-import com.br.dbc.captacao.entity.*;
+import com.br.dbc.captacao.entity.CandidatoEntity;
+import com.br.dbc.captacao.entity.EdicaoEntity;
+import com.br.dbc.captacao.entity.FormularioEntity;
+import com.br.dbc.captacao.entity.LinguagemEntity;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -22,7 +24,10 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +39,7 @@ public class CandidatoService {
     private final FormularioService formularioService;
     private final ObjectMapper objectMapper;
     private final LinguagemService linguagemService;
+    private final TrilhaService trilhaService;
     private final EdicaoService edicaoService;
 
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
@@ -226,7 +232,6 @@ public class CandidatoService {
         return candidatoEntity;
     }
 
-
     public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDto, CandidatoEntity.class);
         candidatoEntity.setFormularioEntity(objectMapper.convertValue(formularioService.findById(candidatoDto.getFormulario().getIdFormulario()), FormularioEntity.class));
@@ -237,53 +242,72 @@ public class CandidatoService {
         return candidatoEntity;
     }
 
-    public CandidatoDTO converterEmDTO(CandidatoEntity candidatoEntity) {
-        CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
+    public CandidatoDTO converterEmDTO(CandidatoEntity candidato) {
+//        CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
+//
+//        if (candidatoEntity.getImageEntity() != null) {
+//            candidatoDTO.setImagem(candidatoEntity.getImageEntity().getIdImagem());
+//        }
+//        candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
+//        if (candidatoEntity.getFormularioEntity().getCurriculoEntity() != null) {
+//            candidatoDTO.getFormulario().setCurriculo(candidatoEntity.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
+//        }
+//        List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
+//        for (TrilhaEntity trilha : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
+//            trilhaDTOList.add(objectMapper.convertValue(trilha, TrilhaDTO.class));
+//        }
+//        candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
+//        if (candidatoEntity.getFormularioEntity().getImagemConfigPc() != null) {
+//            candidatoDTO.getFormulario().setImagemConfigPc(candidatoEntity.getFormularioEntity().getImagemConfigPc().getIdImagem());
+//        }
+//        if (candidatoEntity.getObservacoes() != null) {
+//            candidatoDTO.setObservacoes(candidatoEntity.getObservacoes());
+//        }
+//        if (candidatoEntity.getParecerComportamental() != null) {
+//            candidatoDTO.setParecerComportamental(candidatoEntity.getParecerComportamental());
+//        }
+//        if (candidatoEntity.getParecerTecnico() != null) {
+//            candidatoDTO.setParecerTecnico(candidatoEntity.getParecerTecnico());
+//        }
+//        if (candidatoEntity.getMedia() != null) {
+//            candidatoDTO.setMedia(candidatoEntity.getMedia());
+//        }
+//        candidatoDTO.setIdCandidato(candidatoEntity.getIdCandidato());
+//        candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
+//        candidatoDTO.setLinguagens(candidatoEntity.getLinguagens()
+//                .stream()
+//                .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class))
+//                .toList());
+//        return candidatoDTO;
 
-        if (candidatoEntity.getImageEntity() != null) {
-            candidatoDTO.setImagem(candidatoEntity.getImageEntity().getIdImagem());
-        }
-        candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
-        if (candidatoEntity.getFormularioEntity().getCurriculoEntity() != null) {
-            candidatoDTO.getFormulario().setCurriculo(candidatoEntity.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
-        }
-        List<TrilhaDTO> trilhaDTOList = new ArrayList<>();
-        for (TrilhaEntity trilha : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
-            trilhaDTOList.add(objectMapper.convertValue(trilha, TrilhaDTO.class));
-        }
-        candidatoDTO.getFormulario().setTrilhas(new HashSet<>(trilhaDTOList));
-        if (candidatoEntity.getFormularioEntity().getImagemConfigPc() != null) {
-            candidatoDTO.getFormulario().setImagemConfigPc(candidatoEntity.getFormularioEntity().getImagemConfigPc().getIdImagem());
-        }
-        if (candidatoEntity.getObservacoes() != null) {
-            candidatoDTO.setObservacoes(candidatoEntity.getObservacoes());
-        }
-        if (candidatoEntity.getParecerComportamental() != null) {
-            candidatoDTO.setParecerComportamental(candidatoEntity.getParecerComportamental());
-        }
-        if (candidatoEntity.getParecerTecnico() != null) {
-            candidatoDTO.setParecerTecnico(candidatoEntity.getParecerTecnico());
-        }
-        if (candidatoEntity.getMedia() != null) {
-            candidatoDTO.setMedia(candidatoEntity.getMedia());
-        }
-        candidatoDTO.setIdCandidato(candidatoEntity.getIdCandidato());
-        candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
-        candidatoDTO.setLinguagens(candidatoEntity.getLinguagens()
-                .stream()
-                .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class))
-                .toList());
-        return candidatoDTO;
+                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidato, CandidatoDTO.class);
+                    FormularioDTO formularioDTO = objectMapper.convertValue(candidato.getFormularioEntity(), FormularioDTO.class);
+                    EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
+
+                    formularioDTO.setTrilhas(trilhaService.convertToDTO(candidato.getFormularioEntity().getTrilhaEntitySet()));
+                    if(candidato.getImageEntity() != null) {
+                        candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
+                    }
+                    if(candidato.getFormularioEntity().getCurriculoEntity() != null) {
+                        formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
+                    }
+                    candidatoDTO.setFormulario(formularioDTO);
+                    candidatoDTO.setLinguagens(linguagemService.convertToDTO(candidato.getLinguagens()));
+                    candidatoDTO.setEdicao(edicaoDTO);
+
+                    return candidatoDTO;
     }
 
     public PageDTO<CandidatoDTO> findByNota(Integer pagina, Integer tamanho) {
-
         Sort orderBy = Sort.by("notaProva");
+
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, orderBy);
+
         Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByNota(pageRequest);
+
         List<CandidatoDTO> candidatoDTOList = paginaDoRepositorio.getContent().stream()
-                .map(candidato -> converterEmDTO(candidato))
-                .toList();
+                .map(this::converterEmDTO).toList();
+
         return new PageDTO<>(paginaDoRepositorio.getTotalElements(),
                 paginaDoRepositorio.getTotalPages(),
                 pagina,
@@ -297,23 +321,7 @@ public class CandidatoService {
         Page<CandidatoEntity> candidatoEntityPage = candidatoRepository.filtrarCandidatos(pageRequest, nome, email, edicao, trilha);
 
         List<CandidatoDTO> candidatosDTO = candidatoEntityPage.stream()
-                .map(candidato -> {
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidato, CandidatoDTO.class);
-                    FormularioDTO formularioDTO = objectMapper.convertValue(candidato.getFormularioEntity(), FormularioDTO.class);
-                    List<LinguagemDTO> linguagensDTO = candidato.getLinguagens().stream()
-                            .map(linguagem -> objectMapper.convertValue(linguagem, LinguagemDTO.class)).toList();
-                    EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
-                    Set<TrilhaDTO> trilhasDTO = candidato.getFormularioEntity().getTrilhaEntitySet().stream()
-                            .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class)).collect(Collectors.toSet());
-
-                    formularioDTO.setTrilhas(trilhasDTO);
-
-                    candidatoDTO.setFormulario(formularioDTO);
-                    candidatoDTO.setLinguagens(linguagensDTO);
-                    candidatoDTO.setEdicao(edicaoDTO);
-
-                    return candidatoDTO;
-                }).toList();
+                .map(this::converterEmDTO).toList();
 
         return new PageDTO<>(candidatoEntityPage.getTotalElements(),
                 candidatoEntityPage.getTotalPages(),
@@ -323,13 +331,15 @@ public class CandidatoService {
     }
 
     public PageDTO<CandidatoDTO> findByMedia(Integer pagina, Integer tamanho) {
-
         Sort orderBy = Sort.by("media");
+
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, orderBy);
+
         Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByMedia(pageRequest);
+
         List<CandidatoDTO> candidatoDTOList = paginaDoRepositorio.getContent().stream()
-                .map(candidato -> converterEmDTO(candidato))
-                .toList();
+                .map(this::converterEmDTO).toList();
+
         return new PageDTO<>(paginaDoRepositorio.getTotalElements(),
                 paginaDoRepositorio.getTotalPages(),
                 pagina,

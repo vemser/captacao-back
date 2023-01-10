@@ -28,13 +28,12 @@ public class TrilhaService {
         TrilhaEntity trilhaEntity = objectMapper.convertValue(trilhaCreateDTO, TrilhaEntity.class);
         trilhaEntity.setNome(trilhaEntity.getNome().trim());
         TrilhaEntity trilhaSalva = trilhaRepository.save(trilhaEntity);
-        return convertToDTO(trilhaSalva);
+        return objectMapper.convertValue(trilhaSalva, TrilhaDTO.class);
     }
 
     public List<TrilhaDTO> list() {
         return trilhaRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .toList();
+                .map(trilha -> objectMapper.convertValue(trilha, TrilhaDTO.class)).toList();
     }
 
     public TrilhaEntity findById(Integer idPerfil) throws RegraDeNegocioException {
@@ -67,7 +66,8 @@ public class TrilhaService {
                 .collect(Collectors.toSet());
     }
 
-    private TrilhaDTO convertToDTO(TrilhaEntity trilhaEntity) {
-        return objectMapper.convertValue(trilhaEntity, TrilhaDTO.class);
+    public Set<TrilhaDTO> convertToDTO(Set<TrilhaEntity> trilhas) {
+        return trilhas.stream()
+                .map(trilha -> objectMapper.convertValue(trilha, TrilhaDTO.class)).collect(Collectors.toSet());
     }
 }
