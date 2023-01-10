@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -183,5 +185,16 @@ public class GestorServiceTest {
         assertEquals(gestorEntity.getNome(), gestorDTO.getNome());
     }
 
-
+//    @Test
+//    public void deveGetUserComSucesso() throws RegraDeNegocioException {
+//        //Setup
+//        String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImJydW5vLmJhcmR1IiwianRpIjoiMTM0IiwiY2FyZ29zIjpbXSwiaWF0IjoxNjczMzcxNTUzLCJleHAiOjE2NzU5NjM1NTN9.mzb_ElyLhsfF0d-kluBN5nLnvRKrxmBHd8PI9HGd02A";
+//        when(cargoService.findByNome(any())).thenReturn(CargoFactory.getCargoEntity());
+//        when(gestorRepository.findByEmail(any())).thenReturn(getGestorEntity());
+//        when(gestorRepository.save(any())).thenReturn(getGestorEntity());
+//        //Act
+//        GestorEntity gestorEntity = gestorService.getUser(token);
+//
+//        //Assert
+//    }
 }
