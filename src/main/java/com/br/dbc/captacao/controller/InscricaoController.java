@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @Validated
 @RestController
@@ -72,26 +70,5 @@ public class InscricaoController implements InscricaoControllerInterface {
         inscricaoService.delete(idInscricao);
         log.info("Inscrição deletada");
         return ResponseEntity.noContent().build();
-    }
-
-
-    // ENDPOINTS ANTIGOS DE FILTRO. EXCLUIR APÓS O FRONTEND FIZER INTEGRAÇÃO COM O NOVO ENDPOINT DE FILTROS UNIFICADO
-
-
-    @GetMapping("/list-by-trilha")
-    public ResponseEntity<PageDTO<InscricaoDTO>> listByTrilha(Integer pagina, Integer tamanho, @RequestParam("trilha")String trilha) throws RegraDeNegocioException {
-
-        return null;
-    }
-
-    @GetMapping("/list-by-edicao")
-    public ResponseEntity<List<InscricaoDTO>> listByEdicao(@RequestParam("edicao") String edicao) throws RegraDeNegocioException {
-
-        return null;
-    }
-
-    @GetMapping("/find-by-email")
-    public ResponseEntity<InscricaoDTO> findInscricaoPorEmail(@RequestParam String email) throws RegraDeNegocioException {
-        return null;
     }
 }

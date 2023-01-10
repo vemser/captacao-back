@@ -5,9 +5,11 @@ import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
-import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.*;
+import com.br.dbc.captacao.entity.CandidatoEntity;
+import com.br.dbc.captacao.entity.EntrevistaEntity;
+import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
@@ -18,7 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +31,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EntrevistaService {
     private final EntrevistaRepository entrevistaRepository;
-
     private final CandidatoService candidatoService;
-
     private final GestorService gestorService;
-
     private final ObjectMapper objectMapper;
-
 
     public EntrevistaEntity findById(Integer id) throws RegraDeNegocioException {
         return entrevistaRepository.findById(id)

@@ -4,8 +4,6 @@ package com.br.dbc.captacao.controller;
 import com.br.dbc.captacao.controller.documentationinterface.CandidatoControllerInterface;
 import com.br.dbc.captacao.dto.candidato.*;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoCadastroDTO;
-import com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.CandidatoService;
@@ -21,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -56,26 +53,6 @@ public class CandidatoController implements CandidatoControllerInterface {
                                                @Valid @RequestBody CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         CandidatoDTO candidatoDTO = candidatoService.update(id, candidatoCreateDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
-    }
-
-    @GetMapping("/listar-candidato-cadastro-por-nome-ou-por-trilha-ou-email")
-    public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(@RequestParam(value = "nomeCompleto", required = false) String nomeCompleto,
-                                                                                    @RequestParam(defaultValue = "0") Integer pagina,
-                                                                                    @RequestParam(defaultValue = "20") Integer tamanho,
-                                                                                    @RequestParam(required = false) String nomeTrilha,
-                                                                                    @RequestParam(required = false) String nomeEdicao,
-                                                                                    @RequestParam(required = false) String email) throws RegraDeNegocioException {
-        return candidatoService.listRelatorioCandidatoCadastroDTO(nomeCompleto, pagina, tamanho, nomeTrilha, nomeEdicao, email);
-    }
-
-    @GetMapping("/listar-candidato-principal-por-nome-ou-por-trilha-ou-por-email")
-    public PageDTO<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(@RequestParam(value = "nomeCompleto", required = false) String nomeCompleto,
-                                                                                                           @RequestParam(defaultValue = "0") Integer pagina,
-                                                                                                           @RequestParam(defaultValue = "20") Integer tamanho,
-                                                                                                           @RequestParam(required = false) String nomeTrilha,
-                                                                                                           @RequestParam(required = false) String nomeEdicao,
-                                                                                                           @RequestParam(required = false) String email) throws RegraDeNegocioException {
-        return candidatoService.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nomeCompleto, pagina, tamanho, nomeTrilha, nomeEdicao, email);
     }
 
     @DeleteMapping("/{idCandidato}")
@@ -122,28 +99,12 @@ public class CandidatoController implements CandidatoControllerInterface {
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-trilha")
-    public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
-
-        List<CandidatoDTO> candidatoDTOListByTrilha = candidatoService.listCandidatosByTrilha(trilha);
-
-        return new ResponseEntity<>(candidatoDTOListByTrilha,HttpStatus.OK);
-    }
-
-    @GetMapping("/find-by-edicao")
-    public ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao ( @RequestParam("edicao") String edicao) throws  RegraDeNegocioException{
-
-        List<CandidatoDTO> candidatoDTOListByEdicao = candidatoService.listCandidatosByEdicao(edicao);
-
-        return new ResponseEntity<>(candidatoDTOListByEdicao,HttpStatus.OK);
-    }
-
     @GetMapping("/find-by-nota")
-    public ResponseEntity<PageDTO<CandidatoDTO>> findCandidatosByNota (Integer pagina, Integer tamanho) {
+    public ResponseEntity<PageDTO<CandidatoDTO>> findByNota (Integer pagina, Integer tamanho) {
 
-        PageDTO<CandidatoDTO> candidatoDTOListByNota = candidatoService.listCandidatosByNota(pagina, tamanho);
+        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.findByNota(pagina, tamanho);
 
-        return new ResponseEntity<>(candidatoDTOListByNota,HttpStatus.OK);
+        return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
     }
 
 
@@ -157,4 +118,47 @@ public class CandidatoController implements CandidatoControllerInterface {
         PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatos(pagina, tamanho, nome, email, edicao, trilha);
         return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
     }
+
+    @GetMapping("/resultado")
+    public ResponseEntity<PageDTO<CandidatoDTO>> findByMedia (Integer pagina, Integer tamanho) {
+
+        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.findByMedia(pagina, tamanho);
+
+        return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
+    }
+
+    //    @GetMapping("/find-by-trilha")
+//    public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
+//
+//        List<CandidatoDTO> candidatoDTOListByTrilha = candidatoService.listCandidatosByTrilha(trilha);
+//
+//        return new ResponseEntity<>(candidatoDTOListByTrilha,HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/find-by-edicao")
+//    public ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao ( @RequestParam("edicao") String edicao) throws  RegraDeNegocioException{
+//
+//        List<CandidatoDTO> candidatoDTOListByEdicao = candidatoService.listCandidatosByEdicao(edicao);
+//
+//        return new ResponseEntity<>(candidatoDTOListByEdicao,HttpStatus.OK);
+//    }
+//@GetMapping("/listar-candidato-cadastro-por-nome-ou-por-trilha-ou-email")
+//    public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(@RequestParam(value = "nomeCompleto", required = false) String nomeCompleto,
+//                                                                                    @RequestParam(defaultValue = "0") Integer pagina,
+//                                                                                    @RequestParam(defaultValue = "20") Integer tamanho,
+//                                                                                    @RequestParam(required = false) String nomeTrilha,
+//                                                                                    @RequestParam(required = false) String nomeEdicao,
+//                                                                                    @RequestParam(required = false) String email) throws RegraDeNegocioException {
+//        return candidatoService.listRelatorioCandidatoCadastroDTO(nomeCompleto, pagina, tamanho, nomeTrilha, nomeEdicao, email);
+//    }
+//
+//    @GetMapping("/listar-candidato-principal-por-nome-ou-por-trilha-ou-por-email")
+//    public PageDTO<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(@RequestParam(value = "nomeCompleto", required = false) String nomeCompleto,
+//                                                                                                           @RequestParam(defaultValue = "0") Integer pagina,
+//                                                                                                           @RequestParam(defaultValue = "20") Integer tamanho,
+//                                                                                                           @RequestParam(required = false) String nomeTrilha,
+//                                                                                                           @RequestParam(required = false) String nomeEdicao,
+//                                                                                                           @RequestParam(required = false) String email) throws RegraDeNegocioException {
+//        return candidatoService.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nomeCompleto, pagina, tamanho, nomeTrilha, nomeEdicao, email);
+//    }
 }

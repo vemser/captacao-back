@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 public interface CandidatoControllerInterface {
 
@@ -124,34 +123,39 @@ public interface CandidatoControllerInterface {
     ResponseEntity<CandidatoDTO> updateNotaEParecerTecnico(@PathVariable("idCandidato") Integer id,
                                                            @Valid @RequestBody CandidatoTecnicoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException;
 
-    @Operation(summary = "Busca lista de candidatos por TRILHA.", description = "Busca lista de candidatos por TRILHA.")
+    @Operation(summary = "Busca lista de candidatos com nota da prova maior que 0", description = "Busca lista de candidatos com nota da prova maior que 0")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException;
+    ResponseEntity<PageDTO<CandidatoDTO>> findByNota (Integer pagina, Integer tamanho);
 
-    @Operation(summary = "Busca lista de candidatos por EDIÇAO.", description = "Busca lista de candidatos por EDIÇAO.")
+    @Operation(summary = "Buscar candidatos por filtro", description = "Busca candidatos por filtro")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao (@RequestParam("edicao") String edicao) throws  RegraDeNegocioException;
+    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
+                                                             @RequestParam Integer tamanho,
+                                                             @RequestParam (required = false) String nome,
+                                                             @RequestParam (required = false) String email,
+                                                             @RequestParam (required = false) String edicao,
+                                                             @RequestParam (required = false) String trilha);
 
-    @Operation(summary = "Busca lista de candidatos por NOTA.", description = "Busca lista de candidatos por NOTA.")
+    @Operation(summary = "Busca lista de candidatos com média maior que 60.", description = "Busca lista de candidatos com média maior que 60")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<PageDTO<CandidatoDTO>> findCandidatosByNota (Integer pagina, Integer tamanho);
+    ResponseEntity<PageDTO<CandidatoDTO>> findByMedia (Integer pagina, Integer tamanho);
 
-//    @Operation(summary = "Inserir curriculo do Candidato no sistema", description = "Cadastrar curriculo de um candidato especifico do sistema pelo e-mail")
+    //    @Operation(summary = "Inserir curriculo do Candidato no sistema", description = "Cadastrar curriculo de um candidato especifico do sistema pelo e-mail")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "200", description = "Cadastro realizado com sucesso!"),
 //            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
@@ -194,19 +198,21 @@ public interface CandidatoControllerInterface {
 //                                                                             @RequestParam(defaultValue = "0") Integer pagina,
 //                                                                             @RequestParam(defaultValue = "20") Integer tamanho,
 //                                                                             @RequestParam(required = false) String nomeTrilha,
-//                                                                             @RequestParam(required = false) String nomeEdicao) throws RegraDeNegocioException;
-
-    @Operation(summary = "Buscar candidatos por filtro", description = "Busca candidatos por filtro")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
-            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
-            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
-    })
-    @GetMapping
-    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
-                                                             @RequestParam Integer tamanho,
-                                                             @RequestParam (required = false) String nome,
-                                                             @RequestParam (required = false) String email,
-                                                             @RequestParam (required = false) String edicao,
-                                                             @RequestParam (required = false) String trilha);
+//                                                                             @RequestParam(required = false) String nomeEdicao) throws RegraDeNegocioException;//    @Operation(summary = "Busca lista de candidatos por TRILHA.", description = "Busca lista de candidatos por TRILHA.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
+//            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+//            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+//    })
+//    @GetMapping
+//    ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException;
+//
+//    @Operation(summary = "Busca lista de candidatos por EDIÇAO.", description = "Busca lista de candidatos por EDIÇAO.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
+//            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+//            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+//    })
+//    @GetMapping
+//    ResponseEntity<List<CandidatoDTO>> findCandidatosByEdicao (@RequestParam("edicao") String edicao) throws  RegraDeNegocioException;
 }
