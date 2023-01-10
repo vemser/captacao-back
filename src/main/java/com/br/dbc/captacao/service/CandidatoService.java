@@ -71,7 +71,6 @@ public class CandidatoService {
         return candidatoDTO;
     }
 
-
     public PageDTO<CandidatoDTO> listaAllPaginado(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
@@ -183,12 +182,12 @@ public class CandidatoService {
         CandidatoEntity candidatoEntity = findByEmailEntity(email);
         return converterEmDTO(candidatoEntity);
     }
-
-    public CandidatoDTO findCandidatoDtoByEmail(String email) {
-        CandidatoEntity candidato = candidatoRepository.findCandidatoEntitiesByEmail(email);
-        CandidatoDTO candidatoDto = converterEmDTO(candidato);
-        return candidatoDto;
-    }
+//
+//    public CandidatoDTO findCandidatoDtoByEmail(String email) {
+//        CandidatoEntity candidato = candidatoRepository.findCandidatoEntitiesByEmail(email);
+//        CandidatoDTO candidatoDto = converterEmDTO(candidato);
+//        return candidatoDto;
+//    }
 
     public CandidatoEntity findByEmailEntity(String email) throws RegraDeNegocioException {
         Optional<CandidatoEntity> candidatoEntity = candidatoRepository.findByEmail(email);
@@ -280,22 +279,22 @@ public class CandidatoService {
 //                .toList());
 //        return candidatoDTO;
 
-                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidato, CandidatoDTO.class);
-                    FormularioDTO formularioDTO = objectMapper.convertValue(candidato.getFormularioEntity(), FormularioDTO.class);
-                    EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
+        CandidatoDTO candidatoDTO = objectMapper.convertValue(candidato, CandidatoDTO.class);
+        FormularioDTO formularioDTO = objectMapper.convertValue(candidato.getFormularioEntity(), FormularioDTO.class);
+        EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
 
-                    formularioDTO.setTrilhas(trilhaService.convertToDTO(candidato.getFormularioEntity().getTrilhaEntitySet()));
-                    if(candidato.getImageEntity() != null) {
-                        candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
-                    }
-                    if(candidato.getFormularioEntity().getCurriculoEntity() != null) {
-                        formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
-                    }
-                    candidatoDTO.setFormulario(formularioDTO);
-                    candidatoDTO.setLinguagens(linguagemService.convertToDTO(candidato.getLinguagens()));
-                    candidatoDTO.setEdicao(edicaoDTO);
+        formularioDTO.setTrilhas(trilhaService.convertToDTO(candidato.getFormularioEntity().getTrilhaEntitySet()));
+        if(candidato.getImageEntity() != null) {
+            candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
+        }
+        if(candidato.getFormularioEntity().getCurriculoEntity() != null) {
+            formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
+        }
+        candidatoDTO.setFormulario(formularioDTO);
+        candidatoDTO.setLinguagens(linguagemService.convertToDTO(candidato.getLinguagens()));
+        candidatoDTO.setEdicao(edicaoDTO);
 
-                    return candidatoDTO;
+        return candidatoDTO;
     }
 
     public PageDTO<CandidatoDTO> findByNota(Integer pagina, Integer tamanho) {
@@ -347,7 +346,7 @@ public class CandidatoService {
                 candidatoDTOList);
     }
 
-    //    public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
+//        public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
 //        Sort ordenacao = Sort.by("notaProva");
 //        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
 //        Page<RelatorioCandidatoPaginaPrincipalDTO> candidatoEntityPage =
@@ -387,7 +386,7 @@ public class CandidatoService {
 //                tamanho,
 //                relatorioCandidatoCadastroDTOPage);
 //    }
-
+//
 //    public PageDTO<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
 //        Sort ordenacao = Sort.by("notaProva");
 //        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
@@ -401,7 +400,7 @@ public class CandidatoService {
 //                tamanho,
 //                candidatoEntityPage.toList());
 //    }
-
+//
 //    public List<CandidatoDTO> listCandidatosByTrilha(String trilha) throws RegraDeNegocioException {
 //
 //        TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
@@ -430,7 +429,7 @@ public class CandidatoService {
 //
 //        return candidatoDTOListByTrilha;
 //    }
-
+//
 //    public List<CandidatoDTO> listCandidatosByEdicao(String edicao) throws RegraDeNegocioException {
 //
 //        EdicaoEntity edicaoRetorno = edicaoService.findByNome(edicao);

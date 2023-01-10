@@ -33,7 +33,6 @@ public class AvaliacaoService {
     private final InscricaoService inscricaoService;
     private final GestorService gestorService;
 
-
     public AvaliacaoDTO create(AvaliacaoCreateDTO avaliacaoCreateDTO, String token) throws RegraDeNegocioException {
         if (avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao() )!= null) {
             throw new RegraDeNegocioException("Candidato já avaliado!");

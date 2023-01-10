@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.CargoDTO;
-import com.br.dbc.captacao.dto.gestor.GestorCreateDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.gestor.GestorEmailNomeCargoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
@@ -30,6 +29,7 @@ public class GestorService {
 
     private static final String CHAVE_CARGOS = "cargos";
     private static final String CHAVE_LOGIN = "username";
+    private static final String CHAVE_ID = "jti";
     @Value("${jwt.secret}")
     private String secret;
 
@@ -158,6 +158,7 @@ public class GestorService {
                 .getBody();
 
         String email = chaves.get(CHAVE_LOGIN , String.class);
+        String idGestor = chaves.get(CHAVE_ID, String.class);
         List<String> cargos = chaves.get(CHAVE_CARGOS, List.class);
 
         Set<CargoEntity> lista = cargos.stream().map(x -> {
@@ -170,7 +171,9 @@ public class GestorService {
 
 
         GestorEntity gestor = gestorRepository.findByEmail(email);
-        if (gestor != null){
+        if (gestor == null){
+            gestor = new GestorEntity();
+            gestor.setIdGestor(Integer.valueOf(idGestor));
             gestor.setEmail(email);
             gestor.setNome(email.replace(".", " "));
             gestor.setSenha("123456789");
