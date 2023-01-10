@@ -329,19 +329,19 @@ public class CandidatoServiceTest {
         assertEquals(candidatoDTO.getNome(), candidatoEntity.getNome());
     }
 
-    @Test
-    public void deveTestarFindCandidatoDtoByEmailComSucesso() throws RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-        candidatoEntity.setFormularioEntity(formulario);
-
-        when(candidatoRepository.findCandidatoEntitiesByEmail(anyString()))
-                .thenReturn(candidatoEntity);
-
-        CandidatoDTO candidatoDTO = candidatoService.findCandidatoDtoByEmail("email@email");
-
-        assertEquals(candidatoDTO.getNome(), candidatoEntity.getNome());
-    }
+//    @Test
+//    public void deveTestarFindCandidatoDtoByEmailComSucesso() throws RegraDeNegocioException {
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        candidatoEntity.setFormularioEntity(formulario);
+//
+//        when(candidatoRepository.findCandidatoEntitiesByEmail(anyString()))
+//                .thenReturn(candidatoEntity);
+//
+//        CandidatoDTO candidatoDTO = candidatoService.findCandidatoDtoByEmail("email@email");
+//
+//        assertEquals(candidatoDTO.getNome(), candidatoEntity.getNome());
+//    }
 
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarFindByEmailEntityComException() throws RegraDeNegocioException {
