@@ -8,14 +8,12 @@ import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
-import javax.validation.Valid;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 public interface FormularioControllerInterface {
@@ -64,7 +62,7 @@ public interface FormularioControllerInterface {
             }
     )
     @DeleteMapping("/delete-fisico/{idFormulario}")
-    public ResponseEntity<Void> deletarFormulario(@PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception;
+    ResponseEntity<Void> deletarFormulario(@PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception;
 
     @Operation(summary = "Atualizar curriculo dentro de Formulario", description = "Atualizar curriculo dentro formulario passado por ID")
     @ApiResponses(
@@ -75,7 +73,7 @@ public interface FormularioControllerInterface {
             }
     )
     @PutMapping(value = "/upload-print-config-pc/{idFormulario}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadPrintConfigPc(@RequestPart("file") MultipartFile file,
+    ResponseEntity<Void> uploadPrintConfigPc(@RequestPart("file") MultipartFile file,
                                                     @PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception;
 
     @Operation(summary = "Atualizar Print Config PC dentro de Formulario", description = "Atualizar Print CONFIGURAÇÕES do computador dentro formulario passado por ID")
@@ -87,7 +85,7 @@ public interface FormularioControllerInterface {
             }
     )
     @PutMapping(value = "/upload-curriculo/{idFormulario}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
+    ResponseEntity<Void> uploadCurriculo(@RequestPart("file") MultipartFile file,
                                                 @PathVariable("idFormulario") Integer idFormulario) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception;
 
 
@@ -100,7 +98,16 @@ public interface FormularioControllerInterface {
             }
     )
     @GetMapping("/recuperar-curriculo")
-    public ResponseEntity<String> recuperarCurriculo(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception;
+    ResponseEntity<String> recuperarCurriculo(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception;
 
-
-    }
+    @Operation(summary = "Recuperar print das configurações do pc em Base64 por ID-Formulario", description = "Recuperar print das configurações do pc em Base64 por ID-Formulario")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Print das configurações do pc em Base64 recuperados com sucesso"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @GetMapping("/recuperar-print-config-pc")
+    ResponseEntity<String> recuperarPrint(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocio404Exception, RegraDeNegocioException;
+}
