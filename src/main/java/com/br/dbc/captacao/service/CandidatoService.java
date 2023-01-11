@@ -458,4 +458,18 @@ public class CandidatoService {
 //
 //        return candidatoDTOListByEdicao;
 //    }
+
+    public void getExport(HttpServletResponse response) throws RegraDeNegocioException, IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=candidato_" + currentDateTime + ".csv";
+        response.setHeader(headerKey, headerValue);
+
+        List<CandidatoEntity> listCandidato = candidatoRepository.findListByMedia();
+        ExcelExporter excelExporter = new ExcelExporter(listCandidato.stream().map(x -> converterEmDTO(x)).toList());
+        excelExporter.exportCandidato(response);
+    }
 }

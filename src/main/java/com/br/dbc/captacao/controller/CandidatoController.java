@@ -128,6 +128,11 @@ public class CandidatoController implements CandidatoControllerInterface {
         return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
     }
 
+    @GetMapping("/export-csv")
+    public void exportToExcel(HttpServletResponse response) throws IOException, RegraDeNegocioException {
+        candidatoService.getExport(response);
+    }
+
     //    @GetMapping("/find-by-trilha")
 //    public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
 //
