@@ -2,7 +2,6 @@ package com.br.dbc.captacao.repository;
 
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
-import com.br.dbc.captacao.enums.Legenda;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;

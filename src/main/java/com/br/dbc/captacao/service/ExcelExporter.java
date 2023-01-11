@@ -46,9 +46,9 @@ public class ExcelExporter {
         style.setFont(font);
 
         createCell(row, 0, "Id", style);
-        createCell(row, 1, "Nome", style);
-        createCell(row, 2, "E-mail", style);
-        createCell(row, 3, "Trilha", style);
+        createCell(row, 1, "Nome                         ", style);
+        createCell(row, 2, "E-mail                                        ", style);
+        createCell(row, 3, "Trilha                       ", style);
         createCell(row, 4, "Nota Prova", style);
         createCell(row, 5, "Telefone", style);
     }
