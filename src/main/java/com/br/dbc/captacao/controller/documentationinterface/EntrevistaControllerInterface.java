@@ -12,7 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 public interface EntrevistaControllerInterface {
 
@@ -75,7 +77,7 @@ public interface EntrevistaControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException;
+    ResponseEntity<Void> exportarEntrevistaParaCsv(HttpServletResponse response) throws IOException;
 
     @Operation(summary = "Buscar entrevista pelo e-mail do candidato", description = "Busca uma entrevista a partir do e-mail do candidato")
     @ApiResponses(value = {
