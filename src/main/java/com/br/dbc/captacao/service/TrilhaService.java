@@ -56,8 +56,8 @@ public class TrilhaService {
     }
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
-        findById(id);
-        trilhaRepository.deleteById(id);
+        TrilhaEntity trilha = trilhaRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("Trilha não encontrada!"));
+        trilhaRepository.delete(trilha);
     }
 
     public Set<TrilhaEntity> convertToEntity(Set<TrilhaDTO> trilhas) {
