@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +61,11 @@ public class EntrevistaService {
                 pagina,
                 tamanho,
                 entrevistaDTOList);
+    }
+
+    public List<EntrevistaDTO> listPorTrilha(String trilha) {
+        List<EntrevistaEntity> list = entrevistaRepository.findAllByTrilha(trilha);
+        return list.stream().map(this::converterParaEntrevistaDTO).toList();
     }
 
     public PageDTO<EntrevistaDTO> listMes(Integer pagina, Integer tamanho, Integer mes, Integer ano) {

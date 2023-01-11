@@ -25,4 +25,11 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
     Page<EntrevistaEntity> findAllByMes(Integer mes, Integer ano, PageRequest pageRequest);
 
 
+    @Query("SELECT obj " +
+            "FROM ENTREVISTAS obj " +
+            "inner join obj.candidatoEntity ca "  +
+            "inner join ca.formularioEntity fo " +
+            "inner join fo.trilhaEntitySet ti " +
+            "WHERE ti.nome LIKE :trilha")
+    List<EntrevistaEntity> findAllByTrilha(String trilha);
 }

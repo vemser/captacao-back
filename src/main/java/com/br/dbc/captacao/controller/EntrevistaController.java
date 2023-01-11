@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -49,6 +50,11 @@ public class EntrevistaController implements EntrevistaControllerInterface {
     public ResponseEntity<PageDTO<EntrevistaDTO>> list(@RequestParam(defaultValue = "0") Integer pagina,
                                                        @RequestParam(defaultValue = "20") Integer tamanho) throws RegraDeNegocioException {
         return new ResponseEntity<>(entrevistaService.list(pagina, tamanho), HttpStatus.OK);
+    }
+
+    @GetMapping("/por-trilha")
+    public ResponseEntity<List<EntrevistaDTO>> listPorTrilha(@RequestParam(name = "trilha") String trilha) {
+        return new ResponseEntity<>(entrevistaService.listPorTrilha(trilha), HttpStatus.OK);
     }
 
     @GetMapping("/listar-por-mes")
