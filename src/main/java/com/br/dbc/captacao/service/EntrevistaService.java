@@ -199,7 +199,7 @@ public class EntrevistaService {
         String currentDateTime = dateFormatter.format(new Date());
 
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=entrevistas_agendadas_" + currentDateTime + ".xlsx";
+        String headerValue = "attachment; filename=entrevistas_agendadas_" + currentDateTime + ".csv";
         response.setHeader(headerKey, headerValue);
 
         excelExporter.exportEntrevista(response, entrevistaDTOS);
