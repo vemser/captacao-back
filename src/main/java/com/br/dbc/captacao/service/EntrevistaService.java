@@ -9,9 +9,8 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
-import com.br.dbc.captacao.entity.TrilhaEntity;
-import com.br.dbc.captacao.enums.Legenda;
-import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.enums.Legenda;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,13 +19,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,7 @@ public class EntrevistaService {
     private final CandidatoService candidatoService;
     private final GestorService gestorService;
     private final ObjectMapper objectMapper;
+    private final ExcelExporter excelExporter;
 
     public EntrevistaEntity findById(Integer id) throws RegraDeNegocioException {
         return entrevistaRepository.findById(id)
@@ -167,34 +168,46 @@ public class EntrevistaService {
         }
     }
 
-    public void exportarEntrevistaCSV() throws RegraDeNegocioException {
-        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findAll();
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("entrevistas.csv", false));
-            for (EntrevistaEntity entrevista : entrevistaEntityList) {
-                StringBuilder oneLine = new StringBuilder();
-                oneLine.append(entrevista.getIdEntrevista());
-                oneLine.append(",");
-                oneLine.append(entrevista.getDataEntrevista());
-                oneLine.append(",");
-                oneLine.append(entrevista.getCandidatoEntity().getIdCandidato());
-                oneLine.append(",");
-                oneLine.append(entrevista.getCandidatoEntity().getNome());
-                oneLine.append(",");
-                oneLine.append(entrevista.getCandidatoEntity().getEmail());
-                oneLine.append(",");
-                oneLine.append(entrevista.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().stream().map(TrilhaEntity::getNome).toList());
-                oneLine.append(",");
-                oneLine.append(entrevista.getAvaliado() == null ? "F" : entrevista.getAvaliado());
-                oneLine.append(",");
-                oneLine.append(entrevista.getLegenda().toString());
-                bw.write(oneLine.toString());
-                bw.newLine();
-            }
-            bw.close();
-        } catch (IOException e) {
-            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
-        }
+    public void exportarEntrevistaCSV(HttpServletResponse response) throws IOException {
+//        try {
+//            BufferedWriter bw = new BufferedWriter(new FileWriter("entrevistas.csv", false));
+//            for (EntrevistaEntity entrevista : entrevistaEntityList) {
+//                StringBuilder oneLine = new StringBuilder();
+//                oneLine.append(entrevista.getIdEntrevista());
+//                oneLine.append(",");
+//                oneLine.append(entrevista.getDataEntrevista());
+//                oneLine.append(",");
+//                oneLine.append(entrevista.getCandidatoEntity().getIdCandidato());
+//                oneLine.append(",");
+//                oneLine.append(entrevista.getCandidatoEntity().getNome());
+//                oneLine.append(",");
+//                oneLine.append(entrevista.getCandidatoEntity().getEmail());
+//                oneLine.append(",");
+//                oneLine.append(entrevista.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().stream().map(TrilhaEntity::getNome).toList());
+//                oneLine.append(",");
+//                oneLine.append(entrevista.getAvaliado() == null ? "F" : entrevista.getAvaliado());
+//                oneLine.append(",");
+//                oneLine.append(entrevista.getLegenda().toString());
+//                bw.write(oneLine.toString());
+//                bw.newLine();
+//            }
+//            bw.close();
+//        } catch (IOException e) {
+//            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
+//        }
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findEntrevista();
+        List<EntrevistaDTO> entrevistaDTOS = entrevistaEntityList.stream()
+                .map(this::converterParaEntrevistaDTO).toList();
+
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=entrevistas_agendadas_" + currentDateTime + ".csv";
+        response.setHeader(headerKey, headerValue);
+
+        excelExporter.exportEntrevista(response, entrevistaDTOS);
     }
 
     public EntrevistaDTO buscarPorEmailCandidato(String email) throws RegraDeNegocioException {

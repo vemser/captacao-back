@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -38,6 +39,11 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " FROM CANDIDATO obj " +
             " WHERE obj.media >= 60 ")
     Page<CandidatoEntity> findByMedia(Pageable pageable);
+
+    @Query(" SELECT obj " +
+            " FROM CANDIDATO obj " +
+            " WHERE obj.media >= 60 ")
+    List<CandidatoEntity> findListByMedia();
 
 //    @Query(" select new com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO(" +
 //            " c.idCandidato," +

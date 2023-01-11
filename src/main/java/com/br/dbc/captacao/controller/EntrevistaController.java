@@ -5,7 +5,7 @@ import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.repository.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.EntrevistaService;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.io.IOException;
 
 @Slf4j
 @Validated
@@ -65,9 +67,9 @@ public class EntrevistaController implements EntrevistaControllerInterface {
         return new ResponseEntity<>(entrevistaService.listMes(pagina, tamanho, mes, ano), HttpStatus.OK);
     }
 
-    @GetMapping("/exportar-entrevista-para-csv")
-    public ResponseEntity<Void> exportarEntrevistaParaCsv() throws RegraDeNegocioException {
-        entrevistaService.exportarEntrevistaCSV();
+    @GetMapping("/export-csv")
+    public ResponseEntity<Void> exportarEntrevistaParaCsv(HttpServletResponse response) throws IOException {
+        entrevistaService.exportarEntrevistaCSV(response);
         return ResponseEntity.noContent().build();
     }
 

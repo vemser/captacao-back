@@ -6,8 +6,8 @@ import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
-import com.br.dbc.captacao.enums.TipoMarcacao;
-import com.br.dbc.captacao.enums.TipoTurno;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.enums.TipoTurno;
 
 import java.util.ArrayList;
 import java.util.HashSet;

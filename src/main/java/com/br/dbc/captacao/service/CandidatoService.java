@@ -9,7 +9,7 @@ import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EdicaoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.LinguagemEntity;
-import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CandidatoRepository;
@@ -20,14 +20,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -458,4 +458,18 @@ public class CandidatoService {
 //
 //        return candidatoDTOListByEdicao;
 //    }
+
+    public void getExport(HttpServletResponse response) throws RegraDeNegocioException, IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=candidato_" + currentDateTime + ".csv";
+        response.setHeader(headerKey, headerValue);
+
+        List<CandidatoEntity> listCandidato = candidatoRepository.findListByMedia();
+        ExcelExporter excelExporter = new ExcelExporter(listCandidato.stream().map(x -> converterEmDTO(x)).toList());
+        excelExporter.exportCandidato(response);
+    }
 }

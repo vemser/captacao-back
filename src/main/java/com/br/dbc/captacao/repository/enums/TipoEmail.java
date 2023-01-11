@@ -1,4 +1,4 @@
-package com.br.dbc.captacao.enums;
+package com.br.dbc.captacao.repository.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

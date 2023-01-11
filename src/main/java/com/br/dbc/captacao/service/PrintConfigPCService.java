@@ -1,6 +1,5 @@
 package com.br.dbc.captacao.service;
 
-import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
@@ -9,6 +8,7 @@ import com.br.dbc.captacao.repository.PrintConfigPCRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +55,17 @@ public class PrintConfigPCService {
 
     private Optional<PrintConfigPCEntity> findByFormulario(FormularioEntity formulario) {
         return printConfigPCRepository.findByFormulario(formulario);
+    }
+
+    public String recuperarPrint(Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception {
+
+        FormularioEntity formularioEntity = formularioService.findById(idFormulario);
+
+        if (formularioEntity.getImagemConfigPc() == null) {
+            throw new RegraDeNegocioException("Usuário não possui print das configurações do pc cadastrado.");
+        }
+
+        return Base64Utils.encodeToString(formularioEntity.getImagemConfigPc().getData());
     }
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {

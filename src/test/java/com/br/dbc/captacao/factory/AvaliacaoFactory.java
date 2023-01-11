@@ -3,17 +3,7 @@ package com.br.dbc.captacao.factory;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoCreateDTO;
 import com.br.dbc.captacao.dto.avaliacao.AvaliacaoDTO;
 import com.br.dbc.captacao.entity.AvaliacaoEntity;
-import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.InscricaoEntity;
-import com.br.dbc.captacao.enums.TipoMarcacao;
-import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
-import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import org.junit.Test;
-
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 
 public class AvaliacaoFactory {
 

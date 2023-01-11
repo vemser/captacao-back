@@ -5,8 +5,8 @@ import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
-import com.br.dbc.captacao.enums.Legenda;
-import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.enums.Legenda;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

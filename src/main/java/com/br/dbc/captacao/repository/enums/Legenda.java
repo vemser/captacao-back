@@ -1,4 +1,4 @@
-package com.br.dbc.captacao.enums;
+package com.br.dbc.captacao.repository.enums;
 
 public enum Legenda {
     CONFIRMADA(0),

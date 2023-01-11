@@ -1,6 +1,5 @@
 package com.br.dbc.captacao.dto.entrevista;
 
-import com.br.dbc.captacao.enums.TipoMarcacao;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;

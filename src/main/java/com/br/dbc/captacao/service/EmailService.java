@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.SendEmailDTO;
-import com.br.dbc.captacao.enums.TipoEmail;
+import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

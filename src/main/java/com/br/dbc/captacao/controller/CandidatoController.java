@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -125,6 +126,11 @@ public class CandidatoController implements CandidatoControllerInterface {
         PageDTO<CandidatoDTO> candidatosDTO = candidatoService.findByMedia(pagina, tamanho);
 
         return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
+    }
+
+    @GetMapping("/export-csv")
+    public void exportToExcel(HttpServletResponse response) throws IOException, RegraDeNegocioException {
+        candidatoService.getExport(response);
     }
 
     //    @GetMapping("/find-by-trilha")

@@ -4,7 +4,7 @@ import com.br.dbc.captacao.dto.login.LoginDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
-import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.repository.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.br.dbc.captacao.security.TokenService;

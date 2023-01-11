@@ -2,7 +2,7 @@ package com.br.dbc.captacao.repository;
 
 import com.br.dbc.captacao.entity.CargoEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
-import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

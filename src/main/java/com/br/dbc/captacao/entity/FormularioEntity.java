@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.entity;
 
-import com.br.dbc.captacao.enums.TipoMarcacao;
-import com.br.dbc.captacao.enums.TipoTurno;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.enums.TipoTurno;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

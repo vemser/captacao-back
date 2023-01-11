@@ -1,8 +1,7 @@
 package com.br.dbc.captacao.dto.candidato;
 
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
-import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
-import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -17,7 +16,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter

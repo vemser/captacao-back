@@ -2,7 +2,7 @@ package com.br.dbc.captacao.dto.entrevista;
 
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
-import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.repository.enums.Legenda;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

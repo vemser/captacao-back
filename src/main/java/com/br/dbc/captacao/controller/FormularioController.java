@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import java.io.IOException;
 
 @Slf4j
@@ -74,6 +73,11 @@ public class FormularioController implements FormularioControllerInterface {
     @GetMapping("/recuperar-curriculo")
     public ResponseEntity<String> recuperarCurriculo(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         return new ResponseEntity<>(curriculoService.pegarCurriculoCandidato(idFormulario), HttpStatus.OK);
+    }
+
+    @GetMapping("/recuperar-print-config-pc")
+    public ResponseEntity<String> recuperarPrint(@RequestParam("idFormulario") Integer idFormulario) throws RegraDeNegocio404Exception, RegraDeNegocioException {
+        return new ResponseEntity<>(printConfigPCService.recuperarPrint(idFormulario), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-fisico/{idFormulario}")
