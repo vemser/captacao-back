@@ -116,7 +116,7 @@ public class ExcelExporter {
 
     private void writeDataLinesEntrevista(List<EntrevistaDTO> entrevistasDTO) {
         int rowCount = 1;
-        DateTimeFormatter data = DateTimeFormatter.ofPattern("dd/mm/yyyy");
+        DateTimeFormatter data = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter hora = DateTimeFormatter.ofPattern("HH:mm");
 
         CellStyle style = workbook.createCellStyle();

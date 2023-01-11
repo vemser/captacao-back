@@ -25,5 +25,8 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
             " ORDER BY e.dataEntrevista ASC  ")
     Page<EntrevistaEntity> findAllByMes(Integer mes, Integer ano, PageRequest pageRequest);
 
-    List<EntrevistaEntity> findByLegenda(Legenda legenda);
+    @Query(" SELECT e FROM ENTREVISTAS e " +
+            " INNER JOIN e.candidatoEntity c " +
+            " WHERE e.legenda = 'PENDENTE' AND c.notaProva >= 60 ")
+    List<EntrevistaEntity> findEntrevista();
 }

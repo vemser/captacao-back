@@ -190,7 +190,7 @@ public class EntrevistaService {
 //        } catch (IOException e) {
 //            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
 //        }
-        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByLegenda(Legenda.PENDENTE);
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findEntrevista();
         List<EntrevistaDTO> entrevistaDTOS = entrevistaEntityList.stream()
                 .map(this::converterParaEntrevistaDTO).toList();
 
