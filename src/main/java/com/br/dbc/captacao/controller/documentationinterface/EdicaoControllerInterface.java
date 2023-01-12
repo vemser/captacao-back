@@ -28,7 +28,7 @@ public interface EdicaoControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @PostMapping
-    ResponseEntity<EdicaoDTO> cadastrarEdicao(@Valid @RequestBody EdicaoDTO edicaoDTO);
+    ResponseEntity<EdicaoDTO> cadastrarEdicao(@Valid @RequestBody EdicaoDTO edicaoDTO) throws RegraDeNegocioException;
 
 
     @Operation(summary = "Retorna a edição atual", description = "Retorna a ultima edição criada no banco de dados")

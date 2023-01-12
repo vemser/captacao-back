@@ -25,7 +25,7 @@ public class EdicaoController implements EdicaoControllerInterface {
     }
 
     @PostMapping("/criar-edicao")
-    public ResponseEntity<EdicaoDTO> cadastrarEdicao(@Valid @RequestBody EdicaoDTO edicaoDTO) {
+    public ResponseEntity<EdicaoDTO> cadastrarEdicao(@Valid @RequestBody EdicaoDTO edicaoDTO) throws RegraDeNegocioException {
         return new ResponseEntity<>(edicaoService.createAndReturnDTO(edicaoDTO), HttpStatus.CREATED);
     }
 

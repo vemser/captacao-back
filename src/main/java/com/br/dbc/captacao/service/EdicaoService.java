@@ -27,8 +27,11 @@ public class EdicaoService {
                 .toList();
     }
 
-    public EdicaoDTO createAndReturnDTO(EdicaoDTO edicaoDTO) {
+    public EdicaoDTO createAndReturnDTO(EdicaoDTO edicaoDTO) throws RegraDeNegocioException {
         edicaoDTO.setNome(edicaoDTO.getNome().trim());
+        if (edicaoRepository.findByNome(edicaoDTO.getNome()).isPresent()){
+            throw new RegraDeNegocioException("Edição já existente");
+        }
         EdicaoEntity edicaoEntity = edicaoRepository.save(converterEntity(edicaoDTO));
         return objectMapper.convertValue(edicaoEntity, EdicaoDTO.class);
     }
