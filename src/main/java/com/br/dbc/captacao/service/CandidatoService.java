@@ -241,10 +241,10 @@ public class CandidatoService {
                 candidatoDTOList);
     }
 
-    public PageDTO<CandidatoDTO> filtrarCandidatos(Integer pagina, Integer tamanho, String nome, String email, String edicao, String trilha) {
+    public PageDTO<CandidatoDTO> filtrarCandidatosAptosEntrevista(Integer pagina, Integer tamanho, String email, String edicao, String trilha) {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
-        Page<CandidatoEntity> candidatoEntityPage = candidatoRepository.filtrarCandidatos(pageRequest, nome, email, edicao, trilha);
+        Page<CandidatoEntity> candidatoEntityPage = candidatoRepository.filtrarCandidatosAptosEntrevista(pageRequest, email, edicao, trilha);
 
         List<CandidatoDTO> candidatosDTO = candidatoEntityPage.stream()
                 .map(this::converterEmDTO).toList();
@@ -256,25 +256,23 @@ public class CandidatoService {
                 candidatosDTO);
     }
 
-    public PageDTO<CandidatoDTO> findByMedia(Integer pagina, Integer tamanho) {
-        Sort orderBy = Sort.by("media");
+    public PageDTO<CandidatoDTO> filtrarCandidatosAprovados(Integer pagina, Integer tamanho, String email, String edicao, String trilha) {
+        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho, orderBy);
+        Page<CandidatoEntity> candidatoEntityPage = candidatoRepository.filtrarCandidatosAprovados(pageRequest, email, edicao, trilha);
 
-        Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByMedia(pageRequest);
-
-        List<CandidatoDTO> candidatoDTOList = paginaDoRepositorio.getContent().stream()
+        List<CandidatoDTO> candidatosDTO = candidatoEntityPage.stream()
                 .map(this::converterEmDTO).toList();
 
-        return new PageDTO<>(paginaDoRepositorio.getTotalElements(),
-                paginaDoRepositorio.getTotalPages(),
+        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
+                candidatoEntityPage.getTotalPages(),
                 pagina,
                 tamanho,
-                candidatoDTOList);
+                candidatosDTO);
     }
 
     public void exportarCandidatosCsv(HttpServletResponse response) throws IOException {
-        List<CandidatoEntity> listCandidato = candidatoRepository.findListByMedia();
+        List<CandidatoEntity> listCandidato = candidatoRepository.findByMedia();
         List<CandidatoDTO> candidatoDTOS = listCandidato.stream()
                 .map(this::converterEmDTO).toList();
 

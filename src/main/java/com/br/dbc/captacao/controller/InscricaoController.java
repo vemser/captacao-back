@@ -48,12 +48,6 @@ public class InscricaoController implements InscricaoControllerInterface {
         return new ResponseEntity<>(inscricaoService.listar(pagina, tamanho, sort, order), HttpStatus.OK);
     }
 
-    @GetMapping("/exportar-candidatos-para-csv")
-    public ResponseEntity<Void> exportarCandidatosParaCsv() throws RegraDeNegocioException {
-        inscricaoService.exportarCandidatoCSV();
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/filtro-inscricao")
     public ResponseEntity<PageDTO<InscricaoDTO>> filtrarInscricoes(@RequestParam Integer pagina,
                                                                    @RequestParam Integer tamanho,

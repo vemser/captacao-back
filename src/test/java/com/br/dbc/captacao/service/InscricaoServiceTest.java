@@ -10,11 +10,11 @@ import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.factory.*;
 import com.br.dbc.captacao.repository.InscricaoRepository;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -29,9 +29,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -353,21 +350,6 @@ public class InscricaoServiceTest {
 //        Assert.assertNotNull(inscricaoDtoRetorno);
 //    }
 
-    @Test
-    public void deveTestarExportarCandidatoCSVComSucesso() throws RegraDeNegocioException {
-        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-        List<InscricaoEntity> inscricaoEntityList = new ArrayList<>();
-        inscricaoEntityList.add(inscricaoEntity);
-
-        BufferedWriter writer = mock(BufferedWriter.class);
-        OutputStreamWriter streamWriter = mock(OutputStreamWriter.class);
-        FileOutputStream fileOutputStream=mock(FileOutputStream.class);
-
-        when(inscricaoRepository.listarInscricoesAprovadas())
-                .thenReturn(inscricaoEntityList);
-
-        inscricaoService.exportarCandidatoCSV();
-    }
 
 //    @Test(expected = IOException.class)
 //    public void deveTestarExportarCSVComIOException() throws RegraDeNegocioException, IOException {

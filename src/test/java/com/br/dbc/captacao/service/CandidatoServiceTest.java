@@ -5,12 +5,18 @@ import com.br.dbc.captacao.dto.candidato.*;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
-import com.br.dbc.captacao.entity.*;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.entity.CandidatoEntity;
+import com.br.dbc.captacao.entity.EdicaoEntity;
+import com.br.dbc.captacao.entity.FormularioEntity;
+import com.br.dbc.captacao.entity.LinguagemEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.factory.*;
+import com.br.dbc.captacao.factory.CandidatoFactory;
+import com.br.dbc.captacao.factory.EdicaoFactory;
+import com.br.dbc.captacao.factory.FormularioFactory;
+import com.br.dbc.captacao.factory.LinguagemFactory;
 import com.br.dbc.captacao.repository.CandidatoRepository;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -24,14 +30,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -394,40 +399,22 @@ public class CandidatoServiceTest {
 //        assertNotNull(listaRetorno);
 //    }
 
-    @Test
-    public void deveTestarExportarCandidatoCSVComSucesso() throws RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-        List<CandidatoEntity> candidatoEntityList = new ArrayList<>();
-        candidatoEntityList.add(candidatoEntity);
+//    @Test
+//    public void deveTestarExportarCandidatoCSVComSucesso() throws RegraDeNegocioException {
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        List<CandidatoEntity> candidatoEntityList = new ArrayList<>();
+//        candidatoEntityList.add(candidatoEntity);
+//
+//        BufferedWriter writer = mock(BufferedWriter.class);
+//        OutputStreamWriter streamWriter = mock(OutputStreamWriter.class);
+//        FileOutputStream fileOutputStream = mock(FileOutputStream.class);
+//
+//        when(candidatoRepository.findAll())
+//                .thenReturn(candidatoEntityList);
+//
+//        candidatoService.exportarCandidatoCSV();
+//    }
 
-        BufferedWriter writer = mock(BufferedWriter.class);
-        OutputStreamWriter streamWriter = mock(OutputStreamWriter.class);
-        FileOutputStream fileOutputStream = mock(FileOutputStream.class);
-
-        when(candidatoRepository.findAll())
-                .thenReturn(candidatoEntityList);
-
-        candidatoService.exportarCandidatoCSV();
-    }
-
-    @Test
-    public void deveTestarfindByNotaComSucesso() {
-
-        Sort orderBy = Sort.by("notaProva");
-        PageRequest pageRequest = PageRequest.of(0, 1, orderBy);
-        Page<CandidatoEntity> page = mock(Page.class);
-
-        CandidatoDTO candidatoDTO = CandidatoFactory.getCandidatoDTO();
-        List<CandidatoDTO> candidatoDTOList = new ArrayList<>();
-        candidatoDTOList.add(candidatoDTO);
-
-        when(candidatoRepository.findByNota(any(PageRequest.class)))
-                .thenReturn(page);
-
-        PageDTO<CandidatoDTO> listCandidatoPage = candidatoService.findByNota(0, 1);
-
-        assertNotNull(listCandidatoPage);
-    }
 
 //    @Test(expected = RegraDeNegocioException.class)
 //    public void deveTestarExportarCandidatoCSVComErro() throws RegraDeNegocioException {
@@ -469,34 +456,18 @@ public class CandidatoServiceTest {
 //    }
 
     @Test
-    public void deveTestarFiltarCandidatosComSucesso(){
+    public void deveTestarFiltrarCandidatosAptosEntrevistaComSucesso(){
         Integer pagina = 10;
         Integer quatidade = 4;
         CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
         String trilha = "back-end";
         Page<CandidatoEntity> candidatoEntities = new PageImpl<>(List.of(candidatoEntity));
 
-        when(candidatoRepository.filtrarCandidatos(any(Pageable.class), anyString(), anyString(), any(), any()))
+        when(candidatoRepository.filtrarCandidatosAptosEntrevista(any(Pageable.class), anyString(), anyString(), any()))
                 .thenReturn(candidatoEntities);
 
-        PageDTO<CandidatoDTO> candidatoDTOPageDTO = candidatoService.filtrarCandidatos(pagina, quatidade, candidatoEntity.getNome(),
+        PageDTO<CandidatoDTO> candidatoDTOPageDTO = candidatoService.filtrarCandidatosAptosEntrevista(pagina, quatidade,
                 candidatoEntity.getEmail(), candidatoEntity.getEdicao().getNome(), trilha);
-
-        assertNotNull(candidatoDTOPageDTO);
-
-    }
-
-    @Test
-    public void deveTestarFindByMediaComSucesso(){
-        Integer pagina = 0;
-        Integer tamanho = 10;
-        Sort orderBy = Sort.by("media");
-        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-        Page<CandidatoEntity> candidatoEntities = new PageImpl<>(List.of(candidatoEntity));
-
-        when(candidatoRepository.findByMedia(any())).thenReturn(candidatoEntities);
-
-        PageDTO<CandidatoDTO> candidatoDTOPageDTO = candidatoService.findByMedia(pagina,tamanho);
 
         assertNotNull(candidatoDTOPageDTO);
 

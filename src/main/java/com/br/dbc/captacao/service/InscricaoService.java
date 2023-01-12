@@ -4,10 +4,10 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.InscricaoEntity;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.InscricaoRepository;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,10 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,33 +69,6 @@ public class InscricaoService {
         }
         List<InscricaoDTO> listaVazia = new ArrayList<>();
         return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
-    }
-
-    public void exportarCandidatoCSV() throws RegraDeNegocioException {
-        List<InscricaoEntity> inscricaoEntityList = inscricaoRepository.listarInscricoesAprovadas();
-        try {
-            BufferedWriter bw = new BufferedWriter
-                    (new OutputStreamWriter(new FileOutputStream("candidatos.csv", false), "UTF-8"));
-            for (InscricaoEntity inscricao : inscricaoEntityList) {
-                StringBuilder oneLine = new StringBuilder();
-                oneLine.append(inscricao.getCandidato().getIdCandidato());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getNome());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getEmail());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getMedia());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getParecerTecnico());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getParecerComportamental());
-                bw.write(oneLine.toString());
-                bw.newLine();
-            }
-            bw.close();
-        } catch (IOException e) {
-            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
-        }
     }
 
     public PageDTO<InscricaoDTO> filtrarInscricoes(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException {

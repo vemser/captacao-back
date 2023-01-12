@@ -15,12 +15,15 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     Optional<CandidatoEntity> findByEmail(String email);
 
-    CandidatoEntity findCandidatoEntitiesByEmail(String email);
-
     @Query(" SELECT obj " +
             " FROM CANDIDATO obj " +
             " WHERE obj.notaProva >= 60 ")
     Page<CandidatoEntity> findByNota(Pageable pageable);
+
+    @Query(" SELECT obj " +
+            " FROM CANDIDATO obj " +
+            " WHERE obj.media >= 60 ")
+    List<CandidatoEntity> findByMedia();
 
     @Query("SELECT DISTINCT c FROM CANDIDATO c " +
             " INNER JOIN EDICAO e " +
@@ -28,41 +31,21 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " INNER JOIN FORMULARIO f " +
             " ON c.formularioEntity.idFormulario =  f.idFormulario" +
             " INNER JOIN f.trilhaEntitySet ts " +
-            " WHERE (:nome is null or UPPER(c.nome) LIKE UPPER(CONCAT('%', :nome, '%')))" +
-            " AND (:email is null or UPPER(c.email) = UPPER(:email))" +
+            " WHERE (:email is null or UPPER(c.email) = UPPER(:email))" +
             " AND (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)" +
             " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " +
             " AND (c.notaProva >= 60) " )
-    Page<CandidatoEntity> filtrarCandidatos(Pageable pageable, String nome, String email, String edicao, String trilha);
+    Page<CandidatoEntity> filtrarCandidatosAptosEntrevista(Pageable pageable, String email, String edicao, String trilha);
 
-    @Query(" SELECT obj " +
-            " FROM CANDIDATO obj " +
-            " WHERE obj.media >= 60 ")
-    Page<CandidatoEntity> findByMedia(Pageable pageable);
-
-    @Query(" SELECT obj " +
-            " FROM CANDIDATO obj " +
-            " WHERE obj.media >= 60 ")
-    List<CandidatoEntity> findListByMedia();
-
-//    @Query(" select new com.br.dbc.captacao.dto.relatorios.RelatorioCandidatoPaginaPrincipalDTO(" +
-//            " c.idCandidato," +
-//            " c.nome," +
-//            " c.email," +
-//            " c.notaProva," +
-//            " t.nome," +
-//            " c.edicao.nome)" +
-//            "  from CANDIDATO c " +
-//            " left join c.formularioEntity.trilhaEntitySet t" +
-//            " where (:nomeCompleto is null or UPPER(c.nome) LIKE  upper(concat('%',:nomeCompleto,'%')))" +
-//            " and (:nomeEdicao is null or c.edicao.nome = :nomeEdicao)" +
-//            " and (:nomeTrilha is null or t.nome = :nomeTrilha)" +
-//            " and(:emailCandidato is null or c.email = :emailCandidato)")
-//    Page<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, String nomeTrilha, String nomeEdicao, Pageable pageable, String emailCandidato);
-//
-//
-//    List<CandidatoEntity> findCandidatoEntitiesByFormularioEntity_TrilhaEntitySet(TrilhaEntity trilhaEntity);
-//
-//
-//    List<CandidatoEntity> findCandidatoEntitiesByEdicao(EdicaoEntity edicao);
+    @Query("SELECT DISTINCT c FROM CANDIDATO c " +
+            " INNER JOIN EDICAO e " +
+            " ON e.idEdicao = c.idEdicao " +
+            " INNER JOIN FORMULARIO f " +
+            " ON c.formularioEntity.idFormulario =  f.idFormulario" +
+            " INNER JOIN f.trilhaEntitySet ts " +
+            " WHERE (:email is null or UPPER(c.email) = UPPER(:email))" +
+            " AND (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)" +
+            " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " +
+            " AND (c.media >= 60) " )
+    Page<CandidatoEntity> filtrarCandidatosAprovados(Pageable pageable, String email, String edicao, String trilha);
 }

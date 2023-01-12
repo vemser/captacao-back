@@ -48,18 +48,7 @@ public interface InscricaoControllerInterface {
                                                         @RequestParam(defaultValue = "idInscricao", required = false) String sort,
                                                         @RequestParam(defaultValue = "0", required = false) int order) throws RegraDeNegocioException;
 
-    @Operation(summary = "Exportar candidatos para csv", description = "Exporta lista de candidatos para um arquivo csv")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Candidatos exportados com sucesso!"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @GetMapping
-    ResponseEntity<Void> exportarCandidatosParaCsv() throws RegraDeNegocioException;
-
-    @Operation(summary = "Buscar inscrições por filtro", description = "Busca inscrições por filtro")
+    @Operation(summary = "Buscar inscrições por filtro ou retornar lista de inscrições", description = "Busca inscrições por filtro ou retorna lista de inscrições")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Retorna lista de inscrições"),

@@ -133,29 +133,31 @@ public interface CandidatoControllerInterface {
     @GetMapping
     ResponseEntity<PageDTO<CandidatoDTO>> findByNota (Integer pagina, Integer tamanho);
 
-    @Operation(summary = "Buscar candidatos por filtro", description = "Busca candidatos por filtro")
+    @Operation(summary = "Buscar candidatos por filtro ou retornar lista de candidatos com nota da prova a partir de 60.", description = "Busca candidatos por filtro ou retorna lista de candidatos com nota da prova a partir de 60.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
-                                                             @RequestParam Integer tamanho,
-                                                             @RequestParam (required = false) String nome,
-                                                             @RequestParam (required = false) String email,
-                                                             @RequestParam (required = false) String edicao,
-                                                             @RequestParam (required = false) String trilha);
+    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAptosEntrevista (@RequestParam Integer pagina,
+                                                                            @RequestParam Integer tamanho,
+                                                                            @RequestParam (required = false) String email,
+                                                                            @RequestParam (required = false) String edicao,
+                                                                            @RequestParam (required = false) String trilha);
 
-    @Operation(summary = "Busca lista de candidatos com média a partir de 60.", description = "Busca lista de candidatos com média a partir de 60.")
+    @Operation(summary = "Buscar candidatos por filtro ou retornar lista de candidatos com média a partir de 60.", description = "Busca candidatos por filtro ou retorna lista de candidatos com média a partir de 60.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<PageDTO<CandidatoDTO>> findByMedia (Integer pagina, Integer tamanho);
-
+    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAprovados (@RequestParam Integer pagina,
+                                                                      @RequestParam Integer tamanho,
+                                                                      @RequestParam (required = false) String email,
+                                                                      @RequestParam (required = false) String edicao,
+                                                                      @RequestParam (required = false) String trilha);
 
     @Operation(summary = "Exporta para cvs lista de candidatos com média a partir de 60.", description = "Exporta para cvs lista de candidatos com média a partir de 60.")
     @ApiResponses(value = {
