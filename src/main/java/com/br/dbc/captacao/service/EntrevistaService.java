@@ -9,10 +9,10 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
-import com.br.dbc.captacao.repository.enums.Legenda;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
+import com.br.dbc.captacao.repository.enums.Legenda;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,18 +37,51 @@ public class EntrevistaService {
     private final ObjectMapper objectMapper;
     private final ExcelExporter excelExporter;
 
-    public EntrevistaEntity findById(Integer id) throws RegraDeNegocioException {
-        return entrevistaRepository.findById(id)
-                .orElseThrow(() -> new RegraDeNegocioException("Entrevista não encontrada!"));
+    public EntrevistaDTO createEntrevista(EntrevistaCreateDTO entrevistaCreateDTO, String token) throws RegraDeNegocioException {
+        GestorEntity gestor = gestorService.getUser(token);
+
+        CandidatoEntity candidato = candidatoService.findByEmailEntity(entrevistaCreateDTO.getCandidatoEmail());
+        if (entrevistaRepository.findByCandidatoEntity(candidato).isPresent()) {
+            throw new RegraDeNegocioException("Entrevista para o Candidato já agendada!");
+        }
+
+        String observacoes = entrevistaCreateDTO.getObservacoes();
+        LocalDateTime dia = entrevistaCreateDTO.getDataEntrevista();
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(dia);
+        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
+        EntrevistaEntity entrevistaEntity = new EntrevistaEntity();
+        entrevistaEntity.setDataEntrevista(dia);
+        entrevistaEntity.setCandidatoEntity(candidato);
+        entrevistaEntity.setGestorEntity(gestor);
+        entrevistaEntity.setObservacoes(observacoes);
+        entrevistaEntity.setLegenda(Legenda.PENDENTE);
+        entrevistaEntity.setAvaliado(entrevistaCreateDTO.getAvaliado().equals("T") ? TipoMarcacao.T : TipoMarcacao.F);
+        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevistaEntity);
+        return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
-    public EntrevistaDTO converterParaEntrevistaDTO(EntrevistaEntity entrevistaEntity){
-        EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevistaEntity, EntrevistaDTO.class);
-        entrevistaDTO.setGestorDTO(gestorService.convertoToDTO(entrevistaEntity.getGestorEntity()));
-        entrevistaDTO.setCandidatoDTO(candidatoService.converterEmDTO(entrevistaEntity.getCandidatoEntity()));
-        entrevistaDTO.setCandidatoEmail(entrevistaDTO.getCandidatoDTO().getEmail());
-        entrevistaDTO.setAvaliado(entrevistaDTO.getAvaliado());
-        return entrevistaDTO;
+    public void atualizarObservacaoEntrevista(Integer id, String observacao) throws RegraDeNegocioException {
+        EntrevistaEntity entrevista = findById(id);
+        entrevista.setObservacoes(observacao);
+        entrevistaRepository.save(entrevista);
+    }
+
+    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista,
+                                             EntrevistaAtualizacaoDTO entrevistaCreateDTO,
+                                             Legenda legenda) throws RegraDeNegocioException {
+        GestorEntity gestor = gestorService.findByEmail(entrevistaCreateDTO.getEmail());
+        EntrevistaEntity entrevista = findById(idEntrevista);
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(entrevista.getDataEntrevista());
+        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
+        entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
+        entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
+        entrevista.setLegenda(legenda);
+//        entrevista.setUsuarioEntity(usuario);
+        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
+//        if(entrevista.getDataEntrevista().isAfter(LocalDateTime.now()) && legenda.equals(Legenda.PENDENTE)){
+//            tokenConfirmacao(entrevista);
+//        }
+        return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
     public PageDTO<EntrevistaDTO> list(Integer pagina, Integer tamanho) {
@@ -84,27 +117,60 @@ public class EntrevistaService {
                 entrevistaDTOList);
     }
 
-    public EntrevistaDTO createEntrevista(EntrevistaCreateDTO entrevistaCreateDTO, String token) throws RegraDeNegocioException {
-        GestorEntity gestor = gestorService.getUser(token);
+    public EntrevistaDTO buscarPorEmailCandidato(String email) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
+        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
+        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
 
-        CandidatoEntity candidato = candidatoService.findByEmailEntity(entrevistaCreateDTO.getCandidatoEmail());
-        if (entrevistaRepository.findByCandidatoEntity(candidato).isPresent()) {
-            throw new RegraDeNegocioException("Entrevista para o Candidato já agendada!");
-        }
+        EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevista, EntrevistaDTO.class);
+        entrevistaDTO.setCandidatoDTO(candidatoDTO);
+        entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
+        entrevistaDTO.setAvaliado(entrevista.getAvaliado().toString());
+        entrevistaDTO.setGestorDTO(objectMapper.convertValue(entrevista.getGestorEntity(), GestorDTO.class));
 
-        String observacoes = entrevistaCreateDTO.getObservacoes();
-        LocalDateTime dia = entrevistaCreateDTO.getDataEntrevista();
-        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(dia);
-        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
-        EntrevistaEntity entrevistaEntity = new EntrevistaEntity();
-        entrevistaEntity.setDataEntrevista(dia);
-        entrevistaEntity.setCandidatoEntity(candidato);
-        entrevistaEntity.setGestorEntity(gestor);
-        entrevistaEntity.setObservacoes(observacoes);
-        entrevistaEntity.setLegenda(Legenda.PENDENTE);
-        entrevistaEntity.setAvaliado(entrevistaCreateDTO.getAvaliado().equals("T") ? TipoMarcacao.T : TipoMarcacao.F);
-        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevistaEntity);
-        return converterParaEntrevistaDTO(entrevistaSalva);
+        return entrevistaDTO;
+    }
+
+    public void exportarEntrevistasCsv(HttpServletResponse response) throws IOException {
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findEntrevista();
+        List<EntrevistaDTO> entrevistaDTOS = entrevistaEntityList.stream()
+                .map(this::converterParaEntrevistaDTO).toList();
+
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=entrevistas_agendadas_" + currentDateTime + ".csv";
+        response.setHeader(headerKey, headerValue);
+
+        excelExporter.exportEntrevista(response, entrevistaDTOS);
+    }
+
+    public void deletarEntrevista(Integer idEntrevista) throws RegraDeNegocioException {
+        EntrevistaEntity entrevistaRecuperada = findById(idEntrevista);
+        entrevistaRepository.delete(entrevistaRecuperada);
+    }
+
+    public void deletarEntrevistaEmail(String email) throws RegraDeNegocioException {
+        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
+        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
+        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
+        entrevistaRepository.deleteById(entrevista.getIdEntrevista());
+    }
+
+    public EntrevistaEntity findById(Integer id) throws RegraDeNegocioException {
+        return entrevistaRepository.findById(id)
+                .orElseThrow(() -> new RegraDeNegocioException("Entrevista não encontrada!"));
+    }
+
+    public EntrevistaDTO converterParaEntrevistaDTO(EntrevistaEntity entrevistaEntity){
+        EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevistaEntity, EntrevistaDTO.class);
+        entrevistaDTO.setGestorDTO(gestorService.convertoToDTO(entrevistaEntity.getGestorEntity()));
+        entrevistaDTO.setCandidatoDTO(candidatoService.converterEmDTO(entrevistaEntity.getCandidatoEntity()));
+        entrevistaDTO.setCandidatoEmail(entrevistaDTO.getCandidatoDTO().getEmail());
+        entrevistaDTO.setAvaliado(entrevistaDTO.getAvaliado());
+        return entrevistaDTO;
     }
 
     public EntrevistaEntity findByCandidatoEntity(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
@@ -113,29 +179,6 @@ public class EntrevistaService {
             throw new RegraDeNegocioException("Entrevista com o candidato não encontrada!");
         }
         return entrevistaEntityOptional.get();
-    }
-
-    public void deletarEntrevista(Integer idEntrevista) throws RegraDeNegocioException {
-        EntrevistaEntity entrevistaRecuperada = findById(idEntrevista);
-        entrevistaRepository.delete(entrevistaRecuperada);
-    }
-
-    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista,
-                                             EntrevistaAtualizacaoDTO entrevistaCreateDTO,
-                                             Legenda legenda) throws RegraDeNegocioException {
-        GestorEntity gestor = gestorService.findByEmail(entrevistaCreateDTO.getEmail());
-        EntrevistaEntity entrevista = findById(idEntrevista);
-        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(entrevista.getDataEntrevista());
-        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
-        entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
-        entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
-        entrevista.setLegenda(legenda);
-//        entrevista.setUsuarioEntity(usuario);
-        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
-//        if(entrevista.getDataEntrevista().isAfter(LocalDateTime.now()) && legenda.equals(Legenda.PENDENTE)){
-//            tokenConfirmacao(entrevista);
-//        }
-        return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
     private void verificarListaEntrevistas(EntrevistaAtualizacaoDTO entrevistaCreateDTO,
@@ -166,74 +209,5 @@ public class EntrevistaService {
                 }
             }
         }
-    }
-
-    public void exportarEntrevistaCSV(HttpServletResponse response) throws IOException {
-//        try {
-//            BufferedWriter bw = new BufferedWriter(new FileWriter("entrevistas.csv", false));
-//            for (EntrevistaEntity entrevista : entrevistaEntityList) {
-//                StringBuilder oneLine = new StringBuilder();
-//                oneLine.append(entrevista.getIdEntrevista());
-//                oneLine.append(",");
-//                oneLine.append(entrevista.getDataEntrevista());
-//                oneLine.append(",");
-//                oneLine.append(entrevista.getCandidatoEntity().getIdCandidato());
-//                oneLine.append(",");
-//                oneLine.append(entrevista.getCandidatoEntity().getNome());
-//                oneLine.append(",");
-//                oneLine.append(entrevista.getCandidatoEntity().getEmail());
-//                oneLine.append(",");
-//                oneLine.append(entrevista.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().stream().map(TrilhaEntity::getNome).toList());
-//                oneLine.append(",");
-//                oneLine.append(entrevista.getAvaliado() == null ? "F" : entrevista.getAvaliado());
-//                oneLine.append(",");
-//                oneLine.append(entrevista.getLegenda().toString());
-//                bw.write(oneLine.toString());
-//                bw.newLine();
-//            }
-//            bw.close();
-//        } catch (IOException e) {
-//            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
-//        }
-        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findEntrevista();
-        List<EntrevistaDTO> entrevistaDTOS = entrevistaEntityList.stream()
-                .map(this::converterParaEntrevistaDTO).toList();
-
-        response.setContentType("application/octet-stream");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=entrevistas_agendadas_" + currentDateTime + ".csv";
-        response.setHeader(headerKey, headerValue);
-
-        excelExporter.exportEntrevista(response, entrevistaDTOS);
-    }
-
-    public EntrevistaDTO buscarPorEmailCandidato(String email) throws RegraDeNegocioException {
-        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
-        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
-        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
-
-        EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevista, EntrevistaDTO.class);
-        entrevistaDTO.setCandidatoDTO(candidatoDTO);
-        entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
-        entrevistaDTO.setAvaliado(entrevista.getAvaliado().toString());
-        entrevistaDTO.setGestorDTO(objectMapper.convertValue(entrevista.getGestorEntity(), GestorDTO.class));
-
-        return entrevistaDTO;
-    }
-
-    public void deletarEntrevistaEmail(String email) throws RegraDeNegocioException {
-        CandidatoDTO candidatoDTO = candidatoService.findByEmail(email);
-        CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDTO, CandidatoEntity.class);
-        EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
-        entrevistaRepository.deleteById(entrevista.getIdEntrevista());
-    }
-
-    public void atualizarObservacaoEntrevista(Integer id, String observacao) throws RegraDeNegocioException {
-        EntrevistaEntity entrevista = findById(id);
-        entrevista.setObservacoes(observacao);
-        entrevistaRepository.save(entrevista);
     }
 }

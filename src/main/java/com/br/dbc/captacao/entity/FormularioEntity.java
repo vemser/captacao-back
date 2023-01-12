@@ -2,13 +2,13 @@ package com.br.dbc.captacao.entity;
 
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.repository.enums.TipoTurno;
-import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.Set;
 
 @Getter
@@ -102,6 +102,7 @@ public class FormularioEntity {
     @Column(name = "IMPORTANCIA_TI")
     private String importancia;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "formularioEntity", fetch = FetchType.LAZY)
     private CandidatoEntity candidato;
 

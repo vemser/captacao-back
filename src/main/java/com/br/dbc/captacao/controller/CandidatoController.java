@@ -109,28 +109,30 @@ public class CandidatoController implements CandidatoControllerInterface {
     }
 
 
-    @GetMapping("/filtro-candidato")
-    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
+    @GetMapping("/filtro-candidato-entrevista")
+    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAptosEntrevista (@RequestParam Integer pagina,
                                                                     @RequestParam Integer tamanho,
-                                                                    @RequestParam (required = false) String nome,
                                                                     @RequestParam (required = false) String email,
                                                                     @RequestParam (required = false) String edicao,
                                                                     @RequestParam (required = false) String trilha) {
-        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatos(pagina, tamanho, nome, email, edicao, trilha);
+        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatosAptosEntrevista(pagina, tamanho, email, edicao, trilha);
         return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
     }
 
-    @GetMapping("/resultado")
-    public ResponseEntity<PageDTO<CandidatoDTO>> findByMedia (Integer pagina, Integer tamanho) {
-
-        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.findByMedia(pagina, tamanho);
-
+    @GetMapping("/filtro-candidato-resultado")
+    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAprovados (@RequestParam Integer pagina,
+                                                                    @RequestParam Integer tamanho,
+                                                                    @RequestParam (required = false) String email,
+                                                                    @RequestParam (required = false) String edicao,
+                                                                    @RequestParam (required = false) String trilha) {
+        PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatosAprovados(pagina, tamanho, email, edicao, trilha);
         return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
     }
 
     @GetMapping("/export-csv")
-    public void exportToExcel(HttpServletResponse response) throws IOException, RegraDeNegocioException {
-        candidatoService.getExport(response);
+    public ResponseEntity<Void> exportarCandidatosCsv(HttpServletResponse response) throws IOException {
+        candidatoService.exportarCandidatosCsv(response);
+        return ResponseEntity.noContent().build();
     }
 
     //    @GetMapping("/find-by-trilha")

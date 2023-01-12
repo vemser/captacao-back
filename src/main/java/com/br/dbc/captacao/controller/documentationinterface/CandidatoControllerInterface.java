@@ -133,38 +133,40 @@ public interface CandidatoControllerInterface {
     @GetMapping
     ResponseEntity<PageDTO<CandidatoDTO>> findByNota (Integer pagina, Integer tamanho);
 
-    @Operation(summary = "Buscar candidatos por filtro", description = "Busca candidatos por filtro")
+    @Operation(summary = "Buscar candidatos por filtro ou retornar lista de candidatos com nota da prova a partir de 60.", description = "Busca candidatos por filtro ou retorna lista de candidatos com nota da prova a partir de 60.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatos (@RequestParam Integer pagina,
-                                                             @RequestParam Integer tamanho,
-                                                             @RequestParam (required = false) String nome,
-                                                             @RequestParam (required = false) String email,
-                                                             @RequestParam (required = false) String edicao,
-                                                             @RequestParam (required = false) String trilha);
+    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAptosEntrevista (@RequestParam Integer pagina,
+                                                                            @RequestParam Integer tamanho,
+                                                                            @RequestParam (required = false) String email,
+                                                                            @RequestParam (required = false) String edicao,
+                                                                            @RequestParam (required = false) String trilha);
 
-    @Operation(summary = "Busca lista de candidatos com média a partir de 60.", description = "Busca lista de candidatos com média a partir de 60.")
+    @Operation(summary = "Buscar candidatos por filtro ou retornar lista de candidatos com média a partir de 60.", description = "Busca candidatos por filtro ou retorna lista de candidatos com média a partir de 60.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna lista de candidados."),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<PageDTO<CandidatoDTO>> findByMedia (Integer pagina, Integer tamanho);
+    ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAprovados (@RequestParam Integer pagina,
+                                                                      @RequestParam Integer tamanho,
+                                                                      @RequestParam (required = false) String email,
+                                                                      @RequestParam (required = false) String edicao,
+                                                                      @RequestParam (required = false) String trilha);
 
-
-    @Operation(summary = "Exporta lista de candidatos com média a partir de 60.", description = "Exporta lista de candidatos com média a partir de 60.")
+    @Operation(summary = "Exporta para cvs lista de candidatos com média a partir de 60.", description = "Exporta para cvs lista de candidatos com média a partir de 60.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Exporta lista de candidados."),
+            @ApiResponse(responseCode = "200", description = "Csv exportado com sucesso!"),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping("/export-csv")
-    public void exportToExcel(HttpServletResponse response) throws IOException, RegraDeNegocioException;
+    ResponseEntity<Void> exportarCandidatosCsv(HttpServletResponse response) throws IOException;
 
     //    @Operation(summary = "Inserir curriculo do Candidato no sistema", description = "Cadastrar curriculo de um candidato especifico do sistema pelo e-mail")
 //    @ApiResponses(value = {

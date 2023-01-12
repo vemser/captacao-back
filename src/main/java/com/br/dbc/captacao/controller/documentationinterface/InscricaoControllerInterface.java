@@ -48,22 +48,6 @@ public interface InscricaoControllerInterface {
                                                         @RequestParam(defaultValue = "idInscricao", required = false) String sort,
                                                         @RequestParam(defaultValue = "0", required = false) int order) throws RegraDeNegocioException;
 
-
-    @Operation(summary = "Buscar inscrições por filtro", description = "Busca inscrições por filtro")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Retorna lista de inscrições"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @GetMapping
-    ResponseEntity<PageDTO<InscricaoDTO>> filtrarInscricoes(@RequestParam Integer pagina,
-                                                            @RequestParam Integer tamanho,
-                                                            @RequestParam (required = false) String email,
-                                                            @RequestParam (required = false) String edicao,
-                                                            @RequestParam (required = false) String trilha) throws RegraDeNegocioException;
-
     @Operation(summary = "Deleta inscrição por ID", description = "Deleta inscrição por ID")
     @ApiResponses(
             value = {

@@ -8,17 +8,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface InscricaoRepository extends JpaRepository<InscricaoEntity, Integer> {
 
     Optional<InscricaoEntity> findInscricaoEntitiesByCandidato_IdCandidato(Integer idCandidato);
-
-    @Query("SELECT i FROM INSCRICAO i " +
-            "WHERE i.avaliacaoEntity.aprovado='T'")
-    List<InscricaoEntity> listarInscricoesAprovadas();
 
     @Query("SELECT DISTINCT i FROM INSCRICAO i " +
             " INNER JOIN CANDIDATO c " +

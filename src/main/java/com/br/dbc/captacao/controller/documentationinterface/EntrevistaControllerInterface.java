@@ -15,8 +15,18 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 public interface EntrevistaControllerInterface {
+
+    @Operation(summary = "Criar entrevista para candidatos", description = "Criar entrevistas no sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Cadastro de entrevista realizada com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @PostMapping
+    ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO, @RequestParam String token) throws RegraDeNegocioException;
 
     @Operation(summary = "Atualizar entrevista por id", description = "Atualiza a observacao da entrevista de acordo com o id presente no sistema")
     @ApiResponses(value = {
@@ -39,15 +49,6 @@ public interface EntrevistaControllerInterface {
                                                    @PathVariable("idEntrevista") Integer id,
                                                    Legenda legenda) throws RegraDeNegocioException;
 
-    @Operation(summary = "Criar entrevista para candidatos", description = "Criar entrevistas no sistema")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Cadastro de entrevista realizada com sucesso!"),
-            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
-            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
-    })
-    @PostMapping
-    ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO, @RequestParam String token) throws RegraDeNegocioException;
-
     @Operation(summary = "Listagem de entrevistas no sistema", description = "Listagem das entrevistas presentes no sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listagem de entrevistas realizada com sucesso!"),
@@ -58,7 +59,16 @@ public interface EntrevistaControllerInterface {
     ResponseEntity<PageDTO<EntrevistaDTO>> list(@RequestParam(defaultValue = "0") Integer pagina,
                                                 @RequestParam(defaultValue = "20") Integer tamanho) throws RegraDeNegocioException;
 
-    @Operation(summary = "Listagem de entrevistas por usuarios no sistema", description = "Listagem das entrevistas de acordo com o mês no sistema")
+    @Operation(summary = "Listagem de entrevistas por trilha", description = "Listagem de entrevistas por trilha")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listagem  realizada com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @GetMapping
+    ResponseEntity<List<EntrevistaDTO>> listPorTrilha(@RequestParam(name = "trilha") String trilha);
+
+    @Operation(summary = "Listagem de entrevistas pelo mês e ano", description = "Listagem de entrevistas pelo mês e ano")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listagem  realizada com sucesso!"),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
@@ -70,15 +80,6 @@ public interface EntrevistaControllerInterface {
                                                         @RequestParam Integer mes,
                                                         @RequestParam Integer ano);
 
-    @Operation(summary = "Exportar entrevista para csv", description = "Exporta a entrevista em um arquivo csv")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Entrevista exportada com sucesso!"),
-            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
-            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
-    })
-    @GetMapping
-    ResponseEntity<Void> exportarEntrevistaParaCsv(HttpServletResponse response) throws IOException;
-
     @Operation(summary = "Buscar entrevista pelo e-mail do candidato", description = "Busca uma entrevista a partir do e-mail do candidato")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Entrevista encontrada!"),
@@ -88,6 +89,14 @@ public interface EntrevistaControllerInterface {
     @GetMapping
     ResponseEntity<EntrevistaDTO> buscarEntrevistaPorEmailCandidato(@PathVariable ("email") String email) throws RegraDeNegocioException;
 
+    @Operation(summary = "Exporta para csv lista de entrevistas agendadas.", description = "Exporta para csv lista de entrevistas agendadas.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Csv exportado com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @GetMapping
+    ResponseEntity<Void> exportarEntrevistasParaCsv(HttpServletResponse response) throws IOException;
     @Operation(summary = "Deletar entrevista pelo id", description = "Deleta uma entrevista no sistema a partir do id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Entrevista removida do sistema com sucesso!"),

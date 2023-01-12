@@ -11,7 +11,8 @@ import java.util.Optional;
 public interface TrilhaRepository extends JpaRepository<TrilhaEntity, Integer> {
     Optional<TrilhaEntity> findByNome(String nome);
 
-    @Query(" SELECT t FROM TRILHA t " +
-            " WHERE UPPER(t.nome) = UPPER(:nomeTrilha)")
-    Optional<TrilhaEntity> trilhaExists(String nomeTrilha);
+    @Query(value = " SELECT COUNT (ID_TRILHA) " +
+                   " FROM CAPTACAO.TRILHA_FORM tf " +
+                   " WHERE tf.ID_TRILHA = :id", nativeQuery=true)
+    Integer verifyRelacaoTrilha(Integer id);
 }

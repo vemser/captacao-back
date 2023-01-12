@@ -82,10 +82,12 @@ public class CandidatoEntity {
                 inverseJoinColumns = @JoinColumn(name = "ID_LINGUAGEM"))
         private Set<LinguagemEntity> linguagens;
 
-        @OneToOne(mappedBy = "candidatoEntity")
+        @JsonIgnore
+        @OneToOne(mappedBy = "candidatoEntity", fetch = FetchType.LAZY)
         private EntrevistaEntity entrevistaEntity;
 
-        @OneToOne(mappedBy = "candidato", orphanRemoval = true)
+        @JsonIgnore
+        @OneToOne(mappedBy = "candidato", orphanRemoval = true, fetch = FetchType.LAZY)
         private ImagemEntity imageEntity;
 
         @JsonIgnore
