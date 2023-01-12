@@ -281,7 +281,7 @@ public class CandidatoService {
         String currentDateTime = dateFormatter.format(new Date());
 
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=candidatos_aprovados_" + currentDateTime + ".csv";
+        String headerValue = "attachment; filename=candidatos_aprovados_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
         excelExporter.exportCandidato(response, candidatoDTOS);
