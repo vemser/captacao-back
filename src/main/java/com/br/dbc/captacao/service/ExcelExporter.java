@@ -20,8 +20,19 @@ import java.util.List;
 public class ExcelExporter {
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
+    private List<EntrevistaDTO> entrevistasDTO;
+    private List<CandidatoDTO> candidatosDTO;
 
     public ExcelExporter() {
+    }
+
+    public ExcelExporter(List<CandidatoDTO> candidatosDTO , XSSFWorkbook workbook) {
+        this.candidatosDTO = candidatosDTO;
+        this.workbook = workbook;
+    }
+
+    public ExcelExporter(List<EntrevistaDTO> entrevistasDTO) {
+        this.entrevistasDTO = entrevistasDTO;
         workbook = new XSSFWorkbook();
     }
 
@@ -136,7 +147,7 @@ public class ExcelExporter {
         }
     }
 
-    public void exportCandidato(HttpServletResponse response, List<CandidatoDTO> candidatosDTO) throws IOException {
+    public void exportCandidato(HttpServletResponse response) throws IOException {
         writeHeaderLineCandidato();
         writeDataLinesCandidato(candidatosDTO);
 
@@ -148,7 +159,7 @@ public class ExcelExporter {
 
     }
 
-    public void exportEntrevista(HttpServletResponse response, List<EntrevistaDTO> entrevistasDTO) throws IOException {
+    public void exportEntrevista(HttpServletResponse response) throws IOException {
         writeHeaderLineEntrevista();
         writeDataLinesEntrevista(entrevistasDTO);
 

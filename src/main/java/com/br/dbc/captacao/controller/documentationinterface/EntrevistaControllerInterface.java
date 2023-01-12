@@ -89,9 +89,9 @@ public interface EntrevistaControllerInterface {
     @GetMapping
     ResponseEntity<EntrevistaDTO> buscarEntrevistaPorEmailCandidato(@PathVariable ("email") String email) throws RegraDeNegocioException;
 
-    @Operation(summary = "Exporta para csv lista de entrevistas agendadas.", description = "Exporta para csv lista de entrevistas agendadas.")
+    @Operation(summary = "Exporta para xlsx lista de entrevistas agendadas.", description = "Exporta para csv lista de entrevistas agendadas.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Csv exportado com sucesso!"),
+            @ApiResponse(responseCode = "200", description = "xlsx exportado com sucesso!"),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })

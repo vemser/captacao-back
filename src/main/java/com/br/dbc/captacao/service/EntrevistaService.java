@@ -35,7 +35,6 @@ public class EntrevistaService {
     private final CandidatoService candidatoService;
     private final GestorService gestorService;
     private final ObjectMapper objectMapper;
-    private final ExcelExporter excelExporter;
 
     public EntrevistaDTO createEntrevista(EntrevistaCreateDTO entrevistaCreateDTO, String token) throws RegraDeNegocioException {
         GestorEntity gestor = gestorService.getUser(token);
@@ -144,7 +143,8 @@ public class EntrevistaService {
         String headerValue = "attachment; filename=entrevistas_agendadas_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
-        excelExporter.exportEntrevista(response, entrevistaDTOS);
+        ExcelExporter excelExporter = new ExcelExporter(entrevistaDTOS);
+        excelExporter.exportEntrevista(response);
     }
 
     public void deletarEntrevista(Integer idEntrevista) throws RegraDeNegocioException {

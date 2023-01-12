@@ -15,6 +15,7 @@ import com.br.dbc.captacao.repository.CandidatoRepository;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -38,7 +39,6 @@ public class CandidatoService {
     private final LinguagemService linguagemService;
     private final TrilhaService trilhaService;
     private final EdicaoService edicaoService;
-    private final ExcelExporter excelExporter;
 
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
@@ -284,7 +284,8 @@ public class CandidatoService {
         String headerValue = "attachment; filename=candidatos_aprovados_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
-        excelExporter.exportCandidato(response, candidatoDTOS);
+        ExcelExporter excelExporter = new ExcelExporter(candidatoDTOS, new XSSFWorkbook());
+        excelExporter.exportCandidato(response);
     }
 
 //        public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {

@@ -129,7 +129,7 @@ public class CandidatoController implements CandidatoControllerInterface {
         return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
     }
 
-    @GetMapping("/export-csv")
+    @GetMapping("/export-xlsx")
     public ResponseEntity<Void> exportarCandidatosCsv(HttpServletResponse response) throws IOException {
         candidatoService.exportarCandidatosCsv(response);
         return ResponseEntity.noContent().build();

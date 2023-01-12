@@ -159,9 +159,9 @@ public interface CandidatoControllerInterface {
                                                                       @RequestParam (required = false) String edicao,
                                                                       @RequestParam (required = false) String trilha);
 
-    @Operation(summary = "Exporta para cvs lista de candidatos com média a partir de 60.", description = "Exporta para cvs lista de candidatos com média a partir de 60.")
+    @Operation(summary = "Exporta para xlsx lista de candidatos com média a partir de 60.", description = "Exporta para cvs lista de candidatos com média a partir de 60.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Csv exportado com sucesso!"),
+            @ApiResponse(responseCode = "200", description = "xlsx exportado com sucesso!"),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
