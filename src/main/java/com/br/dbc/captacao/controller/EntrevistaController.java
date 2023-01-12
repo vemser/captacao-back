@@ -72,7 +72,7 @@ public class EntrevistaController implements EntrevistaControllerInterface {
         return new ResponseEntity<>(entrevistaService.buscarPorEmailCandidato(email), HttpStatus.OK);
     }
 
-    @GetMapping("/export-excel")
+    @GetMapping("/export-xlsx")
     public ResponseEntity<Void> exportarEntrevistasParaCsv(HttpServletResponse response) throws IOException {
         entrevistaService.exportarEntrevistasCsv(response);
         return ResponseEntity.noContent().build();
