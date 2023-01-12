@@ -1,12 +1,12 @@
 package com.br.dbc.captacao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.Entity;
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +31,7 @@ public class CurriculoEntity {
     @Lob
     private byte[] data;
 
-    @OneToOne(mappedBy = "curriculoEntity")
+    @JsonIgnore
+    @OneToOne(mappedBy = "curriculoEntity", fetch = FetchType.LAZY)
     private FormularioEntity formularioEntity;
 }

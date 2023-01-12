@@ -20,7 +20,7 @@ public class TrilhaService {
     private final TrilhaRepository trilhaRepository;
 
     public TrilhaDTO create(TrilhaCreateDTO trilhaCreateDTO) throws RegraDeNegocioException {
-        Optional<TrilhaEntity> trilha = trilhaRepository.trilhaExists(trilhaCreateDTO.getNome().trim());
+        Optional<TrilhaEntity> trilha = trilhaRepository.findByNome(trilhaCreateDTO.getNome().trim());
         if(trilha.isPresent()) {
             throw new RegraDeNegocioException("Trilha já existe!");
         }
@@ -57,6 +57,10 @@ public class TrilhaService {
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
         TrilhaEntity trilha = trilhaRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("Trilha não encontrada!"));
+        Integer countRelacaoTrilha = trilhaRepository.verifyRelacaoTrilha(id);
+        if(countRelacaoTrilha > 0) {
+            throw new RegraDeNegocioException("Trilha não pode ser excluída porque possuí inscrições atribuídas a ela!");
+        }
         trilhaRepository.delete(trilha);
     }
 
