@@ -29,6 +29,11 @@ public class EntrevistaController implements EntrevistaControllerInterface {
 
     private final EntrevistaService entrevistaService;
 
+    @PostMapping("/marcar-entrevista")
+    public ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO, @RequestParam String token) throws RegraDeNegocioException {
+        return new ResponseEntity<>(entrevistaService.createEntrevista(entrevistaCreateDTO, token), HttpStatus.CREATED);
+    }
+
     @PutMapping("/atualizar-observacao-entrevista/{idEntrevista}")
     public ResponseEntity<Void> atualizarEntrevista(@PathVariable ("idEntrevista") Integer id,
                                                     String observacao) throws RegraDeNegocioException {
@@ -41,11 +46,6 @@ public class EntrevistaController implements EntrevistaControllerInterface {
                                                           @PathVariable("idEntrevista") Integer id,
                                                           Legenda legenda) throws RegraDeNegocioException {
         return new ResponseEntity<>(entrevistaService.atualizarEntrevista(id, entrevistaCreateDTO, legenda), HttpStatus.OK);
-    }
-
-    @PostMapping("/marcar-entrevista")
-    public ResponseEntity<EntrevistaDTO> cadastrarEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO, @RequestParam String token) throws RegraDeNegocioException {
-        return new ResponseEntity<>(entrevistaService.createEntrevista(entrevistaCreateDTO, token), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -67,15 +67,15 @@ public class EntrevistaController implements EntrevistaControllerInterface {
         return new ResponseEntity<>(entrevistaService.listMes(pagina, tamanho, mes, ano), HttpStatus.OK);
     }
 
-    @GetMapping("/export-csv")
-    public ResponseEntity<Void> exportarEntrevistaParaCsv(HttpServletResponse response) throws IOException {
-        entrevistaService.exportarEntrevistaCSV(response);
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/buscar-entrevista-email-candidato/{email}")
     public ResponseEntity<EntrevistaDTO> buscarEntrevistaPorEmailCandidato(@PathVariable ("email") String email) throws RegraDeNegocioException {
         return new ResponseEntity<>(entrevistaService.buscarPorEmailCandidato(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/export-csv")
+    public ResponseEntity<Void> exportarEntrevistasParaCsv(HttpServletResponse response) throws IOException {
+        entrevistaService.exportarEntrevistasCsv(response);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{idEntrevista}")

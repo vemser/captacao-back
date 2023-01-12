@@ -129,8 +129,9 @@ public class CandidatoController implements CandidatoControllerInterface {
     }
 
     @GetMapping("/export-csv")
-    public void exportToExcel(HttpServletResponse response) throws IOException, RegraDeNegocioException {
-        candidatoService.getExport(response);
+    public ResponseEntity<Void> exportarCandidatosCsv(HttpServletResponse response) throws IOException {
+        candidatoService.exportarCandidatosCsv(response);
+        return ResponseEntity.noContent().build();
     }
 
     //    @GetMapping("/find-by-trilha")

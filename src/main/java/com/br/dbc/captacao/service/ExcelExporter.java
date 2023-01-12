@@ -17,50 +17,40 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-//@RequiredArgsConstructor
 public class ExcelExporter {
-
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-
-    private List<CandidatoDTO> listaCandidato;
 
     public ExcelExporter() {
         workbook = new XSSFWorkbook();
     }
 
-    public ExcelExporter(List<CandidatoDTO> listaCandidato){
-        this.listaCandidato = listaCandidato;
-        workbook = new XSSFWorkbook();
-    }
-
     private void writeHeaderLineCandidato() {
         sheet = workbook.createSheet("Candidatos");
-
         Row row = sheet.createRow(0);
 
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeight(16);
+        font.setFontHeight(15);
         style.setFont(font);
 
-        createCell(row, 0, "Id", style);
-        createCell(row, 1, "Nome                         ", style);
-        createCell(row, 2, "E-mail                                        ", style);
-        createCell(row, 3, "Trilha                       ", style);
-        createCell(row, 4, "Nota Prova", style);
-        createCell(row, 5, "Telefone", style);
+        createCell(row, 0, "ID", style);
+        createCell(row, 1, "Nome do candidato", style);
+        createCell(row, 2, "E-mail do candidato", style);
+        createCell(row, 3, "Trilhas", style);
+        createCell(row, 4, "Nota da prova", style);
+        createCell(row, 5, "Telefone do candidato", style);
     }
 
     private void writeHeaderLineEntrevista() {
-        sheet = workbook.createSheet("Users");
+        sheet = workbook.createSheet("Entrevistas");
         Row row = sheet.createRow(0);
 
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
-        font.setFontHeight(16);
+        font.setFontHeight(15);
         style.setFont(font);
 
         createCell(row, 0, "ID", style);
@@ -85,7 +75,7 @@ public class ExcelExporter {
         cell.setCellStyle(style);
     }
 
-    private void writeDataLinesCandidato() {
+    private void writeDataLinesCandidato(List<CandidatoDTO> candidatosDTO) {
         int rowCount = 1;
 
         CellStyle style = workbook.createCellStyle();
@@ -93,7 +83,7 @@ public class ExcelExporter {
         font.setFontHeight(14);
         style.setFont(font);
 
-        for (CandidatoDTO candidatoDTO : listaCandidato) {
+        for (CandidatoDTO candidatoDTO : candidatosDTO) {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
 
@@ -110,7 +100,7 @@ public class ExcelExporter {
 
             createCell(row, columnCount++, trilha, style);
             createCell(row, columnCount++, candidatoDTO.getNotaProva().toString(), style);
-            createCell(row, columnCount++, candidatoDTO.getTelefone(), style);
+            createCell(row, columnCount, candidatoDTO.getTelefone(), style);
         }
     }
 
@@ -146,9 +136,9 @@ public class ExcelExporter {
         }
     }
 
-    public void exportCandidato(HttpServletResponse response) throws IOException {
+    public void exportCandidato(HttpServletResponse response, List<CandidatoDTO> candidatosDTO) throws IOException {
         writeHeaderLineCandidato();
-        writeDataLinesCandidato();
+        writeDataLinesCandidato(candidatosDTO);
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);

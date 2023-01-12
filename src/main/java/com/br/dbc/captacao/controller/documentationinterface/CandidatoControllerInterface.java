@@ -157,14 +157,14 @@ public interface CandidatoControllerInterface {
     ResponseEntity<PageDTO<CandidatoDTO>> findByMedia (Integer pagina, Integer tamanho);
 
 
-    @Operation(summary = "Exporta lista de candidatos com média a partir de 60.", description = "Exporta lista de candidatos com média a partir de 60.")
+    @Operation(summary = "Exporta para cvs lista de candidatos com média a partir de 60.", description = "Exporta para cvs lista de candidatos com média a partir de 60.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Exporta lista de candidados."),
+            @ApiResponse(responseCode = "200", description = "Csv exportado com sucesso!"),
             @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping("/export-csv")
-    public void exportToExcel(HttpServletResponse response) throws IOException, RegraDeNegocioException;
+    ResponseEntity<Void> exportarCandidatosCsv(HttpServletResponse response) throws IOException;
 
     //    @Operation(summary = "Inserir curriculo do Candidato no sistema", description = "Cadastrar curriculo de um candidato especifico do sistema pelo e-mail")
 //    @ApiResponses(value = {
