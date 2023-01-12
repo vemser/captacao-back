@@ -147,7 +147,16 @@ public class FormularioService {
         formulario.setGenero(formularioCreateDTO.getGenero());
         formulario.setOrientacao(formularioCreateDTO.getOrientacao());
         formulario.setImportancia(formularioCreateDTO.getImportancia());
-
+        List<TrilhaEntity> trilhaEntities = formularioCreateDTO.getTrilhas().stream()
+                .map(x -> {
+                    try {
+                        return trilhaService.findByNome(x);
+                    } catch (RegraDeNegocioException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toList());
+        Set<TrilhaEntity> targetSet = new HashSet<>(trilhaEntities);
+        formulario.setTrilhaEntitySet(targetSet);
         formulario = formularioRepository.save(formulario);
 
         return convertToDto(formulario);
