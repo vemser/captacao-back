@@ -75,33 +75,6 @@ public class InscricaoService {
         return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
     }
 
-    public void exportarCandidatoCSV() throws RegraDeNegocioException {
-        List<InscricaoEntity> inscricaoEntityList = inscricaoRepository.listarInscricoesAprovadas();
-        try {
-            BufferedWriter bw = new BufferedWriter
-                    (new OutputStreamWriter(new FileOutputStream("candidatos.csv", false), "UTF-8"));
-            for (InscricaoEntity inscricao : inscricaoEntityList) {
-                StringBuilder oneLine = new StringBuilder();
-                oneLine.append(inscricao.getCandidato().getIdCandidato());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getNome());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getEmail());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getMedia());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getParecerTecnico());
-                oneLine.append(",");
-                oneLine.append(inscricao.getCandidato().getParecerComportamental());
-                bw.write(oneLine.toString());
-                bw.newLine();
-            }
-            bw.close();
-        } catch (IOException e) {
-            throw new RegraDeNegocioException("Erro ao exportar dados para arquivo.");
-        }
-    }
-
     public PageDTO<InscricaoDTO> filtrarInscricoes(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
