@@ -26,7 +26,7 @@ public class TrilhaService {
         }
 
         TrilhaEntity trilhaEntity = objectMapper.convertValue(trilhaCreateDTO, TrilhaEntity.class);
-        trilhaEntity.setNome(trilhaEntity.getNome().trim());
+        trilhaEntity.setNome(trilhaEntity.getNome().trim().toUpperCase());
         TrilhaEntity trilhaSalva = trilhaRepository.save(trilhaEntity);
         return objectMapper.convertValue(trilhaSalva, TrilhaDTO.class);
     }
