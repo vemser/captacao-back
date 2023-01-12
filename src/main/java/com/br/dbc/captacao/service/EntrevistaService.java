@@ -124,7 +124,7 @@ public class EntrevistaService {
         EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevista, EntrevistaDTO.class);
         entrevistaDTO.setCandidatoDTO(candidatoDTO);
         entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
-        entrevistaDTO.setAvaliado(entrevista.getAvaliado().toString());
+        entrevistaDTO.setAvaliado(entrevista.getAvaliado() == null ? null : entrevista.getAvaliado().toString());
         entrevistaDTO.setGestorDTO(objectMapper.convertValue(entrevista.getGestorEntity(), GestorDTO.class));
 
         return entrevistaDTO;
