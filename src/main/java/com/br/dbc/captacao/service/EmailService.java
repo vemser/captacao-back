@@ -1,12 +1,10 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.SendEmailDTO;
-import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
+import com.br.dbc.captacao.repository.enums.TipoEmail;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +12,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class EmailService {
         dados.put("msg2", base);
         dados.put("msg3", MESSAGE_DUVIDA);
 
-        Template template = fmConfiguration.getTemplate("templates/email-template-universal.ftl");
+        Template template = fmConfiguration.getTemplate("email-template-universal.ftl");
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
         return html;
     }

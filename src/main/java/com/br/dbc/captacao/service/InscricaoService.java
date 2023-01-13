@@ -1,12 +1,14 @@
 package com.br.dbc.captacao.service;
 
 
+import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.InscricaoRepository;
+import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class InscricaoService {
     private final InscricaoRepository inscricaoRepository;
     private final CandidatoService candidatoService;
     private final ObjectMapper objectMapper;
+    private final EmailService emailService;
 
     public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
         if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(idCandidato).isEmpty()) {
@@ -39,10 +42,10 @@ public class InscricaoService {
         inscricaoEntity.setAvaliado(TipoMarcacao.F);
         InscricaoEntity inscricaoRetorno = inscricaoRepository.save(inscricaoEntity);
         InscricaoDTO inscricaoDto = converterParaDTO(inscricaoRetorno);
-//        SendEmailDTO sendEmailDTO = new SendEmailDTO();
-//        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
-//        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
-//        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
+        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+        sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
+        sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
+        emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
         return inscricaoDto;
     }
 

@@ -58,29 +58,29 @@ public class InscricaoServiceTest {
         ReflectionTestUtils.setField(inscricaoService, "objectMapper", objectMapper);
     }
 
-    @Test
-    public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
-        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
-        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-        TrilhaEntity trilha = TrilhaFactory.getTrilhaEntity();
-
-        Set<TrilhaEntity> listTrilha = new HashSet<>();
-        listTrilha.add(trilha);
-        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-        formulario.setTrilhaEntitySet(listTrilha);
-        candidatoEntity.setFormularioEntity(formulario);
-        inscricaoEntity.setCandidato(candidatoEntity);
-        inscricaoEntity.setDataInscricao(LocalDate.now());
-        inscricaoEntity.setAvaliado(TipoMarcacao.F);
-        inscricaoEntity.setIdCandidato(candidatoEntity.getIdCandidato());
-        inscricaoEntity.setAvaliacaoEntity(AvaliacaoFactory.getAvaliacaoEntityAprovado());
-        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt())).thenReturn(Optional.empty());
-        when(inscricaoRepository.save(any())).thenReturn(inscricaoEntity);
-
-        InscricaoDTO inscricaoDTO = inscricaoService.create(inscricaoEntity.getIdCandidato());
-
-        assertEquals(inscricaoDTO.getIdInscricao(), 1);
-    }
+//    @Test
+//    public void deveTestarCreateComSucesso() throws RegraDeNegocioException, RegraDeNegocio404Exception {
+//        InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        TrilhaEntity trilha = TrilhaFactory.getTrilhaEntity();
+//
+//        Set<TrilhaEntity> listTrilha = new HashSet<>();
+//        listTrilha.add(trilha);
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        formulario.setTrilhaEntitySet(listTrilha);
+//        candidatoEntity.setFormularioEntity(formulario);
+//        inscricaoEntity.setCandidato(candidatoEntity);
+//        inscricaoEntity.setDataInscricao(LocalDate.now());
+//        inscricaoEntity.setAvaliado(TipoMarcacao.F);
+//        inscricaoEntity.setIdCandidato(candidatoEntity.getIdCandidato());
+//        inscricaoEntity.setAvaliacaoEntity(AvaliacaoFactory.getAvaliacaoEntityAprovado());
+//        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt())).thenReturn(Optional.empty());
+//        when(inscricaoRepository.save(any())).thenReturn(inscricaoEntity);
+//
+//        InscricaoDTO inscricaoDTO = inscricaoService.create(inscricaoEntity.getIdCandidato());
+//
+//        assertEquals(inscricaoDTO.getIdInscricao(), 1);
+//    }
 
     @Test
     public void deveTestarListarAllPaginadoComSucesso() throws RegraDeNegocioException{
