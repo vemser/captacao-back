@@ -6,13 +6,11 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
 import com.br.dbc.captacao.entity.CurriculoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.entity.TrilhaEntity;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.FormularioRepository;
-import com.br.dbc.captacao.repository.PrintConfigPCRepository;
+import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,7 +30,6 @@ public class FormularioService {
     private static final int DESCENDING = 1;
     private final FormularioRepository formularioRepository;
     private final TrilhaService trilhaService;
-    private final PrintConfigPCRepository printConfigPCRepository;
     private final ObjectMapper objectMapper;
 
     public FormularioDTO create(FormularioCreateDTO formularioCreateDto) throws RegraDeNegocioException {
@@ -41,29 +38,17 @@ public class FormularioService {
         }
         FormularioEntity formulario = convertToEntity(formularioCreateDto);
 
-        List<TrilhaEntity> trilhas = new ArrayList<>();
-        trilhas = getTrilhasFormulario(formularioCreateDto, trilhas);
-        formulario.setTrilhaEntitySet(new HashSet<>(trilhas));
+        formulario.setTrilhaEntitySet(getTrilhasFormulario(formularioCreateDto));
 
-        PrintConfigPCEntity printConfigPCEntity = new PrintConfigPCEntity();
-        printConfigPCEntity.setTipo(" ");
-        printConfigPCEntity.setNome(" ");
-        printConfigPCEntity.setData("dados".getBytes());
-        PrintConfigPCEntity print = printConfigPCRepository.save(printConfigPCEntity);
-        CurriculoEntity curriculo = new CurriculoEntity();
-
-        formulario.setImagemConfigPc(print);
         FormularioEntity formularioRetornoBanco = formularioRepository.save(formulario);
+
         FormularioDTO formularioRetorno = convertToDto(formularioRetornoBanco);
-        Set<TrilhaDTO> trilhaDTOSet = formularioRetornoBanco.getTrilhaEntitySet().stream()
-                .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
-                .collect(Collectors.toSet());
-        formularioRetorno.setTrilhas(trilhaDTOSet);
 
         return formularioRetorno;
     }
 
-    private List<TrilhaEntity> getTrilhasFormulario(FormularioCreateDTO formularioCreateDTO, List<TrilhaEntity> trilhas) throws RegraDeNegocioException {
+    private Set<TrilhaEntity> getTrilhasFormulario(FormularioCreateDTO formularioCreateDTO) throws RegraDeNegocioException {
+        Set<TrilhaEntity> trilhas = new HashSet<>();
         for (String nomeTrilha : formularioCreateDTO.getTrilhas()) {
             TrilhaEntity trilhaEntity = trilhaService.findByNome(nomeTrilha);
             trilhas.add(trilhaEntity);
@@ -85,10 +70,6 @@ public class FormularioService {
             List<FormularioDTO> formularioDtos = paginaFormularioEntity.getContent().stream()
                     .map(formularioEntity -> {
                         FormularioDTO formularioDTO = convertToDto(formularioEntity);
-                        Set<TrilhaDTO> trilhaDTOSet = formularioEntity.getTrilhaEntitySet().stream()
-                                .map(trilhaEntity -> objectMapper.convertValue(trilhaEntity, TrilhaDTO.class))
-                                .collect(Collectors.toSet());
-                        formularioDTO.setTrilhas(trilhaDTOSet);
                         if (formularioEntity.getCurriculoEntity() != null) {
                             formularioDTO.setCurriculo(formularioEntity.getCurriculoEntity().getIdCurriculo());
                         }
