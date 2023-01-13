@@ -1,11 +1,9 @@
 package com.br.dbc.captacao.service;
 
-import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.factory.CandidatoFactory;
 import com.br.dbc.captacao.factory.FormularioFactory;
 import com.br.dbc.captacao.factory.PrintConfigPCFactory;
 import com.br.dbc.captacao.repository.PrintConfigPCRepository;
@@ -17,15 +15,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.lang.model.util.SimpleAnnotationValueVisitor6;
 import java.io.IOException;
 import java.util.HexFormat;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,19 +71,6 @@ public class PrintConfigPCServiceTest {
         printConfigPCService.findById(id);
     }
 
-    @Test
-    public void deveTestarUploadCasoExistaPrintComSucesso() throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception{
-        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-        byte[] printBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
-        MultipartFile print = new MockMultipartFile("print.png", "print.png", ".png", printBytes);
-
-        when(printConfigPCRepository.findByFormulario(any())).thenReturn(Optional.of(PrintConfigPCFactory.getPrintEntity()));
-        when(printConfigPCRepository.save(any())).thenReturn(PrintConfigPCFactory.getPrintEntity());
-
-        printConfigPCService.arquivarPrintConfigPc(print, formulario.getIdFormulario());
-
-        verify(printConfigPCRepository, times(1)).save(any());
-    }
 
     @Test
     public void testarUploadCasoNaoExistaPrintComSucesso() throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception{
@@ -95,12 +79,13 @@ public class PrintConfigPCServiceTest {
         byte[] printBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
         MultipartFile print = new MockMultipartFile("print.png", "print.png", ".png", printBytes);
 
-        when(printConfigPCRepository.findByFormulario(any())).thenReturn(Optional.empty());
+        when(formularioService.findById(any())).thenReturn(formulario);
         when(printConfigPCRepository.save(any())).thenReturn(PrintConfigPCFactory.getPrintEntity());
 
         printConfigPCService.arquivarPrintConfigPc(print, formulario.getIdFormulario());
 
         verify(printConfigPCRepository, times(1)).save(any());
+        verify(formularioService, times(1)).save(any());
     }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -108,8 +93,6 @@ public class PrintConfigPCServiceTest {
         FormularioEntity formulario = FormularioFactory.getFormularioEntity();
         byte[] printBytes = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
         MultipartFile print = new MockMultipartFile("print.abc", "print.abc", ".abc", printBytes);
-
-        when(printConfigPCRepository.findByFormulario(any())).thenReturn(Optional.empty());
 
         printConfigPCService.arquivarPrintConfigPc(print, formulario.getIdFormulario());
     }
