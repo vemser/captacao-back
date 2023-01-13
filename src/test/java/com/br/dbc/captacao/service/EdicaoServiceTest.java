@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EdicaoEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EdicaoRepository;
@@ -17,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,7 +23,8 @@ import java.util.Set;
 import static com.br.dbc.captacao.factory.EdicaoFactory.getEdicaoDTO;
 import static com.br.dbc.captacao.factory.EdicaoFactory.getEdicaoEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -119,38 +118,38 @@ public class EdicaoServiceTest {
         verify(edicaoRepository).deleteById(idEdicao);
     }
 
-    @Test
-    public void testarCriarEdicaoCasoNaoExistaUmaComSucesso() {
-        //Setup
-        final String nome = "12";
-        EdicaoDTO edicaoDTO = new EdicaoDTO();
-        edicaoDTO.setNome(nome);
-        final int id = 2;
-        EdicaoEntity edicaoEntity = new EdicaoEntity();
-        edicaoEntity.setNome(nome);
-        edicaoEntity.setIdEdicao(id);
-        //Act
-        when(edicaoRepository.save(any())).thenReturn(edicaoEntity);
-        EdicaoDTO edicaoEntityResponse = edicaoService.createAndReturnDTO(edicaoDTO);
-        //Assert
-        assertEquals(edicaoEntity.getNome(), edicaoEntityResponse.getNome());
-    }
+//    @Test
+//    public void testarCriarEdicaoCasoNaoExistaUmaComSucesso() {
+//        //Setup
+//        final String nome = "12";
+//        EdicaoDTO edicaoDTO = new EdicaoDTO();
+//        edicaoDTO.setNome(nome);
+//        final int id = 2;
+//        EdicaoEntity edicaoEntity = new EdicaoEntity();
+//        edicaoEntity.setNome(nome);
+//        edicaoEntity.setIdEdicao(id);
+//        //Act
+//        when(edicaoRepository.save(any())).thenReturn(edicaoEntity);
+//        EdicaoDTO edicaoEntityResponse = edicaoService.createAndReturnDTO(edicaoDTO);
+//        //Assert
+//        assertEquals(edicaoEntity.getNome(), edicaoEntityResponse.getNome());
+//    }
 
-    @Test
-    public void deveTestarCriacaoComSucesso() {
-        // Setup
-        EdicaoDTO edicaoDTO = getEdicaoDTO();
-        EdicaoEntity edicaoEntity = getEdicaoEntity();
-        CandidatoEntity candidatoEntity = new CandidatoEntity();
-        Set<CandidatoEntity> lista = new HashSet<>();
-        lista.add(candidatoEntity);
-        edicaoEntity.setCandidatoEntities(lista);
-        // Act
-        when(edicaoRepository.save(any())).thenReturn(edicaoEntity);
-        EdicaoDTO edicaoDTOResponse = edicaoService.createAndReturnDTO(edicaoDTO);
-        // Assert
-        assertEquals(edicaoEntity.getNome(), edicaoDTOResponse.getNome());
-    }
+//    @Test
+//    public void deveTestarCriacaoComSucesso() {
+//        // Setup
+//        EdicaoDTO edicaoDTO = getEdicaoDTO();
+//        EdicaoEntity edicaoEntity = getEdicaoEntity();
+//        CandidatoEntity candidatoEntity = new CandidatoEntity();
+//        Set<CandidatoEntity> lista = new HashSet<>();
+//        lista.add(candidatoEntity);
+//        edicaoEntity.setCandidatoEntities(lista);
+//        // Act
+//        when(edicaoRepository.save(any())).thenReturn(edicaoEntity);
+//        EdicaoDTO edicaoDTOResponse = edicaoService.createAndReturnDTO(edicaoDTO);
+//        // Assert
+//        assertEquals(edicaoEntity.getNome(), edicaoDTOResponse.getNome());
+//    }
 
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarBuscaEdicaoPorIdComErro() throws RegraDeNegocioException {

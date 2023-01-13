@@ -52,7 +52,7 @@ public class CandidatoService {
 
         linguagemList = getLinguagensCandidato(candidatoCreateDTO, linguagemList);
         CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
-        candidatoEntity.setNome(candidatoEntity.getNome().trim());
+        candidatoEntity.setNome(candidatoEntity.getNome().trim().toUpperCase());
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
         FormularioEntity formulario = formularioService.findById(candidatoCreateDTO.getFormulario());
