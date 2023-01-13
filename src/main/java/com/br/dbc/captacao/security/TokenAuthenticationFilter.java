@@ -15,6 +15,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
+    private static String originToken;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -25,6 +26,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             String authorization = request.getHeader("Authorization");
 
             UsernamePasswordAuthenticationToken dtoToken = tokenService.isValid(authorization);
+            originToken = authorization;
             SecurityContextHolder.getContext().setAuthentication(dtoToken);
 
             filterChain.doFilter(request, response);
@@ -33,4 +35,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    public static String getOriginToken() {
+        return originToken;
+    }
 }
