@@ -5,7 +5,6 @@ import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.PrintConfigPCRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
@@ -13,16 +12,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PrintConfigPCService {
 
     private final PrintConfigPCRepository printConfigPCRepository;
-
-    private final ObjectMapper objectMapper;
-
     private final FormularioService formularioService;
 
     public PrintConfigPCEntity findById(Integer id) throws RegraDeNegocioException {
@@ -32,29 +27,21 @@ public class PrintConfigPCService {
 
     public void arquivarPrintConfigPc(MultipartFile file, Integer idFormulario) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception {
         FormularioEntity formulario = formularioService.findById(idFormulario);
-        Optional<PrintConfigPCEntity> printConfigPCEntity = findByFormulario(formulario);
+
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
         if(!nomeArquivo.endsWith(".png") && !nomeArquivo.endsWith(".jpeg") && !nomeArquivo.endsWith(".jpg")){
             throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .png, .jpg ou .jpeg");
         }
-        if (printConfigPCEntity.isPresent()) {
-            printConfigPCEntity.get().setNome(nomeArquivo);
-            printConfigPCEntity.get().setTipo(file.getContentType());
-            printConfigPCEntity.get().setData(file.getBytes());
-            printConfigPCEntity.get().setFormulario(formulario);
-            printConfigPCRepository.save(printConfigPCEntity.get());
-        } else {
-            PrintConfigPCEntity novaImagemBD = new PrintConfigPCEntity();
-            novaImagemBD.setNome(nomeArquivo);
-            novaImagemBD.setTipo(file.getContentType());
-            novaImagemBD.setData(file.getBytes());
-            novaImagemBD.setFormulario(formulario);
-            printConfigPCRepository.save(novaImagemBD);
-        }
-    }
 
-    private Optional<PrintConfigPCEntity> findByFormulario(FormularioEntity formulario) {
-        return printConfigPCRepository.findByFormulario(formulario);
+        PrintConfigPCEntity novaImagemBD = new PrintConfigPCEntity();
+
+        novaImagemBD.setNome(nomeArquivo);
+        novaImagemBD.setTipo(file.getContentType());
+        novaImagemBD.setData(file.getBytes());
+
+        PrintConfigPCEntity printSalvo = printConfigPCRepository.save(novaImagemBD);
+        formulario.setImagemConfigPc(printSalvo);
+        formularioService.save(formulario);
     }
 
     public String recuperarPrint(Integer idFormulario) throws RegraDeNegocioException, RegraDeNegocio404Exception {

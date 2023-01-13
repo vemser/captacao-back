@@ -182,4 +182,8 @@ public class FormularioService {
         formularioEntity.setCurriculoEntity(curriculoEntity);
         formularioRepository.save(formularioEntity);
     }
+
+    public void save(FormularioEntity formularioEntity) {
+        formularioRepository.save(formularioEntity);
+    }
 }
