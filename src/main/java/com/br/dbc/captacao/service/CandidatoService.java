@@ -61,6 +61,9 @@ public class CandidatoService {
         EdicaoEntity edicao = edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome());
 
         candidatoEntity.setEdicao(edicao);
+        candidatoEntity.setNotaProva(0.00);
+        candidatoEntity.setNotaEntrevistaComportamental(0.00);
+        candidatoEntity.setNotaEntrevistaTecnica(0.00);
 
         CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
         candidatoDTO.setFormulario(formularioService.convertToDto(formulario));
@@ -122,6 +125,7 @@ public class CandidatoService {
         candidatoEntity.setEstado(candidatoCreateDTO.getEstado());
         candidatoEntity.setCidade(candidatoCreateDTO.getCidade());
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
+
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 
@@ -129,7 +133,9 @@ public class CandidatoService {
         CandidatoEntity candidatoEntity = findById(id);
         candidatoEntity.setNotaEntrevistaTecnica(candidatoTecnicoNotaDTO.getNotaTecnico());
         candidatoEntity.setParecerTecnico(candidatoTecnicoNotaDTO.getParecerTecnico());
-        return converterEmDTO(candidatoRepository.save(candidatoEntity));
+        CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
+        calcularMediaNotas(candidatoDTO.getIdCandidato());
+        return candidatoDTO;
     }
 
     public CandidatoDTO calcularMediaNotas(Integer id) throws RegraDeNegocioException {
@@ -144,6 +150,7 @@ public class CandidatoService {
     public CandidatoDTO updateNota(Integer id, CandidatoNotaDTO candidatoNotaDTO) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
         candidatoEntity.setNotaProva(candidatoNotaDTO.getNotaProva());
+
         return converterEmDTO(candidatoRepository.save(candidatoEntity));
     }
 
@@ -151,7 +158,9 @@ public class CandidatoService {
         CandidatoEntity candidatoEntity = findById(id);
         candidatoEntity.setNotaEntrevistaComportamental(candidatoNotaComportamentalDTO.getNotaComportamental());
         candidatoEntity.setParecerComportamental(candidatoNotaComportamentalDTO.getParecerComportamental());
-        return converterEmDTO(candidatoRepository.save(candidatoEntity));
+        CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
+        calcularMediaNotas(candidatoDTO.getIdCandidato());
+        return candidatoDTO;
     }
 
     private List<LinguagemEntity> getLinguagensCandidato(CandidatoCreateDTO candidatoCreateDTO, List<LinguagemEntity> linguagemList) {

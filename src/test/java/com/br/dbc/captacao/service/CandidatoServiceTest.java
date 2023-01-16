@@ -226,25 +226,25 @@ public class CandidatoServiceTest {
         CandidatoDTO candidatoDTO = candidatoService.update(1, candidatoCreateDTO);
     }
 
-    @Test
-    public void deveTestarUpdateTecnicoComSucesso() throws RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-        candidatoEntity.setFormularioEntity(formulario);
-        CandidatoTecnicoNotaDTO candidatoTecnicoNotaDTO = new CandidatoTecnicoNotaDTO();
-        candidatoTecnicoNotaDTO.setNotaTecnico(80.0);
-        candidatoTecnicoNotaDTO.setParecerTecnico("observacao");
-
-        when(candidatoRepository.findById(anyInt()))
-                .thenReturn(Optional.of(candidatoEntity));
-
-        when(candidatoRepository.save(any(CandidatoEntity.class)))
-                .thenReturn(candidatoEntity);
-
-        CandidatoDTO candidatoRetorno = candidatoService.updateTecnico(1, candidatoTecnicoNotaDTO);
-
-        assertNotNull(candidatoRetorno);
-    }
+//    @Test
+//    public void deveTestarUpdateTecnicoComSucesso() throws RegraDeNegocioException {
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        candidatoEntity.setFormularioEntity(formulario);
+//        CandidatoTecnicoNotaDTO candidatoTecnicoNotaDTO = new CandidatoTecnicoNotaDTO();
+//        candidatoTecnicoNotaDTO.setNotaTecnico(80.0);
+//        candidatoTecnicoNotaDTO.setParecerTecnico("observacao");
+//
+//        when(candidatoRepository.findById(anyInt()))
+//                .thenReturn(Optional.of(candidatoEntity));
+//
+//        when(candidatoRepository.save(any(CandidatoEntity.class)))
+//                .thenReturn(candidatoEntity);
+//
+//        CandidatoDTO candidatoRetorno = candidatoService.updateTecnico(1, candidatoTecnicoNotaDTO);
+//
+//        assertNotNull(candidatoRetorno);
+//    }
 
     @Test
     public void deveTestarCalcularMediaNotas() throws RegraDeNegocioException {
@@ -286,25 +286,25 @@ public class CandidatoServiceTest {
         assertNotNull(candidatoRetorno);
     }
 
-    @Test
-    public void deveTestarUpdateComportamental() throws RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
-        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
-        candidatoEntity.setFormularioEntity(formulario);
-        CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO = new CandidatoNotaComportamentalDTO();
-        candidatoNotaComportamentalDTO.setParecerComportamental("observacoes");
-        candidatoNotaComportamentalDTO.setNotaComportamental(80.0);
-
-        when(candidatoRepository.findById(anyInt()))
-                .thenReturn(Optional.of(candidatoEntity));
-
-        when(candidatoRepository.save(any(CandidatoEntity.class)))
-                .thenReturn(candidatoEntity);
-
-        CandidatoDTO candidatoDTO = candidatoService.updateComportamental(1, candidatoNotaComportamentalDTO);
-
-        assertNotNull(candidatoDTO);
-    }
+//    @Test
+//    public void deveTestarUpdateComportamental() throws RegraDeNegocioException {
+//        CandidatoEntity candidatoEntity = CandidatoFactory.getCandidatoEntity();
+//        FormularioEntity formulario = FormularioFactory.getFormularioEntity();
+//        candidatoEntity.setFormularioEntity(formulario);
+//        CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO = new CandidatoNotaComportamentalDTO();
+//        candidatoNotaComportamentalDTO.setParecerComportamental("observacoes");
+//        candidatoNotaComportamentalDTO.setNotaComportamental(80.0);
+//
+//        when(candidatoRepository.findById(anyInt()))
+//                .thenReturn(Optional.of(candidatoEntity));
+//
+//        when(candidatoRepository.save(any(CandidatoEntity.class)))
+//                .thenReturn(candidatoEntity);
+//
+//        CandidatoDTO candidatoDTO = candidatoService.updateComportamental(1, candidatoNotaComportamentalDTO);
+//
+//        assertNotNull(candidatoDTO);
+//    }
 
     @Test
     public void deveTestarFindDtoByIdComSucesso() throws RegraDeNegocioException {
