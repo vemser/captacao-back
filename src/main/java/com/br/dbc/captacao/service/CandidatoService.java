@@ -131,7 +131,11 @@ public class CandidatoService {
 
     public CandidatoDTO updateTecnico(Integer id, CandidatoTecnicoNotaDTO candidatoTecnicoNotaDTO) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
-        candidatoEntity.setNotaEntrevistaTecnica(candidatoTecnicoNotaDTO.getNotaTecnico());
+        if(candidatoTecnicoNotaDTO.getNotaTecnico() == null) {
+            candidatoEntity.setNotaEntrevistaTecnica(0.00);
+        }else {
+            candidatoEntity.setNotaEntrevistaTecnica(candidatoTecnicoNotaDTO.getNotaTecnico());
+        }
         candidatoEntity.setParecerTecnico(candidatoTecnicoNotaDTO.getParecerTecnico());
         CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
         calcularMediaNotas(candidatoDTO.getIdCandidato());
@@ -156,7 +160,11 @@ public class CandidatoService {
 
     public CandidatoDTO updateComportamental(Integer id, CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
-        candidatoEntity.setNotaEntrevistaComportamental(candidatoNotaComportamentalDTO.getNotaComportamental());
+        if(candidatoNotaComportamentalDTO.getNotaComportamental() == null) {
+            candidatoEntity.setNotaEntrevistaComportamental(0.00);
+        }else {
+            candidatoEntity.setNotaEntrevistaComportamental(candidatoNotaComportamentalDTO.getNotaComportamental());
+        }
         candidatoEntity.setParecerComportamental(candidatoNotaComportamentalDTO.getParecerComportamental());
         CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
         calcularMediaNotas(candidatoDTO.getIdCandidato());
