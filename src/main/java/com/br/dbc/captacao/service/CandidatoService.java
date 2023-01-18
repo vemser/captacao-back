@@ -131,15 +131,12 @@ public class CandidatoService {
 
     public CandidatoDTO updateTecnico(Integer id, CandidatoTecnicoNotaDTO candidatoTecnicoNotaDTO) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
-        if(candidatoTecnicoNotaDTO.getNotaTecnico() == null) {
-            candidatoEntity.setNotaEntrevistaTecnica(0.00);
-        }else {
-            candidatoEntity.setNotaEntrevistaTecnica(candidatoTecnicoNotaDTO.getNotaTecnico());
-        }
+
+        candidatoEntity.setNotaEntrevistaTecnica(candidatoTecnicoNotaDTO.getNotaTecnica());
         candidatoEntity.setParecerTecnico(candidatoTecnicoNotaDTO.getParecerTecnico());
+
         CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
-        calcularMediaNotas(candidatoDTO.getIdCandidato());
-        return candidatoDTO;
+        return calcularMediaNotas(candidatoDTO.getIdCandidato());
     }
 
     public CandidatoDTO calcularMediaNotas(Integer id) throws RegraDeNegocioException {
@@ -160,15 +157,12 @@ public class CandidatoService {
 
     public CandidatoDTO updateComportamental(Integer id, CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO) throws RegraDeNegocioException {
         CandidatoEntity candidatoEntity = findById(id);
-        if(candidatoNotaComportamentalDTO.getNotaComportamental() == null) {
-            candidatoEntity.setNotaEntrevistaComportamental(0.00);
-        }else {
-            candidatoEntity.setNotaEntrevistaComportamental(candidatoNotaComportamentalDTO.getNotaComportamental());
-        }
+
+        candidatoEntity.setNotaEntrevistaComportamental(candidatoNotaComportamentalDTO.getNotaComportamental());
         candidatoEntity.setParecerComportamental(candidatoNotaComportamentalDTO.getParecerComportamental());
+
         CandidatoDTO candidatoDTO = converterEmDTO(candidatoRepository.save(candidatoEntity));
-        calcularMediaNotas(candidatoDTO.getIdCandidato());
-        return candidatoDTO;
+        return calcularMediaNotas(candidatoDTO.getIdCandidato());
     }
 
     private List<LinguagemEntity> getLinguagensCandidato(CandidatoCreateDTO candidatoCreateDTO, List<LinguagemEntity> linguagemList) {
