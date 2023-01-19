@@ -248,13 +248,13 @@ INSERT INTO cargo (id_cargo, nome)
 VALUES (nextval('seq_cargo'), 'ROLE_GESTAO');
 
 INSERT INTO trilha (id_trilha, descricao)
-VALUES (nextval('seq_trilha'), 'FRONTEND')
+VALUES (nextval('seq_trilha'), 'FRONTEND');
 
 INSERT INTO trilha (id_trilha, descricao)
-VALUES (nextval('seq_trilha'), 'BACKEND')
+VALUES (nextval('seq_trilha'), 'BACKEND');
 
 INSERT INTO trilha (id_trilha, descricao)
-VALUES (nextval('seq_trilha'), 'QA')
+VALUES (nextval('seq_trilha'), 'QA');
 
 INSERT INTO gestor (id_gestor, nome, email, senha, ativo, genero, cidade, estado)
-VALUES (nextval('seq_gestor'), 'ADMIN', 'admin@dbccompany.com.br', '123', 'T', 'M', 'Porto Alegre', 'Rio Grande do Sul')
+VALUES (nextval('seq_gestor'), 'ADMIN', 'admin@dbccompany.com.br', '123', 'T', 'M', 'Porto Alegre', 'Rio Grande do Sul');
