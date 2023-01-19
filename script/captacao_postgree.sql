@@ -62,9 +62,9 @@ REFERENCES cargo(id_cargo)
 );
 
 CREATE TABLE formulario (
-id_formulario NUMERIC ,
+id_formulario NUMERIC,
 id_curriculo NUMERIC,
-id_print_config_pc NUMERIC NOT NULL,
+id_print_config_pc NUMERIC,
 instituicao TEXT NOT NULL,
 lgpd TEXT NOT NULL,
 github TEXT,
