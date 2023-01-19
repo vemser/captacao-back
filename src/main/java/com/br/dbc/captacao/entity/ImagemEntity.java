@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -29,6 +30,7 @@ public class ImagemEntity {
 
     @Column(name = "dado")
     @Lob
+    @Type(type="org.hibernate.type.BinaryType")
     private byte[] data;
 
     @JsonIgnore
