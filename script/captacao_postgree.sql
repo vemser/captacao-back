@@ -187,55 +187,55 @@ CONSTRAINT FK_CAND_IMG FOREIGN KEY (id_candidato) REFERENCES candidato (id_candi
 );
 
 CREATE SEQUENCE seq_gestor
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_edicao
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_candidato
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_formulario
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_linguagem
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_cargo
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_print_config_pc
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_ENTREVISTA
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_avaliacao
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_imagem
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_curriculo
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_inscricao
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_trilha
-increment 1;
+increment 1
 start 1;
 
 INSERT INTO cargo (id_cargo, nome)
