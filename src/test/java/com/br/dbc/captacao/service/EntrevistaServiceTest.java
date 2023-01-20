@@ -86,8 +86,6 @@ public class EntrevistaServiceTest {
     @Test
     public void deveRetornarUmaListaDeEntrevistaDTO() {
         final int tamanhoEsperado = 1;
-        final int pagina = 0;
-        final int tamanho = 5;
 
         GestorEntity usuarioEntity = getGestorEntity();
         CandidatoEntity candidato = getCandidatoEntity();
@@ -96,21 +94,18 @@ public class EntrevistaServiceTest {
         entrevista.setGestorEntity(usuarioEntity);
         entrevista.setCandidatoEntity(candidato);
 
-        PageImpl<EntrevistaEntity> page =
-                new PageImpl<>(List.of(entrevista), PageRequest.of(pagina, tamanho), 0);
+        List<EntrevistaEntity> page = List.of(entrevista);
 
         GestorDTO usuarioDTO = getGestorDTO();
         CandidatoDTO candidatoDTO = getCandidatoDTO();
 
         when(gestorService.convertoToDTO(any())).thenReturn(usuarioDTO);
         when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDTO);
-        when(entrevistaRepository.findAll(any(PageRequest.class))).thenReturn(page);
+        when(entrevistaRepository.findAll()).thenReturn(page);
 
-        PageDTO<EntrevistaDTO> entrevistaDTOS = entrevistaService.list(pagina, tamanho);
+        List<EntrevistaDTO> entrevistaDTOS = entrevistaService.list();
 
-        assertEquals(pagina, entrevistaDTOS.getPagina());
-        assertEquals(tamanho, entrevistaDTOS.getTamanho());
-        assertEquals(tamanhoEsperado, entrevistaDTOS.getElementos().size());
+        assertEquals(tamanhoEsperado, entrevistaDTOS.size());
     }
 
     @Test
