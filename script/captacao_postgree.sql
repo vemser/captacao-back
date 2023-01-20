@@ -62,9 +62,9 @@ REFERENCES cargo(id_cargo)
 );
 
 CREATE TABLE formulario (
-id_formulario NUMERIC ,
+id_formulario NUMERIC,
 id_curriculo NUMERIC,
-id_print_config_pc NUMERIC NOT NULL,
+id_print_config_pc NUMERIC,
 instituicao TEXT NOT NULL,
 lgpd TEXT NOT NULL,
 github TEXT,
@@ -187,55 +187,55 @@ CONSTRAINT FK_CAND_IMG FOREIGN KEY (id_candidato) REFERENCES candidato (id_candi
 );
 
 CREATE SEQUENCE seq_gestor
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_edicao
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_candidato
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_formulario
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_linguagem
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_cargo
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_print_config_pc
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_ENTREVISTA
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_avaliacao
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_imagem
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_curriculo
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_inscricao
-increment 1;
+increment 1
 start 1;
 
 CREATE SEQUENCE seq_trilha
-increment 1;
+increment 1
 start 1;
 
 INSERT INTO cargo (id_cargo, nome)
@@ -248,13 +248,13 @@ INSERT INTO cargo (id_cargo, nome)
 VALUES (nextval('seq_cargo'), 'ROLE_GESTAO');
 
 INSERT INTO trilha (id_trilha, descricao)
-VALUES (nextval('seq_trilha'), 'FRONTEND')
+VALUES (nextval('seq_trilha'), 'FRONTEND');
 
 INSERT INTO trilha (id_trilha, descricao)
-VALUES (nextval('seq_trilha'), 'BACKEND')
+VALUES (nextval('seq_trilha'), 'BACKEND');
 
 INSERT INTO trilha (id_trilha, descricao)
-VALUES (nextval('seq_trilha'), 'QA')
+VALUES (nextval('seq_trilha'), 'QA');
 
 INSERT INTO gestor (id_gestor, nome, email, senha, ativo, genero, cidade, estado)
-VALUES (nextval('seq_gestor'), 'ADMIN', 'admin@dbccompany.com.br', '123', 'T', 'M', 'Porto Alegre', 'Rio Grande do Sul')
+VALUES (nextval('seq_gestor'), 'ADMIN', 'admin@dbccompany.com.br', '123', 'T', 'M', 'Porto Alegre', 'Rio Grande do Sul');
