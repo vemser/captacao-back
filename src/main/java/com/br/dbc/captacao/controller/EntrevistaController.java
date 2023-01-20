@@ -49,9 +49,8 @@ public class EntrevistaController implements EntrevistaControllerInterface {
     }
 
     @GetMapping
-    public ResponseEntity<PageDTO<EntrevistaDTO>> list(@RequestParam(defaultValue = "0") Integer pagina,
-                                                       @RequestParam(defaultValue = "20") Integer tamanho) throws RegraDeNegocioException {
-        return new ResponseEntity<>(entrevistaService.list(pagina, tamanho), HttpStatus.OK);
+    public ResponseEntity<List<EntrevistaDTO>> list() throws RegraDeNegocioException {
+        return new ResponseEntity<>(entrevistaService.list(), HttpStatus.OK);
     }
 
     @GetMapping("/por-trilha")

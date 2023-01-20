@@ -83,17 +83,12 @@ public class EntrevistaService {
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
-    public PageDTO<EntrevistaDTO> list(Integer pagina, Integer tamanho) {
-        PageRequest pageRequest = PageRequest.of(pagina, tamanho);
-        Page<EntrevistaEntity> entrevistaEntityPage = entrevistaRepository.findAll(pageRequest);
-        List<EntrevistaDTO> entrevistaDTOList = entrevistaEntityPage.stream()
+    public List<EntrevistaDTO> list() {
+        List<EntrevistaEntity> entrevistaEntityPage = entrevistaRepository.findAll();
+
+        return entrevistaEntityPage.stream()
                 .map(this::converterParaEntrevistaDTO)
                 .toList();
-        return new PageDTO<>(entrevistaEntityPage.getTotalElements(),
-                entrevistaEntityPage.getTotalPages(),
-                pagina,
-                tamanho,
-                entrevistaDTOList);
     }
 
     public List<EntrevistaDTO> listPorTrilha(String trilha) {

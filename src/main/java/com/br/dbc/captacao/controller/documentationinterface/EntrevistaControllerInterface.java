@@ -56,8 +56,7 @@ public interface EntrevistaControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @GetMapping
-    ResponseEntity<PageDTO<EntrevistaDTO>> list(@RequestParam(defaultValue = "0") Integer pagina,
-                                                @RequestParam(defaultValue = "20") Integer tamanho) throws RegraDeNegocioException;
+    ResponseEntity<List<EntrevistaDTO>> list() throws RegraDeNegocioException;
 
     @Operation(summary = "Listagem de entrevistas por trilha", description = "Listagem de entrevistas por trilha")
     @ApiResponses(value = {
