@@ -2,14 +2,22 @@ package com.br.dbc.captacao.repository.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.bytebuddy.asm.Advice;
+
+import java.time.LocalDate;
 
 @Getter
 public enum TipoEmail {
+
 
     INSCRICAO(" Tua candidatura para o processo seletivo foi recebida com sucesso. " +
             "  Avaliaremos o teu currículo e as respostas do questionário e," +
             " caso aprovado para a próxima etapa, entraremos em contato para dar seguimento no processo seletivo. <br>" +
             "As próximas etapas consistem na realização do teste de lógica e entrevista individual.", "DBC Company - Inscrição"),
+
+    CONFIRMAR_ENTREVISTA(" Tua entrevista foi marcada com sucesso. " +
+            "Para o dia: "
+            , "DBC Company - Entrevista"),
 
     APROVADO("Olá, tudo bem? <br>" +
             "Gostaríamos de informar que foste aprovado(a) para a primeira <br>" +
