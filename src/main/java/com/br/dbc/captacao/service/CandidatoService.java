@@ -43,15 +43,21 @@ public class CandidatoService {
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
         Optional<CandidatoEntity> candidatoEntityOptional = candidatoRepository.findByEmail(candidatoCreateDTO.getEmail());
+
+        CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
+
         if (candidatoEntityOptional.isPresent()) {
-            throw new RegraDeNegocioException("Candidato com este e-mail já existe no sistema.");
+            if (candidatoEntityOptional.get().getEdicao().getNome().equals(candidatoCreateDTO.getEdicao().getNome())){
+                throw new RegraDeNegocioException("Candidato com este e-mail já cadastrado para essa edição.");
+            }
+            candidatoEntity.setIdCandidato(candidatoEntityOptional.get().getIdCandidato());
         }
         if (candidatoCreateDTO.getEmail().isEmpty() || candidatoCreateDTO.getEmail().isBlank()) {
             throw new RegraDeNegocioException("E-mail inválido! Deve ser inserido um endereço de email válido!");
         }
 
         linguagemList = getLinguagensCandidato(candidatoCreateDTO, linguagemList);
-        CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
+
         candidatoEntity.setNome(candidatoEntity.getNome().trim().toUpperCase());
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));

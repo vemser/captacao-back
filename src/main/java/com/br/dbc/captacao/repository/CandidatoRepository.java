@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Integer> {
 
+    Optional<CandidatoEntity> findCandidatoEntitiesByEmailAndEdicao_Nome(String email, String edicao);
     Optional<CandidatoEntity> findByEmail(String email);
 
     @Query(" SELECT obj " +
