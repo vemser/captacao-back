@@ -6,6 +6,7 @@ import com.br.dbc.captacao.dto.gestor.GestorEmailNomeCargoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CargoEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.repository.enums.Genero;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.GestorRepository;
@@ -179,6 +180,9 @@ public class GestorService {
             gestor.setSenha("123456789");
             gestor.setAtivo(TipoMarcacao.T);
             gestor.setCargoEntity(lista);
+            gestor.setGenero(Genero.M);
+            gestor.setEstado("------");
+            gestor.setCidade("------");
 
             gestor = gestorRepository.save(gestor);
         }
