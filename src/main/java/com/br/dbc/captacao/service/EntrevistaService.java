@@ -1,5 +1,6 @@
 package com.br.dbc.captacao.service;
 
+import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
@@ -12,6 +13,7 @@ import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.br.dbc.captacao.repository.enums.Legenda;
+import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Email;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,6 +38,8 @@ public class EntrevistaService {
     private final CandidatoService candidatoService;
     private final GestorService gestorService;
     private final ObjectMapper objectMapper;
+
+    private final EmailService emailService;
 
     public EntrevistaDTO createEntrevista(EntrevistaCreateDTO entrevistaCreateDTO, String token) throws RegraDeNegocioException {
         GestorEntity gestor = gestorService.getUser(token);
@@ -56,6 +61,15 @@ public class EntrevistaService {
         entrevistaEntity.setLegenda(Legenda.PENDENTE);
         entrevistaEntity.setAvaliado(entrevistaCreateDTO.getAvaliado().equals("T") ? TipoMarcacao.T : TipoMarcacao.F);
         EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevistaEntity);
+
+        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+        sendEmailDTO.setEmail(candidato.getEmail());
+        sendEmailDTO.setNome(candidato.getNome());
+        sendEmailDTO.setData(entrevistaEntity.getDataEntrevista().getDayOfMonth() + " de "
+                + entrevistaEntity.getDataEntrevista().getMonth() + " de " + entrevistaEntity.getDataEntrevista().getYear() +
+                " às " + entrevistaEntity.getDataEntrevista().getHour() + " Horas");
+
+        emailService.sendEmail(sendEmailDTO, TipoEmail.CONFIRMAR_ENTREVISTA);
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
 

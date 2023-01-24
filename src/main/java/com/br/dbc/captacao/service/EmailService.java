@@ -57,6 +57,11 @@ public class EmailService {
         }
 
         Map<String, Object> dados = new HashMap<>();
+
+
+        dados.put("data", sendEmailDTO.getData());
+
+
         dados.put("nome", sendEmailDTO.getNome());
         dados.put("email", from);
         dados.put("msg1", "Agradecemos o teu interesse em fazer parte do time DBC Company e participar desta edição do Vem Ser DBC. :)");

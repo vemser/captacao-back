@@ -26,6 +26,7 @@ backgrily: Arial, Helvetica, sans-serif; font-size: 13px; color: #000000; paddin
                         <div style="font-size: 24px; color: black;">
                             <br>
                             <b>${msg1}</b>
+
                         </div>
                         <div style="font-size: 24px; color:black;">
 
@@ -33,6 +34,8 @@ backgrily: Arial, Helvetica, sans-serif; font-size: 13px; color: #000000; paddin
                             <br>
                             <p style="font-size:24px; color: black;">${msg2}</p>
                             <br>
+                            <br>
+                            <b>${data}</b>
 
                             <br>
                             <br>
