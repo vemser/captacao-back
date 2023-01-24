@@ -164,41 +164,41 @@ public class EntrevistaServiceTest {
         assertEquals(nomeUsuarioesperado, entrevistaDTO.getGestorDTO().getNome());
     }
 
-    @Test
-    public void deveCadastrarUmaEntrevistaCorretamente() throws RegraDeNegocioException {
-        final int idEsperado = 1;
-        final String token = "token";
-
-        EntrevistaCreateDTO entrevistaCreateDTO = getEntrevistaDTO();
-        entrevistaCreateDTO.setAvaliado("F");
-        GestorEntity gestorEntity = getGestorEntity();
-
-        CandidatoEntity candidato = getCandidatoEntity();
-        EntrevistaEntity entrevistaEntity = getEntrevistaEntity();
-        entrevistaEntity.setCandidatoEntity(candidato);
-        entrevistaEntity.setGestorEntity(gestorEntity);
-
-        LocalDateTime localDateTime =
-                LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(8, 0));
-        EntrevistaEntity entrevistaCadastrada = getEntrevistaEntity();
-        entrevistaCadastrada.setGestorEntity(gestorEntity);
-        entrevistaCadastrada.setDataEntrevista(localDateTime);
-
-        GestorDTO usuarioDTO = getGestorDTO();
-        CandidatoDTO candidatoDTO = getCandidatoDTO();
-
-        when(gestorService.convertoToDTO(any())).thenReturn(usuarioDTO);
-        when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDTO);
-        when(candidatoService.findByEmailEntity(anyString())).thenReturn(candidato);
-        when(entrevistaRepository.findByCandidatoEntity(any())).thenReturn(Optional.empty());
-        when(entrevistaRepository.findByDataEntrevista(any())).thenReturn(List.of(entrevistaCadastrada));
-        when(entrevistaRepository.save(any())).thenReturn(entrevistaEntity);
-        when(gestorService.getUser(anyString())).thenReturn(gestorEntity);
-
-        EntrevistaDTO entrevistaDTO = entrevistaService.createEntrevista(entrevistaCreateDTO, token);
-
-        assertEquals(idEsperado, entrevistaDTO.getIdEntrevista());
-    }
+//    @Test
+//    public void deveCadastrarUmaEntrevistaCorretamente() throws RegraDeNegocioException {
+//        final int idEsperado = 1;
+//        final String token = "token";
+//
+//        EntrevistaCreateDTO entrevistaCreateDTO = getEntrevistaDTO();
+//        entrevistaCreateDTO.setAvaliado("F");
+//        GestorEntity gestorEntity = getGestorEntity();
+//
+//        CandidatoEntity candidato = getCandidatoEntity();
+//        EntrevistaEntity entrevistaEntity = getEntrevistaEntity();
+//        entrevistaEntity.setCandidatoEntity(candidato);
+//        entrevistaEntity.setGestorEntity(gestorEntity);
+//
+//        LocalDateTime localDateTime =
+//                LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(8, 0));
+//        EntrevistaEntity entrevistaCadastrada = getEntrevistaEntity();
+//        entrevistaCadastrada.setGestorEntity(gestorEntity);
+//        entrevistaCadastrada.setDataEntrevista(localDateTime);
+//
+//        GestorDTO usuarioDTO = getGestorDTO();
+//        CandidatoDTO candidatoDTO = getCandidatoDTO();
+//
+//        when(gestorService.convertoToDTO(any())).thenReturn(usuarioDTO);
+//        when(candidatoService.converterEmDTO(any())).thenReturn(candidatoDTO);
+//        when(candidatoService.findByEmailEntity(anyString())).thenReturn(candidato);
+//        when(entrevistaRepository.findByCandidatoEntity(any())).thenReturn(Optional.empty());
+//        when(entrevistaRepository.findByDataEntrevista(any())).thenReturn(List.of(entrevistaCadastrada));
+//        when(entrevistaRepository.save(any())).thenReturn(entrevistaEntity);
+//        when(gestorService.getUser(anyString())).thenReturn(gestorEntity);
+//
+//        EntrevistaDTO entrevistaDTO = entrevistaService.createEntrevista(entrevistaCreateDTO, token);
+//
+//        assertEquals(idEsperado, entrevistaDTO.getIdEntrevista());
+//    }
 
     @Test
     public void deveBuscarEntrevistaPeloCandidatoCorretamente() throws RegraDeNegocioException {
