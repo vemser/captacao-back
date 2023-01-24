@@ -1,6 +1,7 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.SendEmailDTO;
+import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.enums.TipoEmail;
 import freemarker.template.Template;
@@ -15,6 +16,8 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +47,36 @@ public class EmailService {
         } catch (MessagingException | IOException | TemplateException e) {
             throw new RegraDeNegocioException("Erro ao enviar email");
         }
+    }
+
+    public void sendEmailConfirmacaoEntrevista(EntrevistaEntity entrevistaEntity, String email, String token) throws RegraDeNegocioException {
+        final String subject = "Confirmação de entrevista.";
+        sendEmailEntrevista(entrevistaEntity, email, token, "envio-entrevista-template.html", subject);
+    }
+
+    public void sendEmailEntrevista(EntrevistaEntity entrevistaEntity, String email, String token, String nomeTemplate, String assunto) throws RegraDeNegocioException {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(from);
+            mimeMessageHelper.setTo(email);
+            mimeMessageHelper.setSubject(assunto);
+            mimeMessageHelper.setText(getContentFromTemplateEntrevista(entrevistaEntity.getDataEntrevista(), entrevistaEntity.getCandidatoEntity().getNome(), nomeTemplate, token), true);
+            emailSender.send(mimeMessageHelper.getMimeMessage());
+        } catch (MessagingException | IOException | TemplateException e) {
+            throw new RegraDeNegocioException("Email inválido! inserir outro e-mail.");
+        }
+    }
+
+    public String getContentFromTemplateEntrevista(LocalDateTime data, String nome, String nomeTemplate, String token) throws IOException, TemplateException {
+        Map<String, Object> dados = new HashMap<>();
+        dados.put("email", from);
+        dados.put("nome", nome);
+        dados.put("data", data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        dados.put("token", "https://facetoface-front.vercel.app/confirm-interview?token="+token);
+        dados.put("colaborador", from);
+        Template template = fmConfiguration.getTemplate(nomeTemplate);
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
     }
 
     public String geContentFromTemplate(SendEmailDTO sendEmailDTO, TipoEmail tipoEmail) throws IOException, TemplateException {

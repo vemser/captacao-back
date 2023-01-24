@@ -1,6 +1,7 @@
 package com.br.dbc.captacao.security;
 
 import com.br.dbc.captacao.entity.CargoEntity;
+import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
@@ -30,6 +31,9 @@ public class TokenService {
 
     @Value("${jwt.expiration}")
     private String expiration;
+
+    @Value("${jwt.expiration}")
+    private String expirationChangePassword;
 
     public String getToken(GestorEntity usuarioEntity, String expiration) {
         if (expiration != null) {
@@ -91,5 +95,23 @@ public class TokenService {
         } catch (ExpiredJwtException exception) {
             throw new InvalidTokenException("Token Expirado");
         }
+    }
+
+    public String getTokenConfirmacao(EntrevistaEntity entrevistaEntity){
+        LocalDateTime dataAtual = LocalDateTime.now();
+        Date now = Date.from(dataAtual.atZone(ZoneId.systemDefault()).toInstant());
+
+        LocalDateTime dataExpiracao = dataAtual.plusDays(Long.parseLong(expirationChangePassword));
+        Date exp = Date.from(dataExpiracao.atZone(ZoneId.systemDefault()).toInstant());
+
+        String meuToken = Jwts.builder()
+                .setIssuer("facetoface-api")
+                .claim(Claims.ID, entrevistaEntity.getCandidatoEntity().getEmail())
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+
+        return meuToken;
     }
 }
