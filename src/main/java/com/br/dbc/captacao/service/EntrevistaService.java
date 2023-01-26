@@ -15,6 +15,7 @@ import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.br.dbc.captacao.repository.enums.Legenda;
 import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.security.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,8 @@ public class EntrevistaService {
     private final CandidatoService candidatoService;
     private final GestorService gestorService;
     private final ObjectMapper objectMapper;
+
+    private final TokenService tokenService;
 
     private final EmailService emailService;
 
@@ -68,9 +71,15 @@ public class EntrevistaService {
         sendEmailDTO.setData(entrevistaEntity.getDataEntrevista().getDayOfMonth() + " de "
                 + entrevistaEntity.getDataEntrevista().getMonth() + " de " + entrevistaEntity.getDataEntrevista().getYear() +
                 " às " + entrevistaEntity.getDataEntrevista().getHour() + " Horas");
-
-        emailService.sendEmail(sendEmailDTO, TipoEmail.CONFIRMAR_ENTREVISTA);
+        tokenConfirmacao(entrevistaEntity);
+        //emailService.sendEmail(sendEmailDTO, TipoEmail.CONFIRMAR_ENTREVISTA);
         return converterParaEntrevistaDTO(entrevistaSalva);
+    }
+
+    public void tokenConfirmacao(EntrevistaEntity entrevistaEntity) throws RegraDeNegocioException {
+        String tokenSenha = tokenService.getTokenConfirmacao(entrevistaEntity);
+
+        emailService.sendEmailConfirmacaoEntrevista(entrevistaEntity, entrevistaEntity.getCandidatoEntity().getEmail(), tokenSenha);
     }
 
     public void atualizarObservacaoEntrevista(Integer id, String observacao) throws RegraDeNegocioException {
