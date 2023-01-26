@@ -51,7 +51,12 @@ public class ExcelExporter {
         createCell(row, 2, "E-mail do candidato", style);
         createCell(row, 3, "Trilhas", style);
         createCell(row, 4, "Nota da prova", style);
-        createCell(row, 5, "Telefone do candidato", style);
+        createCell(row, 5, "Nota da Entrevista tecnica", style);
+        createCell(row, 6, "Nota da Comportamental", style);
+        createCell(row, 7, "Média das notas", style);
+        createCell(row, 8, "Telefone do candidato", style);
+        createCell(row, 9, "Parecer tecnico", style);
+        createCell(row, 10, "Parecer Comportamental", style);
     }
 
     private void writeHeaderLineEntrevista() {
@@ -111,7 +116,12 @@ public class ExcelExporter {
 
             createCell(row, columnCount++, trilha, style);
             createCell(row, columnCount++, candidatoDTO.getNotaProva().toString(), style);
+            createCell(row, columnCount++, candidatoDTO.getNotaEntrevistaTecnica().toString(), style);
+            createCell(row, columnCount++, candidatoDTO.getNotaEntrevistaComportamental().toString(), style);
+            createCell(row, columnCount++, candidatoDTO.getMedia().toString(), style);
             createCell(row, columnCount, candidatoDTO.getTelefone(), style);
+            createCell(row, columnCount++, candidatoDTO.getParecerTecnico(), style);
+            createCell(row, columnCount++, candidatoDTO.getParecerComportamental(), style);
         }
     }
 
