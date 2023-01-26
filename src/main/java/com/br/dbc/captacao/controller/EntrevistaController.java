@@ -41,6 +41,12 @@ public class EntrevistaController implements EntrevistaControllerInterface {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/confirmar-entrevista")
+    public void confirmarEntrevista(@RequestParam @Valid String tokenEntrevista) throws RegraDeNegocioException {
+        entrevistaService.confirmarEntrevista(tokenEntrevista);
+        new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
     @PutMapping("/atualizar-entrevista/{idEntrevista}")
     public ResponseEntity<EntrevistaDTO> updateEntrevista(@Valid @RequestBody EntrevistaAtualizacaoDTO entrevistaCreateDTO,
                                                           @PathVariable("idEntrevista") Integer id,
