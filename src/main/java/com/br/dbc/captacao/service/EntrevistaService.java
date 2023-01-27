@@ -92,9 +92,26 @@ public class EntrevistaService {
     public EntrevistaDTO atualizarEntrevista(Integer idEntrevista, EntrevistaAtualizacaoDTO entrevistaCreateDTO, Legenda legenda) throws RegraDeNegocioException {
         GestorEntity gestor = gestorService.getUser(TokenAuthenticationFilter.getOriginToken());
 
+    public void confirmarEntrevista(String token) throws RegraDeNegocioException {
+        EntrevistaEntity entrevista = procurarCandidato(token);
+        entrevista.setLegenda(Legenda.CONFIRMADA);
+        entrevistaRepository.save(entrevista);
+    }
+
+
+    public EntrevistaEntity procurarCandidato(String token) throws RegraDeNegocioException {
+        String emailCandidatoByToken = tokenService.getEmailByToken(token);
+        CandidatoEntity candidatoEntity = candidatoService.findByEmailEntity(emailCandidatoByToken);
+        return findByCandidatoEntity(candidatoEntity);
+    }
+
+    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista,
+                                             EntrevistaAtualizacaoDTO entrevistaCreateDTO,
+                                             Legenda legenda) throws RegraDeNegocioException {
+        GestorEntity gestor = gestorService.findByEmail(entrevistaCreateDTO.getEmail());
         EntrevistaEntity entrevista = findById(idEntrevista);
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(entrevista.getDataEntrevista());
-        
+
         verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
         entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
         entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
