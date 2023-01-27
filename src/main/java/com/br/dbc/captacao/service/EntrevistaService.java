@@ -15,6 +15,7 @@ import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.br.dbc.captacao.repository.enums.Legenda;
 import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.security.TokenAuthenticationFilter;
 import com.br.dbc.captacao.security.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -88,21 +89,18 @@ public class EntrevistaService {
         entrevistaRepository.save(entrevista);
     }
 
-    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista,
-                                             EntrevistaAtualizacaoDTO entrevistaCreateDTO,
-                                             Legenda legenda) throws RegraDeNegocioException {
-        GestorEntity gestor = gestorService.findByEmail(entrevistaCreateDTO.getEmail());
+    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista, EntrevistaAtualizacaoDTO entrevistaCreateDTO, Legenda legenda) throws RegraDeNegocioException {
+        GestorEntity gestor = gestorService.getUser(TokenAuthenticationFilter.getOriginToken());
+
         EntrevistaEntity entrevista = findById(idEntrevista);
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(entrevista.getDataEntrevista());
+        
         verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
         entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
         entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
         entrevista.setLegenda(legenda);
-//        entrevista.setUsuarioEntity(usuario);
+
         EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
-//        if(entrevista.getDataEntrevista().isAfter(LocalDateTime.now()) && legenda.equals(Legenda.PENDENTE)){
-//            tokenConfirmacao(entrevista);
-//        }
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
