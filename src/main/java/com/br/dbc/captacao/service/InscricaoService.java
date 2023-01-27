@@ -45,6 +45,7 @@ public class InscricaoService {
         SendEmailDTO sendEmailDTO = new SendEmailDTO();
         sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
         sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
+        sendEmailDTO.setData(inscricaoDto.getDataInscricao().toString());
         emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
         return inscricaoDto;
     }
