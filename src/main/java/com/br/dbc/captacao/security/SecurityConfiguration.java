@@ -28,7 +28,7 @@ public class SecurityConfiguration {
                 .frameOptions().disable().and()
                 .cors().and()
                 .csrf().disable()
-                .authorizeHttpRequests((auth) -> auth.antMatchers("/", "/auth/**").permitAll()
+                .authorizeHttpRequests((auth) -> auth.antMatchers("/", "/auth/**", "/entrevista/confirmar-entrevista/**").permitAll()
 
                         .antMatchers(HttpMethod.PUT, "/formulario/**").permitAll()
                         .antMatchers(HttpMethod.POST, "/formulario/**").permitAll()
