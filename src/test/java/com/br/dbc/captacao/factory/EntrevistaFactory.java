@@ -52,7 +52,6 @@ public class EntrevistaFactory {
                         "Santana",
                         "AP",
                         "Sem observações",
-                        "julio.gabriel@dbccompany.com.br",
                         "T"
                 );
 
