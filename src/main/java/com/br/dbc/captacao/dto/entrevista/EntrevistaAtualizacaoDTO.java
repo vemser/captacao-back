@@ -1,12 +1,11 @@
 package com.br.dbc.captacao.dto.entrevista;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data

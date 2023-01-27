@@ -1,10 +1,6 @@
 package com.br.dbc.captacao.repository.enums;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.bytebuddy.asm.Advice;
-
-import java.time.LocalDate;
 
 @Getter
 public enum TipoEmail {

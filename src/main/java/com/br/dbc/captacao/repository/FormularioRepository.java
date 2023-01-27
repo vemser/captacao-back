@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.repository;
 
 import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.TrilhaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -13,7 +13,6 @@ import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.br.dbc.captacao.repository.enums.Legenda;
-import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.br.dbc.captacao.security.TokenAuthenticationFilter;
 import com.br.dbc.captacao.security.TokenService;
@@ -24,7 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Email;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -71,7 +69,7 @@ public class EntrevistaService {
                 + entrevistaEntity.getDataEntrevista().getMonth() + " de " + entrevistaEntity.getDataEntrevista().getYear() +
                 " às " + entrevistaEntity.getDataEntrevista().getHour() + " Horas");
         tokenConfirmacao(entrevistaEntity);
-        //emailService.sendEmail(sendEmailDTO, TipoEmail.CONFIRMAR_ENTREVISTA);
+//        emailService.sendEmail(sendEmailDTO, TipoEmail.CONFIRMAR_ENTREVISTA);
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
 

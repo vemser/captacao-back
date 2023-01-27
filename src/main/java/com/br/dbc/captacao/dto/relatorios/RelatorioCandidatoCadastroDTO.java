@@ -1,11 +1,11 @@
 package com.br.dbc.captacao.dto.relatorios;
 
-import javax.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Lob;
 import java.util.List;
 
 @AllArgsConstructor

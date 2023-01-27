@@ -1,12 +1,13 @@
 package com.br.dbc.captacao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
 
 @Getter
 @Setter

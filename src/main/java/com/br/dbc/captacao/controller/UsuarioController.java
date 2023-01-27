@@ -1,15 +1,12 @@
 package com.br.dbc.captacao.controller;
 
 import com.br.dbc.captacao.controller.documentationinterface.UsuarioControllerInterface;
-import com.br.dbc.captacao.dto.gestor.GestorCreateDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.gestor.GestorEmailNomeCargoDTO;
-import com.br.dbc.captacao.dto.gestor.GestorSenhaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.service.GestorService;
 import com.br.dbc.captacao.service.ImagemService;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

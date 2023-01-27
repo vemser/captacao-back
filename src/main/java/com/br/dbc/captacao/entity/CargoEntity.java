@@ -1,11 +1,12 @@
 package com.br.dbc.captacao.entity;
 
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor

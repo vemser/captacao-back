@@ -1,8 +1,6 @@
 package com.br.dbc.captacao.repository;
 
-import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.ImagemEntity;
 import com.br.dbc.captacao.entity.PrintConfigPCEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
