@@ -53,8 +53,8 @@ public class InscricaoService {
         sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
         sendEmailDTO.setData(inscricaoDto.getDataInscricao().toString());
 
-        System.out.println(password);
-        System.out.println(from);
+        System.out.println("-------------------------------"+password);
+        System.out.println("-------------------------------"+from);
 
         emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
         return inscricaoDto;
