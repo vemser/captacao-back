@@ -85,6 +85,7 @@ public class FormularioService {
                     tamanho,
                     formularioDtos);
         }
+
         List<FormularioDTO> listaVazia = new ArrayList<>();
         return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
     }
