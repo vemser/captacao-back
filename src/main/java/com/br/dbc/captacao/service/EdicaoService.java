@@ -50,9 +50,10 @@ public class EdicaoService {
         edicaoRepository.deleteById(id);
     }
 
-    public String retornarEdicaoAtual() throws RegraDeNegocioException {
-        int id = edicaoRepository.findAll().size();
-        EdicaoDTO edicaoDTORetorno = objectMapper.convertValue(findById(id), EdicaoDTO.class);
+    public String retornarEdicaoAtual() {
+        EdicaoEntity edicao = edicaoRepository.findLastEdicao().get();
+
+        EdicaoDTO edicaoDTORetorno = objectMapper.convertValue(edicao, EdicaoDTO.class);
         return edicaoDTORetorno.getNome();
     }
 }
