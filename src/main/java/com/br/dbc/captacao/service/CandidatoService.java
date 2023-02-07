@@ -5,13 +5,11 @@ import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
-import com.br.dbc.captacao.entity.EdicaoEntity;
-import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.LinguagemEntity;
+import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CandidatoRepository;
+import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +37,7 @@ public class CandidatoService {
     private final LinguagemService linguagemService;
     private final TrilhaService trilhaService;
     private final EdicaoService edicaoService;
+    private final InscricaoRepository inscricaoRepository;
 
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
@@ -108,7 +107,15 @@ public class CandidatoService {
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
         findById(id);
-        candidatoRepository.deleteById(id);
+        if(findByIdCandidato(id).isEmpty()){
+            candidatoRepository.deleteById(id);
+        }else {
+            throw new RegraDeNegocioException("Candidato não pode ser deletado, pois está em uma inscrição");
+        }
+    }
+
+    public Optional<InscricaoEntity> findByIdCandidato(Integer idCandidato ){
+        return inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(idCandidato);
     }
 
     public CandidatoDTO update(Integer id, CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
