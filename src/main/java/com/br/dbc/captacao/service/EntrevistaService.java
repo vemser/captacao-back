@@ -98,6 +98,17 @@ public class EntrevistaService {
         entrevista.setLegenda(legenda);
 //        entrevista.setUsuarioEntity(usuario);
         EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
+
+        CandidatoEntity candidato = entrevista.getCandidatoEntity();
+
+        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+        sendEmailDTO.setEmail(candidato.getEmail());
+        sendEmailDTO.setNome(candidato.getNome());
+        sendEmailDTO.setData(entrevistaSalva.getDataEntrevista().getDayOfMonth() + " de "
+                + entrevistaSalva.getDataEntrevista().getMonth() + " de " + entrevistaSalva.getDataEntrevista().getYear() +
+                " às " + entrevistaSalva.getDataEntrevista().getHour() + " Horas");
+        tokenConfirmacao(entrevistaSalva);
+
 //        if(entrevista.getDataEntrevista().isAfter(LocalDateTime.now()) && legenda.equals(Legenda.PENDENTE)){
 //            tokenConfirmacao(entrevista);
 //        }
