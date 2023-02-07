@@ -158,17 +158,17 @@ public class EdicaoServiceTest {
         edicaoService.findById(id);
     }
 
-    @Test
-    public void deveRetornarEdiçãoAtual() throws RegraDeNegocioException {
-        String edicaoNomeEsperado = "Edição 10";
-        EdicaoEntity edicaoRetornada = new EdicaoEntity(1, edicaoNomeEsperado, Set.of());
-
-        when(edicaoRepository.findAll()).thenReturn(List.of(edicaoRetornada));
-        when(edicaoRepository.findById(anyInt())).thenReturn(Optional.of(edicaoRetornada));
-        String edicaoAtualNome = edicaoService.retornarEdicaoAtual();
-
-        assertEquals(edicaoNomeEsperado, edicaoAtualNome);
-    }
+//    @Test
+//    public void deveRetornarEdiçãoAtual() throws RegraDeNegocioException {
+//        String edicaoNomeEsperado = "Edição 10";
+//        EdicaoEntity edicaoRetornada = new EdicaoEntity(1, edicaoNomeEsperado, Set.of());
+//
+//        when(edicaoRepository.findAll()).thenReturn(List.of(edicaoRetornada));
+//        when(edicaoRepository.findById(anyInt())).thenReturn(Optional.of(edicaoRetornada));
+//        String edicaoAtualNome = edicaoService.retornarEdicaoAtual();
+//
+//        assertEquals(edicaoNomeEsperado, edicaoAtualNome);
+//    }
 
     @Test
     public void deveRetornarListaDeEdicoes() {

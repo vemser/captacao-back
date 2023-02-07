@@ -32,11 +32,6 @@ public class InscricaoService {
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
 
-    @Value("${spring.mail.password}")
-    private String password;
-    @Value("${spring.mail.username}")
-    private String from;
-
     public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
         if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(idCandidato).isEmpty()) {
             throw new RegraDeNegocioException("Inscrição já realizada");
@@ -52,9 +47,6 @@ public class InscricaoService {
         sendEmailDTO.setNome(inscricaoEntity.getCandidato().getNome());
         sendEmailDTO.setEmail(inscricaoDto.getCandidato().getEmail());
         sendEmailDTO.setData(inscricaoDto.getDataInscricao().toString());
-
-        System.out.println("-------------------------------"+password);
-        System.out.println("-------------------------------"+from);
 
         emailService.sendEmail(sendEmailDTO, TipoEmail.INSCRICAO);
         return inscricaoDto;
