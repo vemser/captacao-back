@@ -50,9 +50,11 @@ public class EntrevistaService {
         }
 
         String observacoes = entrevistaCreateDTO.getObservacoes();
+
         LocalDateTime dia = entrevistaCreateDTO.getDataEntrevista();
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(dia);
-        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
+        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList, candidato);
+
         EntrevistaEntity entrevistaEntity = new EntrevistaEntity();
         entrevistaEntity.setDataEntrevista(dia);
         entrevistaEntity.setCandidatoEntity(candidato);
@@ -69,7 +71,7 @@ public class EntrevistaService {
                 + entrevistaEntity.getDataEntrevista().getMonth() + " de " + entrevistaEntity.getDataEntrevista().getYear() +
                 " às " + entrevistaEntity.getDataEntrevista().getHour() + " Horas");
         tokenConfirmacao(entrevistaEntity);
-//        emailService.sendEmail(sendEmailDTO, TipoEmail.CONFIRMAR_ENTREVISTA);
+
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
@@ -225,13 +227,15 @@ public class EntrevistaService {
 
     private void verificarListaEntrevistas(EntrevistaCreateDTO entrevistaCreateDTO,
                                            GestorEntity gestor,
-                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
+                                           List<EntrevistaEntity> entrevistaEntityList,
+                                           CandidatoEntity candidato) throws RegraDeNegocioException {
+
         if (!entrevistaEntityList.isEmpty()) {
             entrevistaEntityList = entrevistaEntityList.stream()
                     .filter(x -> x.getGestorEntity().getEmail().equals(gestor.getEmail()))
                     .toList();
             for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
-                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
+                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista()) && entrevistaEntity.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().equals(candidato.getFormularioEntity().getTrilhaEntitySet())) {
                     throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
                 }
             }
