@@ -56,7 +56,10 @@ public class FormularioService {
         return trilhas;
     }
 
-    public PageDTO<FormularioDTO> listAllPaginado(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
+    public PageDTO<FormularioDTO> listAllPaginado(Integer pagina,
+                                                  Integer tamanho,
+                                                  String sort,
+                                                  int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
@@ -164,7 +167,7 @@ public class FormularioService {
         formularioEntity.setEfetivacao(formularioCreateDto.isEfetivacaoBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
         formularioEntity.setDisponibilidade(formularioCreateDto.isDisponibilidadeBoolean() ? TipoMarcacao.T : TipoMarcacao.F);
         List<Integer> trilhasFormulario = new ArrayList<>();
-        for(String nomeTrilha: formularioCreateDto.getTrilhas()){
+        for (String nomeTrilha : formularioCreateDto.getTrilhas()) {
             TrilhaEntity trilha = trilhaService.findByNome(nomeTrilha);
             trilhasFormulario.add(trilha.getIdTrilha());
         }

@@ -34,7 +34,7 @@ public class AvaliacaoService {
     private final GestorService gestorService;
 
     public AvaliacaoDTO create(AvaliacaoCreateDTO avaliacaoCreateDTO, String token) throws RegraDeNegocioException {
-        if (avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao() )!= null) {
+        if (avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(avaliacaoCreateDTO.getIdInscricao()) != null) {
             throw new RegraDeNegocioException("Candidato já avaliado!");
         }
 
@@ -78,7 +78,6 @@ public class AvaliacaoService {
             ordenacao = Sort.by(sort).descending();
         }
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-//        Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findAll(pageRequest);
         Page<AvaliacaoEntity> paginaAvaliacaoEntities = avaliacaoRepository.findByAprovado(pageRequest, TipoMarcacao.T);
 
         List<AvaliacaoDTO> avaliacaoDtos = paginaAvaliacaoEntities.getContent().stream()
@@ -103,10 +102,17 @@ public class AvaliacaoService {
         avaliacaoRepository.deleteById(idAvaliacao);
     }
 
-    public PageDTO<AvaliacaoDTO> filtrarAvaliacoes(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException{
+    public PageDTO<AvaliacaoDTO> filtrarAvaliacoes(Integer pagina,
+                                                   Integer tamanho,
+                                                   String email,
+                                                   String edicao,
+                                                   String trilha) {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
-        Page<AvaliacaoEntity> avaliacaoEntityPage = avaliacaoRepository.filtrarAvaliacoes(pageRequest, email, edicao, trilha);
+        Page<AvaliacaoEntity> avaliacaoEntityPage = avaliacaoRepository.filtrarAvaliacoes(pageRequest,
+                email,
+                edicao,
+                trilha);
 
         List<AvaliacaoDTO> avaliacaoDTOS = avaliacaoEntityPage.stream()
                 .map(this::convertToDTO).toList();

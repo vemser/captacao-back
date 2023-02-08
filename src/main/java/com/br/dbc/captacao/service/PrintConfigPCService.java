@@ -25,11 +25,12 @@ public class PrintConfigPCService {
                 .orElseThrow(() -> new RegraDeNegocioException("Configurações do computador não encontrada!"));
     }
 
-    public void arquivarPrintConfigPc(MultipartFile file, Integer idFormulario) throws RegraDeNegocioException, IOException, RegraDeNegocio404Exception {
+    public void arquivarPrintConfigPc(MultipartFile file, Integer idFormulario) throws RegraDeNegocioException,
+            IOException, RegraDeNegocio404Exception {
         FormularioEntity formulario = formularioService.findById(idFormulario);
 
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
-        if(!nomeArquivo.endsWith(".png") && !nomeArquivo.endsWith(".jpeg") && !nomeArquivo.endsWith(".jpg")){
+        if (!nomeArquivo.endsWith(".png") && !nomeArquivo.endsWith(".jpeg") && !nomeArquivo.endsWith(".jpg")) {
             throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .png, .jpg ou .jpeg");
         }
 

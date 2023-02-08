@@ -39,7 +39,6 @@ public class GestorService {
     private final CargoService cargoService;
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
-//    private final TokenService tokenService;
 
     private final EmailService emailService;
 
@@ -132,7 +131,10 @@ public class GestorService {
             return Collections.emptyList();
         }
         CargoEntity cargo = cargoService.findById(gestorEmailNomeCargoDTO.getCargo().getIdCargo());
-        List<GestorEntity> lista = gestorRepository.findGestorEntitiesByCargoEntityAndNomeIgnoreCaseOrCargoEntityAndEmailIgnoreCase(cargo, gestorEmailNomeCargoDTO.getNome(), cargo, gestorEmailNomeCargoDTO.getEmail());
+        List<GestorEntity> lista = gestorRepository.findGestorEntitiesByCargoEntityAndNomeIgnoreCaseOrCargoEntityAndEmailIgnoreCase(cargo,
+                gestorEmailNomeCargoDTO.getNome(),
+                cargo,
+                gestorEmailNomeCargoDTO.getEmail());
         return lista.stream()
                 .map(this::convertoToDTO)
                 .toList();
@@ -158,7 +160,7 @@ public class GestorService {
                 .parseClaimsJws(token)
                 .getBody();
 
-        String email = chaves.get(CHAVE_LOGIN , String.class);
+        String email = chaves.get(CHAVE_LOGIN, String.class);
         String idGestor = chaves.get(CHAVE_ID, String.class);
         List<String> cargos = chaves.get(CHAVE_CARGOS, List.class);
 
@@ -172,7 +174,7 @@ public class GestorService {
 
 
         GestorEntity gestor = gestorRepository.findByEmail(email);
-        if (gestor == null){
+        if (gestor == null) {
             gestor = new GestorEntity();
             gestor.setIdGestor(Integer.valueOf(idGestor));
             gestor.setEmail(email);

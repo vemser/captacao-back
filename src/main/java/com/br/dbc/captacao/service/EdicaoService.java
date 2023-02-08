@@ -21,7 +21,7 @@ public class EdicaoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Edição não encontrada!"));
     }
 
-    public List<EdicaoDTO> list(){
+    public List<EdicaoDTO> list() {
         return edicaoRepository.findAll().stream()
                 .map(contato -> objectMapper.convertValue(contato, EdicaoDTO.class))
                 .toList();
@@ -29,7 +29,7 @@ public class EdicaoService {
 
     public EdicaoDTO createAndReturnDTO(EdicaoDTO edicaoDTO) throws RegraDeNegocioException {
         edicaoDTO.setNome(edicaoDTO.getNome().trim());
-        if (edicaoRepository.findByNome(edicaoDTO.getNome()).isPresent()){
+        if (edicaoRepository.findByNome(edicaoDTO.getNome()).isPresent()) {
             throw new RegraDeNegocioException("Edição já existente");
         }
         EdicaoEntity edicaoEntity = edicaoRepository.save(converterEntity(edicaoDTO));

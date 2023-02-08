@@ -78,7 +78,9 @@ public class EntrevistaService {
     public void tokenConfirmacao(EntrevistaEntity entrevistaEntity) throws RegraDeNegocioException {
         String tokenSenha = tokenService.getTokenConfirmacao(entrevistaEntity);
 
-        emailService.sendEmailConfirmacaoEntrevista(entrevistaEntity, entrevistaEntity.getCandidatoEntity().getEmail(), tokenSenha);
+        emailService.sendEmailConfirmacaoEntrevista(entrevistaEntity,
+                entrevistaEntity.getCandidatoEntity().getEmail(),
+                tokenSenha);
     }
 
     public void atualizarObservacaoEntrevista(Integer id, String observacao) throws RegraDeNegocioException {
@@ -87,7 +89,9 @@ public class EntrevistaService {
         entrevistaRepository.save(entrevista);
     }
 
-    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista, EntrevistaAtualizacaoDTO entrevistaCreateDTO, Legenda legenda) throws RegraDeNegocioException {
+    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista,
+                                             EntrevistaAtualizacaoDTO entrevistaCreateDTO,
+                                             Legenda legenda) throws RegraDeNegocioException {
         GestorEntity gestor = gestorService.getUser(TokenAuthenticationFilter.getOriginToken());
 
         EntrevistaEntity entrevista = findById(idEntrevista);
@@ -96,7 +100,6 @@ public class EntrevistaService {
         entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
         entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
         entrevista.setLegenda(legenda);
-//        entrevista.setUsuarioEntity(usuario);
         EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
 
         CandidatoEntity candidato = entrevista.getCandidatoEntity();
@@ -109,9 +112,6 @@ public class EntrevistaService {
                 " às " + entrevistaSalva.getDataEntrevista().getHour() + " Horas");
         tokenConfirmacao(entrevistaSalva);
 
-//        if(entrevista.getDataEntrevista().isAfter(LocalDateTime.now()) && legenda.equals(Legenda.PENDENTE)){
-//            tokenConfirmacao(entrevista);
-//        }
         return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
@@ -204,7 +204,7 @@ public class EntrevistaService {
                 .orElseThrow(() -> new RegraDeNegocioException("Entrevista não encontrada!"));
     }
 
-    public EntrevistaDTO converterParaEntrevistaDTO(EntrevistaEntity entrevistaEntity){
+    public EntrevistaDTO converterParaEntrevistaDTO(EntrevistaEntity entrevistaEntity) {
         EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevistaEntity, EntrevistaDTO.class);
         entrevistaDTO.setGestorDTO(gestorService.convertoToDTO(entrevistaEntity.getGestorEntity()));
         entrevistaDTO.setCandidatoDTO(candidatoService.converterEmDTO(entrevistaEntity.getCandidatoEntity()));
@@ -246,7 +246,11 @@ public class EntrevistaService {
                     .filter(x -> x.getGestorEntity().getEmail().equals(gestor.getEmail()))
                     .toList();
             for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
-                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista()) && entrevistaEntity.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().equals(candidato.getFormularioEntity().getTrilhaEntitySet())) {
+                boolean trilhaEquals = entrevistaEntity.getCandidatoEntity()
+                        .getFormularioEntity()
+                        .getTrilhaEntitySet()
+                        .equals(candidato.getFormularioEntity().getTrilhaEntitySet());
+                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista()) && trilhaEquals) {
                     throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
                 }
             }
