@@ -42,18 +42,24 @@ public class CandidatoService {
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
         Optional<CandidatoEntity> candidatoEntityOptional = candidatoRepository.findByEmail(candidatoCreateDTO.getEmail());
+        Optional<CandidatoEntity> candidatoEntityCPF = candidatoRepository.findByCpf(candidatoCreateDTO.getCpf());
 
         CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
-
         if (candidatoEntityOptional.isPresent()) {
             if (candidatoEntityOptional.get().getEdicao().getNome().equals(candidatoCreateDTO.getEdicao().getNome())){
                 throw new RegraDeNegocioException("Candidato com este e-mail já cadastrado para essa edição.");
             }
             candidatoEntity.setIdCandidato(candidatoEntityOptional.get().getIdCandidato());
         }
+        if (candidatoEntityCPF.isPresent()) {
+            if (candidatoEntityCPF.get().getEdicao().getNome().equals(candidatoCreateDTO.getEdicao().getNome())) {
+                throw new RegraDeNegocioException("Candidato com esse cpf já existe!");
+            }
+        }
         if (candidatoCreateDTO.getEmail().isEmpty() || candidatoCreateDTO.getEmail().isBlank()) {
             throw new RegraDeNegocioException("E-mail inválido! Deve ser inserido um endereço de email válido!");
         }
+
 
         linguagemList = getLinguagensCandidato(candidatoCreateDTO, linguagemList);
 
@@ -211,6 +217,7 @@ public class CandidatoService {
         }
         return candidatoEntity.get();
     }
+
 
     public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocio404Exception {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);

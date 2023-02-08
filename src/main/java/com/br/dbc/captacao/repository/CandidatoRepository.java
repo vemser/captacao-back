@@ -15,6 +15,7 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     Optional<CandidatoEntity> findCandidatoEntitiesByEmailAndEdicao_Nome(String email, String edicao);
     Optional<CandidatoEntity> findByEmail(String email);
+    Optional<CandidatoEntity> findByCpf(String cpf);
 
     @Query(" SELECT obj " +
             " FROM CANDIDATO obj " +
