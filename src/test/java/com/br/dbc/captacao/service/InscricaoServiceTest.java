@@ -13,6 +13,7 @@ import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.factory.*;
+import com.br.dbc.captacao.repository.AvaliacaoRepository;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -49,6 +50,8 @@ public class InscricaoServiceTest {
     private CandidatoService candidatoService;
     @Mock
     private EdicaoService edicaoService;
+    @Mock
+    private AvaliacaoRepository avaliacaoRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Before
     public void init() {
@@ -326,6 +329,7 @@ public class InscricaoServiceTest {
         InscricaoEntity inscricaoEntity = InscricaoFactory.getInscricaoEntity();
 
         when(inscricaoRepository.findById(anyInt())).thenReturn(Optional.of(inscricaoEntity));
+        when(avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(anyInt())).thenReturn(null);
 
         inscricaoService.delete(1);
 

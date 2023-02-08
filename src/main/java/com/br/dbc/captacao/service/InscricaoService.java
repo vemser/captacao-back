@@ -4,9 +4,11 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.entity.AvaliacaoEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
+import com.br.dbc.captacao.repository.AvaliacaoRepository;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
@@ -30,6 +32,7 @@ public class InscricaoService {
     private final CandidatoService candidatoService;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
+    private final AvaliacaoRepository avaliacaoRepository;
 
     public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
         if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(idCandidato).isEmpty()) {
@@ -93,13 +96,20 @@ public class InscricaoService {
 
     public void delete(Integer id) throws RegraDeNegocioException {
         findById(id);
-        inscricaoRepository.deleteById(id);
+        if (findByIdInscricao(id) == null){
+            inscricaoRepository.deleteById(id);
+        }else {
+            throw new RegraDeNegocioException("Inscrição não pode ser deletada, pois está em uma avaliação");
+        }
+    }
+
+    public AvaliacaoEntity findByIdInscricao(Integer idInscricao ){
+        return avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(idInscricao);
     }
 
     public InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
         return inscricaoRepository.findById(idInscricao)
                 .orElseThrow(() -> new RegraDeNegocioException("ID_Inscrição inválido"));
-
     }
 
     public InscricaoDTO findDtoById(Integer idInscricao) throws RegraDeNegocioException {

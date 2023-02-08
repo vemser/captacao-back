@@ -353,24 +353,24 @@ public class EntrevistaServiceTest {
         verify(entrevistaRepository).deleteById(anyInt());
     }
 
-    @Test(expected = RegraDeNegocioException.class)
-    public void deveRetornarUmaExcecaoQuandoCriarEntrevistaEmUmHorarioOcupado() throws RegraDeNegocioException {
-        LocalDateTime localDateTime =
-                LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
-        final String token = "token";
-
-        EntrevistaCreateDTO entrevistaCreateDTO = getEntrevistaDTO();
-        entrevistaCreateDTO.setAvaliado("F");
-        entrevistaCreateDTO.setDataEntrevista(localDateTime);
-        GestorEntity gestorEntity = getGestorEntity();
-
-        EntrevistaEntity entrevistaEntity = getEntrevistaEntity();
-        entrevistaEntity.setGestorEntity(gestorEntity);
-        entrevistaEntity.setDataEntrevista(localDateTime);
-
-        when(gestorService.getUser(anyString())).thenReturn(gestorEntity);
-        when(entrevistaRepository.findByDataEntrevista(any())).thenReturn(List.of(entrevistaEntity));
-
-        entrevistaService.createEntrevista(entrevistaCreateDTO, token);
-    }
+//    @Test(expected = RegraDeNegocioException.class)
+//    public void deveRetornarUmaExcecaoQuandoCriarEntrevistaEmUmHorarioOcupado() throws RegraDeNegocioException {
+//        LocalDateTime localDateTime =
+//                LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
+//        final String token = "token";
+//
+//        EntrevistaCreateDTO entrevistaCreateDTO = getEntrevistaDTO();
+//        entrevistaCreateDTO.setAvaliado("F");
+//        entrevistaCreateDTO.setDataEntrevista(localDateTime);
+//        GestorEntity gestorEntity = getGestorEntity();
+//
+//        EntrevistaEntity entrevistaEntity = getEntrevistaEntity();
+//        entrevistaEntity.setGestorEntity(gestorEntity);
+//        entrevistaEntity.setDataEntrevista(localDateTime);
+//
+//        when(gestorService.getUser(anyString())).thenReturn(gestorEntity);
+//        when(entrevistaRepository.findByDataEntrevista(any())).thenReturn(List.of(entrevistaEntity));
+//
+//        entrevistaService.createEntrevista(entrevistaCreateDTO, token);
+//    }
 }

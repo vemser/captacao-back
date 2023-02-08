@@ -11,11 +11,9 @@ import com.br.dbc.captacao.entity.FormularioEntity;
 import com.br.dbc.captacao.entity.LinguagemEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.factory.CandidatoFactory;
-import com.br.dbc.captacao.factory.EdicaoFactory;
-import com.br.dbc.captacao.factory.FormularioFactory;
-import com.br.dbc.captacao.factory.LinguagemFactory;
+import com.br.dbc.captacao.factory.*;
 import com.br.dbc.captacao.repository.CandidatoRepository;
+import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +51,9 @@ public class CandidatoServiceTest {
 
     @Mock
     private TrilhaService trilhaService;
+
+    @Mock
+    private InscricaoRepository inscricaoRepository;
 
     @Mock
     private FormularioService formularioService;
@@ -180,6 +181,7 @@ public class CandidatoServiceTest {
 
         when(candidatoRepository.findById(anyInt()))
                 .thenReturn(Optional.of(candidatoEntity));
+        when(inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(anyInt())).thenReturn(Optional.empty());
 
         candidatoService.deleteFisico(1);
     }
