@@ -92,7 +92,7 @@ public class EntrevistaService {
 
         EntrevistaEntity entrevista = findById(idEntrevista);
         List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(entrevista.getDataEntrevista());
-        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
+        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList, entrevista.getCandidatoEntity());
         entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
         entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
         entrevista.setLegenda(legenda);
@@ -223,13 +223,14 @@ public class EntrevistaService {
 
     private void verificarListaEntrevistas(EntrevistaAtualizacaoDTO entrevistaCreateDTO,
                                            GestorEntity gestor,
-                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
+                                           List<EntrevistaEntity> entrevistaEntityList,
+                                           CandidatoEntity candidato) throws RegraDeNegocioException {
         if (!entrevistaEntityList.isEmpty()) {
             entrevistaEntityList = entrevistaEntityList.stream()
                     .filter(entrevista -> entrevista.getGestorEntity().getEmail().equals(gestor.getEmail()))
                     .toList();
             for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
-                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
+                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista()) && entrevistaEntity.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().equals(candidato.getFormularioEntity().getTrilhaEntitySet())) {
                     throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
                 }
             }
