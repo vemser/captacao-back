@@ -29,7 +29,7 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
             "inner join obj.candidatoEntity ca "  +
             "inner join ca.formularioEntity fo " +
             "inner join fo.trilhaEntitySet ti " +
-            "WHERE ti.nome LIKE :trilha")
+            "WHERE UPPER(ti.nome) LIKE UPPER(:trilha)")
     List<EntrevistaEntity> findAllByTrilha(String trilha);
 
     @Query(" SELECT e FROM ENTREVISTAS e " +
