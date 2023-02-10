@@ -45,7 +45,7 @@ public interface EntrevistaControllerInterface {
             @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
     })
     @PutMapping
-    ResponseEntity<EntrevistaDTO> updateEntrevista(@Valid @RequestBody EntrevistaAtualizacaoDTO entrevistaCreateDTO,
+    ResponseEntity<EntrevistaDTO> updateEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO,
                                                    @PathVariable("idEntrevista") Integer id,
                                                    Legenda legenda) throws RegraDeNegocioException;
 

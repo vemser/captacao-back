@@ -24,7 +24,7 @@ public class EntrevistaEntity {
     private Integer idEntrevista;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_candidato", referencedColumnName = "id_candidato")
     private CandidatoEntity candidatoEntity;
 
