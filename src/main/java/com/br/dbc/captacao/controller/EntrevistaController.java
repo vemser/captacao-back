@@ -48,7 +48,7 @@ public class EntrevistaController implements EntrevistaControllerInterface {
     }
 
     @PutMapping("/atualizar-entrevista/{idEntrevista}")
-    public ResponseEntity<EntrevistaDTO> updateEntrevista(@Valid @RequestBody EntrevistaAtualizacaoDTO entrevistaCreateDTO,
+    public ResponseEntity<EntrevistaDTO> updateEntrevista(@Valid @RequestBody EntrevistaCreateDTO entrevistaCreateDTO,
                                                           @PathVariable("idEntrevista") Integer id,
                                                           Legenda legenda) throws RegraDeNegocioException {
         return new ResponseEntity<>(entrevistaService.atualizarEntrevista(id, entrevistaCreateDTO, legenda), HttpStatus.OK);
