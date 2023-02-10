@@ -338,6 +338,24 @@ public class CandidatoService {
         ExcelExporter excelExporter = new ExcelExporter(candidatoDTOS, new XSSFWorkbook());
         excelExporter.exportCandidato(response);
     }
+    public void exportarCsvCanditatosEdicaoAtual(HttpServletResponse response) throws IOException {
+        String edicaoAtual = edicaoService.retornarEdicaoAtual();
+        List<CandidatoEntity> listCandidato = candidatoRepository.filtrarCandidatosEdicaoAtual(edicaoAtual);
+        List<CandidatoDTO> candidatoDTOS = listCandidato.stream()
+                .map(this::converterEmDTO).toList();
+
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=candidatos_edicao_atual" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        ExcelExporter excelExporter = new ExcelExporter(candidatoDTOS, new XSSFWorkbook());
+        excelExporter.exportCandidatos(response);
+    }
+
 
 //        public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
 //        Sort ordenacao = Sort.by("notaProva");
