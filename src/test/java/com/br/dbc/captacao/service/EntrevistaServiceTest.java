@@ -9,6 +9,7 @@ import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
+import com.br.dbc.captacao.factory.EntrevistaFactory;
 import com.br.dbc.captacao.repository.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
@@ -298,7 +299,7 @@ public class EntrevistaServiceTest {
 
     @Test(expected = RegraDeNegocioException.class)
     public void deveRetornarUmaExcecaoQuandoUsuarioNaoForCadastrado() throws RegraDeNegocioException {
-        EntrevistaAtualizacaoDTO entrevistaAtualizacaoDTO = getEntrevistaAtualizacaoDTO();
+        EntrevistaCreateDTO entrevistaAtualizacaoDTO = EntrevistaFactory.getEntrevistaDTO();
 
         entrevistaService.atualizarEntrevista(1, entrevistaAtualizacaoDTO, Legenda.CANCELADA);
     }
