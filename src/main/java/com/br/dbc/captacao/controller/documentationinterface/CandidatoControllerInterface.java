@@ -167,6 +167,14 @@ public interface CandidatoControllerInterface {
     })
     @GetMapping("/export-csv")
     ResponseEntity<Void> exportarCandidatosCsv(HttpServletResponse response) throws IOException;
+    @Operation(summary = "Exporta para xlsx lista de candidatos da edicao atual.", description = "Exporta para cvs lista de candidatos da edicao atual.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "xlsx exportado com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Erro na inserção de dados."),
+            @ApiResponse(responseCode = "403", description = "Foi gerada uma exceção.")
+    })
+    @GetMapping("/export-csv-ed")
+    ResponseEntity<Void> exportarCsvCandidatosEdicaoAtual(HttpServletResponse response) throws IOException;
 
     //    @Operation(summary = "Inserir curriculo do Candidato no sistema", description = "Cadastrar curriculo de um candidato especifico do sistema pelo e-mail")
 //    @ApiResponses(value = {

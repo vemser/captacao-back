@@ -54,26 +54,36 @@ public class EmailService {
         sendEmailEntrevista(entrevistaEntity, email, token, "envio-entrevista-template.html", subject);
     }
 
-    public void sendEmailEntrevista(EntrevistaEntity entrevistaEntity, String email, String token, String nomeTemplate, String assunto) throws RegraDeNegocioException {
+    public void sendEmailEntrevista(EntrevistaEntity entrevistaEntity,
+                                    String email,
+                                    String token,
+                                    String nomeTemplate,
+                                    String assunto) throws RegraDeNegocioException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(email);
             mimeMessageHelper.setSubject(assunto);
-            mimeMessageHelper.setText(getContentFromTemplateEntrevista(entrevistaEntity.getDataEntrevista(), entrevistaEntity.getCandidatoEntity().getNome(), nomeTemplate, token), true);
+            mimeMessageHelper.setText(getContentFromTemplateEntrevista(entrevistaEntity.getDataEntrevista(),
+                    entrevistaEntity.getCandidatoEntity().getNome(),
+                    nomeTemplate,
+                    token), true);
             emailSender.send(mimeMessageHelper.getMimeMessage());
         } catch (MessagingException | IOException | TemplateException e) {
             throw new RegraDeNegocioException("Email inválido! inserir outro e-mail.");
         }
     }
 
-    public String getContentFromTemplateEntrevista(LocalDateTime data, String nome, String nomeTemplate, String token) throws IOException, TemplateException {
+    public String getContentFromTemplateEntrevista(LocalDateTime data,
+                                                   String nome,
+                                                   String nomeTemplate,
+                                                   String token) throws IOException, TemplateException {
         Map<String, Object> dados = new HashMap<>();
         dados.put("email", from);
         dados.put("nome", nome);
         dados.put("data", data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-        dados.put("token", "http://vemser-dbc.dbccompany.com.br:39000/vemser/captacao-front/confirmar-entrevista?tokenEntrevista="+token);
+        dados.put("token", "http://vemser-dbc.dbccompany.com.br:39000/vemser/captacao-front/confirmar-entrevista?tokenEntrevista=" + token);
         dados.put("colaborador", from);
         Template template = fmConfiguration.getTemplate(nomeTemplate);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
