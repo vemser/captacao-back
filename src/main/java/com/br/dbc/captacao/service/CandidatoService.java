@@ -338,6 +338,7 @@ public class CandidatoService {
         ExcelExporter excelExporter = new ExcelExporter(candidatoDTOS, new XSSFWorkbook());
         excelExporter.exportCandidato(response);
     }
+
     public void exportarCsvCanditatosEdicaoAtual(HttpServletResponse response) throws IOException {
         String edicaoAtual = edicaoService.retornarEdicaoAtual();
         List<CandidatoEntity> listCandidato = candidatoRepository.filtrarCandidatosEdicaoAtual(edicaoAtual);

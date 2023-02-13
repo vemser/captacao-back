@@ -18,6 +18,8 @@ import java.util.List;
 
 @Service
 public class ExcelExporter {
+
+    private static final String NOTA_PADRAO = "0";
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
     private List<EntrevistaDTO> entrevistasDTO;
@@ -151,8 +153,14 @@ public class ExcelExporter {
             createCell(row, columnCount++, candidatoDTO.getNotaProva().toString(), style);
             createCell(row, columnCount++, candidatoDTO.getNotaEntrevistaTecnica().toString(), style);
             createCell(row, columnCount++, candidatoDTO.getNotaEntrevistaComportamental().toString(), style);
-//            createCell(row, columnCount++, candidatoDTO.getMedia().toString(), style);
-            createCell(row, columnCount, candidatoDTO.getTelefone(), style);
+
+            if(candidatoDTO.getMedia() == null){
+                createCell(row, columnCount++, NOTA_PADRAO, style);
+            }else {
+                createCell(row, columnCount++, candidatoDTO.getMedia().toString(), style);
+            }
+
+            createCell(row, columnCount++, candidatoDTO.getTelefone(), style);
             createCell(row, columnCount++, candidatoDTO.getParecerTecnico(), style);
             createCell(row, columnCount++, candidatoDTO.getParecerComportamental(), style);
         }
