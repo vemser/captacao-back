@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EntrevistaAtualizacaoDTO {
     @NotNull
-    @FutureOrPresent
+    @FutureOrPresent(message = "Entrevista precisa ser no presente ou futuro.")
     @Schema(description = "Dia/Mês/Ano que irá ocorrer a entrevista.")
     private LocalDateTime dataEntrevista;
     @NotNull

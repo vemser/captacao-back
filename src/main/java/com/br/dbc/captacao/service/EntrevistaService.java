@@ -2,7 +2,6 @@ package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
-import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
@@ -34,6 +33,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class EntrevistaService {
+
+    final static Integer TEMPO_ENTREVISTA = 29;
+    final static Integer HORAS_DIA_ENTREVISTA = 8;
     private final EntrevistaRepository entrevistaRepository;
     private final CandidatoService candidatoService;
     private final GestorService gestorService;
@@ -50,27 +52,54 @@ public class EntrevistaService {
         }
 
         String observacoes = entrevistaCreateDTO.getObservacoes();
-        LocalDateTime dia = entrevistaCreateDTO.getDataEntrevista();
-        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(dia);
-        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
+
+        LocalDateTime diamin = entrevistaCreateDTO.getDataEntrevista().minusHours(HORAS_DIA_ENTREVISTA);
+        LocalDateTime diamax = entrevistaCreateDTO.getDataEntrevista().plusHours(HORAS_DIA_ENTREVISTA);
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevistaBetween(diamin, diamax);
+        verificarListaEntrevistas(entrevistaCreateDTO, entrevistaEntityList, candidato);
+
         EntrevistaEntity entrevistaEntity = new EntrevistaEntity();
-        entrevistaEntity.setDataEntrevista(dia);
+        setEntrevista(entrevistaCreateDTO, gestor, candidato, observacoes, entrevistaEntity);
+
+        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevistaEntity);
+
+        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+        buildEmail(candidato, entrevistaEntity, sendEmailDTO);
+        tokenConfirmacao(entrevistaEntity);
+
+        return converterParaEntrevistaDTO(entrevistaSalva);
+    }
+
+
+    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista, EntrevistaCreateDTO entrevistaCreateDTO, Legenda legenda) throws RegraDeNegocioException {
+        GestorEntity gestor = gestorService.getUser(TokenAuthenticationFilter.getOriginToken());
+
+        EntrevistaEntity entrevista = findById(idEntrevista);
+        CandidatoEntity candidato = entrevista.getCandidatoEntity();
+
+        LocalDateTime diamin = entrevistaCreateDTO.getDataEntrevista().minusHours(5);
+        LocalDateTime diamax = entrevistaCreateDTO.getDataEntrevista().plusHours(5);
+
+        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevistaBetween(diamin, diamax);
+        verificarListaEntrevistas(entrevistaCreateDTO, entrevistaEntityList, entrevista.getCandidatoEntity());
+
+        setEntrevista(entrevistaCreateDTO, gestor, candidato, entrevistaCreateDTO.getObservacoes(), entrevista);
+        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
+
+        SendEmailDTO sendEmailDTO = new SendEmailDTO();
+        buildEmail(candidato, entrevista, sendEmailDTO);
+        tokenConfirmacao(entrevistaSalva);
+
+        return converterParaEntrevistaDTO(entrevistaSalva);
+    }
+
+    private static void setEntrevista(EntrevistaCreateDTO entrevistaCreateDTO, GestorEntity gestor, CandidatoEntity candidato, String observacoes, EntrevistaEntity entrevistaEntity) {
+        entrevistaEntity.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
         entrevistaEntity.setCandidatoEntity(candidato);
         entrevistaEntity.setGestorEntity(gestor);
         entrevistaEntity.setObservacoes(observacoes);
         entrevistaEntity.setLegenda(Legenda.PENDENTE);
         entrevistaEntity.setAvaliado(entrevistaCreateDTO.getAvaliado().equals("T") ? TipoMarcacao.T : TipoMarcacao.F);
-        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevistaEntity);
-
-        SendEmailDTO sendEmailDTO = new SendEmailDTO();
-        sendEmailDTO.setEmail(candidato.getEmail());
-        sendEmailDTO.setNome(candidato.getNome());
-        sendEmailDTO.setData(entrevistaEntity.getDataEntrevista().getDayOfMonth() + " de "
-                + entrevistaEntity.getDataEntrevista().getMonth() + " de " + entrevistaEntity.getDataEntrevista().getYear() +
-                " às " + entrevistaEntity.getDataEntrevista().getHour() + " Horas");
-        tokenConfirmacao(entrevistaEntity);
-//        emailService.sendEmail(sendEmailDTO, TipoEmail.CONFIRMAR_ENTREVISTA);
-        return converterParaEntrevistaDTO(entrevistaSalva);
     }
 
     public void tokenConfirmacao(EntrevistaEntity entrevistaEntity) throws RegraDeNegocioException {
@@ -85,21 +114,12 @@ public class EntrevistaService {
         entrevistaRepository.save(entrevista);
     }
 
-    public EntrevistaDTO atualizarEntrevista(Integer idEntrevista, EntrevistaAtualizacaoDTO entrevistaCreateDTO, Legenda legenda) throws RegraDeNegocioException {
-        GestorEntity gestor = gestorService.getUser(TokenAuthenticationFilter.getOriginToken());
-
-        EntrevistaEntity entrevista = findById(idEntrevista);
-        List<EntrevistaEntity> entrevistaEntityList = entrevistaRepository.findByDataEntrevista(entrevista.getDataEntrevista());
-        verificarListaEntrevistas(entrevistaCreateDTO, gestor, entrevistaEntityList);
-        entrevista.setObservacoes(entrevistaCreateDTO.getObservacoes());
-        entrevista.setDataEntrevista(entrevistaCreateDTO.getDataEntrevista());
-        entrevista.setLegenda(legenda);
-//        entrevista.setUsuarioEntity(usuario);
-        EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
-//        if(entrevista.getDataEntrevista().isAfter(LocalDateTime.now()) && legenda.equals(Legenda.PENDENTE)){
-//            tokenConfirmacao(entrevista);
-//        }
-        return converterParaEntrevistaDTO(entrevistaSalva);
+    private static void buildEmail(CandidatoEntity candidato, EntrevistaEntity entrevistaEntity, SendEmailDTO sendEmailDTO) {
+        sendEmailDTO.setEmail(candidato.getEmail());
+        sendEmailDTO.setNome(candidato.getNome());
+        sendEmailDTO.setData(entrevistaEntity.getDataEntrevista().getDayOfMonth() + " de "
+                + entrevistaEntity.getDataEntrevista().getMonth() + " de " + entrevistaEntity.getDataEntrevista().getYear() +
+                " às " + entrevistaEntity.getDataEntrevista().getHour() + " Horas");
     }
 
     public void confirmarEntrevista(String token) throws RegraDeNegocioException {
@@ -208,31 +228,19 @@ public class EntrevistaService {
         return entrevistaEntityOptional.get();
     }
 
-    private void verificarListaEntrevistas(EntrevistaAtualizacaoDTO entrevistaCreateDTO,
-                                           GestorEntity gestor,
-                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
-        if (!entrevistaEntityList.isEmpty()) {
-            entrevistaEntityList = entrevistaEntityList.stream()
-                    .filter(entrevista -> entrevista.getGestorEntity().getEmail().equals(gestor.getEmail()))
-                    .toList();
-            for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
-                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
-                    throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
-                }
-            }
-        }
-    }
-
     private void verificarListaEntrevistas(EntrevistaCreateDTO entrevistaCreateDTO,
-                                           GestorEntity gestor,
-                                           List<EntrevistaEntity> entrevistaEntityList) throws RegraDeNegocioException {
+                                           List<EntrevistaEntity> entrevistaEntityList,
+                                           CandidatoEntity candidato) throws RegraDeNegocioException {
+
         if (!entrevistaEntityList.isEmpty()) {
-            entrevistaEntityList = entrevistaEntityList.stream()
-                    .filter(x -> x.getGestorEntity().getEmail().equals(gestor.getEmail()))
-                    .toList();
             for (EntrevistaEntity entrevistaEntity : entrevistaEntityList) {
-                if (entrevistaEntity.getDataEntrevista().equals(entrevistaCreateDTO.getDataEntrevista())) {
-                    throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
+                LocalDateTime datamin = entrevistaEntity.getDataEntrevista().minusMinutes(TEMPO_ENTREVISTA);
+                LocalDateTime datamax = entrevistaEntity.getDataEntrevista().plusMinutes(TEMPO_ENTREVISTA);
+
+                if (entrevistaCreateDTO.getDataEntrevista().isAfter(datamin) && entrevistaCreateDTO.getDataEntrevista().isBefore(datamax) && !entrevistaEntity.getCandidatoEntity().getEmail().equals(entrevistaCreateDTO.getCandidatoEmail())) {
+                    if(entrevistaEntity.getCandidatoEntity().getFormularioEntity().getTrilhaEntitySet().equals(candidato.getFormularioEntity().getTrilhaEntitySet())) {
+                        throw new RegraDeNegocioException("Horário já ocupado para entrevista! Agendar outro horário!");
+                    }
                 }
             }
         }

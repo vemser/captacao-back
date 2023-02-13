@@ -4,15 +4,16 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.dto.inscricao.InscricaoDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
+import com.br.dbc.captacao.entity.AvaliacaoEntity;
 import com.br.dbc.captacao.entity.InscricaoEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
+import com.br.dbc.captacao.repository.AvaliacaoRepository;
 import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.br.dbc.captacao.repository.enums.TipoEmail;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -31,6 +32,7 @@ public class InscricaoService {
     private final CandidatoService candidatoService;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
+    private final AvaliacaoRepository avaliacaoRepository;
 
     public InscricaoDTO create(Integer idCandidato) throws RegraDeNegocioException {
         if (!inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(idCandidato).isEmpty()) {
@@ -57,10 +59,10 @@ public class InscricaoService {
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
         }
-        if(tamanho < 0 || pagina < 0) {
+        if (tamanho < 0 || pagina < 0) {
             throw new RegraDeNegocioException("Page ou Size não pode ser menor que zero.");
         }
-        if(tamanho > 0) {
+        if (tamanho > 0) {
             PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
             Page<InscricaoEntity> paginaInscricaoEntities = inscricaoRepository.findAll(pageRequest);
 
@@ -77,7 +79,11 @@ public class InscricaoService {
         return new PageDTO<>(0L, 0, 0, tamanho, listaVazia);
     }
 
-    public PageDTO<InscricaoDTO> filtrarInscricoes(Integer pagina, Integer tamanho, String email, String edicao, String trilha) throws RegraDeNegocioException {
+    public PageDTO<InscricaoDTO> filtrarInscricoes(Integer pagina,
+                                                   Integer tamanho,
+                                                   String email,
+                                                   String edicao,
+                                                   String trilha) {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
         Page<InscricaoEntity> inscricaoEntityPage = inscricaoRepository.filtrarInscricoes(pageRequest, email, edicao, trilha);
@@ -94,13 +100,20 @@ public class InscricaoService {
 
     public void delete(Integer id) throws RegraDeNegocioException {
         findById(id);
-        inscricaoRepository.deleteById(id);
+        if (findByIdInscricao(id) == null) {
+            inscricaoRepository.deleteById(id);
+        } else {
+            throw new RegraDeNegocioException("Inscrição não pode ser deletada, pois está em uma avaliação");
+        }
+    }
+
+    public AvaliacaoEntity findByIdInscricao(Integer idInscricao) {
+        return avaliacaoRepository.findAvaliacaoEntitiesByInscricao_IdInscricao(idInscricao);
     }
 
     public InscricaoEntity findById(Integer idInscricao) throws RegraDeNegocioException {
         return inscricaoRepository.findById(idInscricao)
                 .orElseThrow(() -> new RegraDeNegocioException("ID_Inscrição inválido"));
-
     }
 
     public InscricaoDTO findDtoById(Integer idInscricao) throws RegraDeNegocioException {

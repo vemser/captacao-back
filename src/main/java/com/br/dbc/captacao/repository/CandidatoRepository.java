@@ -15,6 +15,7 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     Optional<CandidatoEntity> findCandidatoEntitiesByEmailAndEdicao_Nome(String email, String edicao);
     Optional<CandidatoEntity> findByEmail(String email);
+    Optional<CandidatoEntity> findByCpf(String cpf);
 
     @Query(" SELECT obj " +
             " FROM CANDIDATO obj " +
@@ -49,4 +50,13 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " +
             " AND (c.media >= 60) " )
     Page<CandidatoEntity> filtrarCandidatosAprovados(Pageable pageable, String email, String edicao, String trilha);
+
+    @Query("SELECT DISTINCT c FROM CANDIDATO c " +
+            " INNER JOIN EDICAO e " +
+            " ON e.idEdicao = c.idEdicao " +
+            " INNER JOIN FORMULARIO f " +
+            " ON c.formularioEntity.idFormulario =  f.idFormulario" +
+            " INNER JOIN f.trilhaEntitySet ts " +
+            " WHERE (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)")
+    List<CandidatoEntity> filtrarCandidatosEdicaoAtual(String edicao);
 }

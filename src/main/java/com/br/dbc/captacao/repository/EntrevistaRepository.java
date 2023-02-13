@@ -17,7 +17,10 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
 
     Optional<EntrevistaEntity> findByCandidatoEntity(CandidatoEntity candidatoEntity);
 
-    List<EntrevistaEntity> findByDataEntrevista(LocalDateTime localDateTime);
+    @Query("SELECT obj " +
+            "FROM ENTREVISTAS obj " +
+            "WHERE obj.dataEntrevista BETWEEN :inicio AND :fim")
+    List<EntrevistaEntity> findByDataEntrevistaBetween(LocalDateTime inicio, LocalDateTime fim);
 
     @Query("SELECT e FROM ENTREVISTAS e " +
             "WHERE EXTRACT (MONTH FROM e.dataEntrevista) = :mes AND EXTRACT (YEAR FROM e.dataEntrevista) = :ano" +
@@ -29,7 +32,7 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
             "inner join obj.candidatoEntity ca "  +
             "inner join ca.formularioEntity fo " +
             "inner join fo.trilhaEntitySet ti " +
-            "WHERE ti.nome LIKE :trilha")
+            "WHERE UPPER(ti.nome) LIKE UPPER(:trilha)")
     List<EntrevistaEntity> findAllByTrilha(String trilha);
 
     @Query(" SELECT e FROM ENTREVISTAS e " +

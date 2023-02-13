@@ -29,7 +29,7 @@ public class PrintConfigPCService {
         FormularioEntity formulario = formularioService.findById(idFormulario);
 
         String nomeArquivo = StringUtils.cleanPath((file.getOriginalFilename()));
-        if(!nomeArquivo.endsWith(".png") && !nomeArquivo.endsWith(".jpeg") && !nomeArquivo.endsWith(".jpg")){
+        if(!nomeArquivo.toLowerCase().endsWith(".png") && !nomeArquivo.toLowerCase().endsWith(".jpeg") && !nomeArquivo.toLowerCase().endsWith(".jpg")){
             throw new RegraDeNegocioException("Formato de arquivo inválido! Inserir .png, .jpg ou .jpeg");
         }
 

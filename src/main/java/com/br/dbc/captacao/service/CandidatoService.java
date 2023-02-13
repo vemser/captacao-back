@@ -5,13 +5,11 @@ import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
-import com.br.dbc.captacao.entity.CandidatoEntity;
-import com.br.dbc.captacao.entity.EdicaoEntity;
-import com.br.dbc.captacao.entity.FormularioEntity;
-import com.br.dbc.captacao.entity.LinguagemEntity;
+import com.br.dbc.captacao.entity.*;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CandidatoRepository;
+import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.br.dbc.captacao.repository.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -39,25 +37,20 @@ public class CandidatoService {
     private final LinguagemService linguagemService;
     private final TrilhaService trilhaService;
     private final EdicaoService edicaoService;
+    private final InscricaoRepository inscricaoRepository;
 
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
         Optional<CandidatoEntity> candidatoEntityOptional = candidatoRepository.findByEmail(candidatoCreateDTO.getEmail());
+        Optional<CandidatoEntity> candidatoEntityCPF = candidatoRepository.findByCpf(candidatoCreateDTO.getCpf());
 
         CandidatoEntity candidatoEntity = convertToEntity(candidatoCreateDTO);
-
-        if (candidatoEntityOptional.isPresent()) {
-            if (candidatoEntityOptional.get().getEdicao().getNome().equals(candidatoCreateDTO.getEdicao().getNome())){
-                throw new RegraDeNegocioException("Candidato com este e-mail já cadastrado para essa edição.");
-            }
-            candidatoEntity.setIdCandidato(candidatoEntityOptional.get().getIdCandidato());
-        }
+        verificarEmailCandidato(candidatoCreateDTO, candidatoEntityOptional, candidatoEntity);
+        verificarCpfCandidato(candidatoCreateDTO, candidatoEntityCPF);
         if (candidatoCreateDTO.getEmail().isEmpty() || candidatoCreateDTO.getEmail().isBlank()) {
             throw new RegraDeNegocioException("E-mail inválido! Deve ser inserido um endereço de email válido!");
         }
-
         linguagemList = getLinguagensCandidato(candidatoCreateDTO, linguagemList);
-
         candidatoEntity.setNome(candidatoEntity.getNome().trim().toUpperCase());
         candidatoEntity.setEdicao(edicaoService.findByNome(candidatoCreateDTO.getEdicao().getNome()));
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
@@ -78,7 +71,30 @@ public class CandidatoService {
         return candidatoDTO;
     }
 
-    public PageDTO<CandidatoDTO> listaAllPaginado(Integer pagina, Integer tamanho, String sort, int order) throws RegraDeNegocioException {
+    private static void verificarEmailCandidato(CandidatoCreateDTO candidatoCreateDTO,
+                                                Optional<CandidatoEntity> candidatoEntityOptional,
+                                                CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
+        if (candidatoEntityOptional.isPresent()) {
+            if (candidatoEntityOptional.get().getEdicao().getNome().equals(candidatoCreateDTO.getEdicao().getNome())) {
+                throw new RegraDeNegocioException("Candidato com este e-mail já cadastrado para essa edição.");
+            }
+            candidatoEntity.setIdCandidato(candidatoEntityOptional.get().getIdCandidato());
+        }
+    }
+
+    private static void verificarCpfCandidato(CandidatoCreateDTO candidatoCreateDTO,
+                                              Optional<CandidatoEntity> candidatoEntityCPF) throws RegraDeNegocioException {
+        if (candidatoEntityCPF.isPresent()) {
+            if (candidatoEntityCPF.get().getEdicao().getNome().equals(candidatoCreateDTO.getEdicao().getNome())) {
+                throw new RegraDeNegocioException("Candidato com esse cpf já existe!");
+            }
+        }
+    }
+
+    public PageDTO<CandidatoDTO> listaAllPaginado(Integer pagina,
+                                                  Integer tamanho,
+                                                  String sort,
+                                                  int order) throws RegraDeNegocioException {
         Sort ordenacao = Sort.by(sort).ascending();
         if (order == DESCENDING) {
             ordenacao = Sort.by(sort).descending();
@@ -108,7 +124,15 @@ public class CandidatoService {
 
     public void deleteFisico(Integer id) throws RegraDeNegocioException {
         findById(id);
-        candidatoRepository.deleteById(id);
+        if (findByIdCandidato(id).isEmpty()) {
+            candidatoRepository.deleteById(id);
+        } else {
+            throw new RegraDeNegocioException("Candidato não pode ser deletado, pois está em uma inscrição");
+        }
+    }
+
+    public Optional<InscricaoEntity> findByIdCandidato(Integer idCandidato) {
+        return inscricaoRepository.findInscricaoEntitiesByCandidato_IdCandidato(idCandidato);
     }
 
     public CandidatoDTO update(Integer id, CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
@@ -205,6 +229,7 @@ public class CandidatoService {
         return candidatoEntity.get();
     }
 
+
     public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocio404Exception {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
         candidatoEntity.setPcd(candidatoCreateDTO.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
@@ -214,7 +239,8 @@ public class CandidatoService {
 
     public CandidatoEntity convertToEntity(CandidatoDTO candidatoDto) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoDto, CandidatoEntity.class);
-        candidatoEntity.setFormularioEntity(objectMapper.convertValue(formularioService.findById(candidatoDto.getFormulario().getIdFormulario()), FormularioEntity.class));
+        candidatoEntity.setFormularioEntity(objectMapper.convertValue(formularioService.findById(candidatoDto
+                .getFormulario().getIdFormulario()), FormularioEntity.class));
         candidatoEntity.setEdicao(objectMapper.convertValue(candidatoDto.getEdicao(), EdicaoEntity.class));
         candidatoEntity.setLinguagens(candidatoDto.getLinguagens().stream()
                 .map(linguagemDTO -> objectMapper.convertValue(linguagemDTO, LinguagemEntity.class))
@@ -228,10 +254,10 @@ public class CandidatoService {
         EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
 
         formularioDTO.setTrilhas(trilhaService.convertToDTO(candidato.getFormularioEntity().getTrilhaEntitySet()));
-        if(candidato.getImageEntity() != null) {
+        if (candidato.getImageEntity() != null) {
             candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
         }
-        if(candidato.getFormularioEntity().getCurriculoEntity() != null) {
+        if (candidato.getFormularioEntity().getCurriculoEntity() != null) {
             formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
         }
         candidatoDTO.setFormulario(formularioDTO);
@@ -258,7 +284,11 @@ public class CandidatoService {
                 candidatoDTOList);
     }
 
-    public PageDTO<CandidatoDTO> filtrarCandidatosAptosEntrevista(Integer pagina, Integer tamanho, String email, String edicao, String trilha) {
+    public PageDTO<CandidatoDTO> filtrarCandidatosAptosEntrevista(Integer pagina,
+                                                                  Integer tamanho,
+                                                                  String email,
+                                                                  String edicao,
+                                                                  String trilha) {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
         Page<CandidatoEntity> candidatoEntityPage = candidatoRepository.filtrarCandidatosAptosEntrevista(pageRequest, email, edicao, trilha);
@@ -273,7 +303,11 @@ public class CandidatoService {
                 candidatosDTO);
     }
 
-    public PageDTO<CandidatoDTO> filtrarCandidatosAprovados(Integer pagina, Integer tamanho, String email, String edicao, String trilha) {
+    public PageDTO<CandidatoDTO> filtrarCandidatosAprovados(Integer pagina,
+                                                            Integer tamanho,
+                                                            String email,
+                                                            String edicao,
+                                                            String trilha) {
         PageRequest pageRequest = PageRequest.of(pagina, tamanho);
 
         Page<CandidatoEntity> candidatoEntityPage = candidatoRepository.filtrarCandidatosAprovados(pageRequest, email, edicao, trilha);
@@ -304,6 +338,25 @@ public class CandidatoService {
         ExcelExporter excelExporter = new ExcelExporter(candidatoDTOS, new XSSFWorkbook());
         excelExporter.exportCandidato(response);
     }
+
+    public void exportarCsvCanditatosEdicaoAtual(HttpServletResponse response) throws IOException {
+        String edicaoAtual = edicaoService.retornarEdicaoAtual();
+        List<CandidatoEntity> listCandidato = candidatoRepository.filtrarCandidatosEdicaoAtual(edicaoAtual);
+        List<CandidatoDTO> candidatoDTOS = listCandidato.stream()
+                .map(this::converterEmDTO).toList();
+
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=candidatos_edicao_atual" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        ExcelExporter excelExporter = new ExcelExporter(candidatoDTOS, new XSSFWorkbook());
+        excelExporter.exportCandidatos(response);
+    }
+
 
 //        public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
 //        Sort ordenacao = Sort.by("notaProva");

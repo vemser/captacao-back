@@ -97,7 +97,7 @@ public class CandidatoEntity {
         private EdicaoEntity edicao;
 
         @JsonIgnore
-        @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
+        @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true)
         @JoinColumn(name = "ID_FORMULARIO", referencedColumnName = "ID_FORMULARIO")
         private FormularioEntity formularioEntity;
 }

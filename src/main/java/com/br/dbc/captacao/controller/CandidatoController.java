@@ -134,6 +134,11 @@ public class CandidatoController implements CandidatoControllerInterface {
         candidatoService.exportarCandidatosCsv(response);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/export-csv-ed")
+    public ResponseEntity<Void> exportarCsvCandidatosEdicaoAtual(HttpServletResponse response) throws IOException {
+        candidatoService.exportarCsvCanditatosEdicaoAtual(response);
+        return ResponseEntity.noContent().build();
+    }
 
     //    @GetMapping("/find-by-trilha")
 //    public ResponseEntity<List<CandidatoDTO>> findCandidatosByTrilha (@RequestParam("trilha") String trilha) throws RegraDeNegocioException {
