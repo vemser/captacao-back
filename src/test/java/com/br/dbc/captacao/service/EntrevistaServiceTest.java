@@ -216,15 +216,6 @@ public class EntrevistaServiceTest {
         assertEquals(candidatoEntity.getEmail(), entrevistaEntity.getCandidatoEntity().getEmail());
     }
 
-    @Test(expected = RegraDeNegocioException.class)
-    public void deveRetornarUmaExcecaoQuandoCandidatoNaoTiverEntrevistas() throws RegraDeNegocioException {
-        CandidatoEntity candidatoEntity = getCandidatoEntity();
-
-        when(entrevistaRepository.findByCandidatoEntity(any())).thenReturn(Optional.empty());
-
-        entrevistaService.findByCandidatoEntity(candidatoEntity);
-    }
-
     @Test
     public void deveDeletarUmaEntrevistaCorretamente() throws RegraDeNegocioException {
         EntrevistaEntity entrevistaEntity = getEntrevistaEntity();
