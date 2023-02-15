@@ -272,7 +272,7 @@ public class CandidatoService {
 
         PageRequest pageRequest = PageRequest.of(pagina, tamanho, orderBy);
 
-        Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByNota(pageRequest);
+        Page<CandidatoEntity> paginaDoRepositorio = candidatoRepository.findByNota(pageRequest, edicaoService.retornarEdicaoAtual());
 
         List<CandidatoDTO> candidatoDTOList = paginaDoRepositorio.getContent().stream()
                 .map(this::converterEmDTO).toList();
@@ -323,7 +323,7 @@ public class CandidatoService {
     }
 
     public void exportarCandidatosCsv(HttpServletResponse response) throws IOException {
-        List<CandidatoEntity> listCandidato = candidatoRepository.findByMedia();
+        List<CandidatoEntity> listCandidato = candidatoRepository.findByMedia(edicaoService.retornarEdicaoAtual());
         List<CandidatoDTO> candidatoDTOS = listCandidato.stream()
                 .map(this::converterEmDTO).toList();
 

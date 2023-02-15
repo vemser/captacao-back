@@ -19,13 +19,17 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
 
     @Query(" SELECT obj " +
             " FROM CANDIDATO obj " +
-            " WHERE obj.notaProva >= 60 ")
-    Page<CandidatoEntity> findByNota(Pageable pageable);
+            " INNER JOIN obj.edicao e " +
+            " WHERE obj.notaProva >= 60 " +
+            "AND :edicao is null or UPPER(e.nome) = UPPER(:edicao)")
+    Page<CandidatoEntity> findByNota(Pageable pageable, String edicao);
 
     @Query(" SELECT obj " +
             " FROM CANDIDATO obj " +
-            " WHERE obj.media >= 60 ")
-    List<CandidatoEntity> findByMedia();
+            " INNER JOIN obj.edicao e " +
+            " WHERE obj.media >= 60 " +
+            "AND :edicao is null or UPPER(e.nome) = UPPER(:edicao)")
+    List<CandidatoEntity> findByMedia(String edicao);
 
     @Query("SELECT DISTINCT c FROM CANDIDATO c " +
             " INNER JOIN EDICAO e " +
