@@ -169,10 +169,13 @@ public class EntrevistaService {
         EntrevistaEntity entrevista = findByCandidatoEntity(candidatoEntity);
 
         EntrevistaDTO entrevistaDTO = objectMapper.convertValue(entrevista, EntrevistaDTO.class);
-        entrevistaDTO.setCandidatoDTO(candidatoDTO);
-        entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
-        entrevistaDTO.setAvaliado(entrevista.getAvaliado() == null ? null : entrevista.getAvaliado().toString());
-        entrevistaDTO.setGestorDTO(objectMapper.convertValue(entrevista.getGestorEntity(), GestorDTO.class));
+
+        if (entrevista != null){
+            entrevistaDTO.setCandidatoDTO(candidatoDTO);
+            entrevistaDTO.setCandidatoEmail(candidatoDTO.getEmail());
+            entrevistaDTO.setAvaliado(entrevista.getAvaliado() == null ? null : entrevista.getAvaliado().toString());
+            entrevistaDTO.setGestorDTO(objectMapper.convertValue(entrevista.getGestorEntity(), GestorDTO.class));
+        }
 
         return entrevistaDTO;
     }
@@ -222,10 +225,7 @@ public class EntrevistaService {
 
     public EntrevistaEntity findByCandidatoEntity(CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
         Optional<EntrevistaEntity> entrevistaEntityOptional = entrevistaRepository.findByCandidatoEntity(candidatoEntity);
-        if (entrevistaEntityOptional.isEmpty()) {
-            throw new RegraDeNegocioException("Entrevista com o candidato não encontrada!");
-        }
-        return entrevistaEntityOptional.get();
+        return entrevistaEntityOptional.orElse(null);
     }
 
     private void verificarListaEntrevistas(EntrevistaCreateDTO entrevistaCreateDTO,

@@ -23,12 +23,12 @@ public class EdicaoService {
 
     public List<EdicaoDTO> list() {
         return edicaoRepository.findAll().stream()
-                .map(contato -> objectMapper.convertValue(contato, EdicaoDTO.class))
+                .map(edicao -> objectMapper.convertValue(edicao, EdicaoDTO.class))
                 .toList();
     }
 
     public EdicaoDTO createAndReturnDTO(EdicaoDTO edicaoDTO) throws RegraDeNegocioException {
-        edicaoDTO.setNome(edicaoDTO.getNome().trim());
+        edicaoDTO.setNome(edicaoDTO.getNome().trim().toUpperCase());
         if (edicaoRepository.findByNome(edicaoDTO.getNome()).isPresent()) {
             throw new RegraDeNegocioException("Edição já existente");
         }
