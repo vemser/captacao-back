@@ -30,6 +30,9 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String from;
 
+    @Value("${email.link.entrevista}")
+    private String linkEntrevista;
+
     private final JavaMailSender emailSender;
 
     public void sendEmail(SendEmailDTO sendEmailDTO, TipoEmail tipoEmail) throws RegraDeNegocioException {
@@ -83,7 +86,7 @@ public class EmailService {
         dados.put("email", from);
         dados.put("nome", nome);
         dados.put("data", data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-        dados.put("token", "http://vemser-dbc.dbccompany.com.br:39000/vemser/captacao-front/confirmar-entrevista?tokenEntrevista=" + token);
+        dados.put("token",  linkEntrevista + token);
         dados.put("colaborador", from);
         Template template = fmConfiguration.getTemplate(nomeTemplate);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
