@@ -15,6 +15,6 @@ public class EdicaoFactory {
     }
 
     public static EdicaoDTO getEdicaoDTO() {
-        return new EdicaoDTO("Edição 10");
+        return new EdicaoDTO(1,"Edição 10");
     }
 }
