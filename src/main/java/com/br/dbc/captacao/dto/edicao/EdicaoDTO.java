@@ -10,5 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EdicaoDTO {
+
+    private Integer idEdicao;
     private String nome;
 }
