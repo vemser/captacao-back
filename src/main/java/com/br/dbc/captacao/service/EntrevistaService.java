@@ -84,6 +84,7 @@ public class EntrevistaService {
         verificarListaEntrevistas(entrevistaCreateDTO, entrevistaEntityList, entrevista.getCandidatoEntity());
 
         setEntrevista(entrevistaCreateDTO, gestor, candidato, entrevistaCreateDTO.getObservacoes(), entrevista);
+        entrevista.setLegenda(legenda);
         EntrevistaEntity entrevistaSalva = entrevistaRepository.save(entrevista);
 
         SendEmailDTO sendEmailDTO = new SendEmailDTO();
