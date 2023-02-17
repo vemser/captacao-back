@@ -15,7 +15,7 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 public class CandidatoNotaDTO {
 
-    @Min(0)
-    @Max(100)
+    @Min(value = 0,  message = "Nota deve ser entre 0 e 100")
+    @Max(value = 100, message = "Nota deve ser entre 0 e 100")
     private Double notaProva;
 }

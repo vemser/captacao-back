@@ -49,12 +49,13 @@
         .container-footer {
             width: 40%;
             border-top: 1px solid #999;
-            padding-top: 3rem;
+            padding-top:16px;
         }
         .link {
             color: #fff;
             font-weight: 700;
             text-decoration: unset;
+            cursor:pointer;
         }
 
     </style>
@@ -69,11 +70,13 @@
             <div class="header"></div>
             <h1>Olá, ${nome}</h1>
             <p>Parabéns, você passou para a próxima etapa do processo seletivo, sua entrevista será dia ${data}</p>
-            <button class="button-confirmar"><a style="color:#FFF;" class="link" href="${token}">Clique para confirmar</a></button>
+            <a style="color:#FFF; cursor:pointer;" class="link" href=${token}><input style="curson:pointer;" class="button-confirmar" type="button" value="Clique para confirmar"/></a>
+
         </div>
 
         <div class="container-footer">
-            <p>Enviado por <span>${colaborador}</span></p>
+            <a href=${token} style="font-size:15px;">Clique aqui caso não consiga acessar pelo  botão!</a>
+            <p style="margin-top:30px;">Enviado por <span>${colaborador}</span></p>
         </div>
 
     </td>
