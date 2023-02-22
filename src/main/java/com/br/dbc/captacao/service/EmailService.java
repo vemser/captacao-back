@@ -82,11 +82,13 @@ public class EmailService {
                                                    String nome,
                                                    String nomeTemplate,
                                                    String token) throws IOException, TemplateException {
+        String url = linkEntrevista + token;
+
         Map<String, Object> dados = new HashMap<>();
         dados.put("email", from);
         dados.put("nome", nome);
         dados.put("data", data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-        dados.put("token",  linkEntrevista + token);
+        dados.put("token", url);
         dados.put("colaborador", from);
         Template template = fmConfiguration.getTemplate(nomeTemplate);
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, dados);
