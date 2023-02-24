@@ -99,7 +99,7 @@ public class EmailService {
 
     public String geContentFromTemplate(SendEmailDTO sendEmailDTO, TipoEmail tipoEmail) throws IOException, TemplateException {
 
-        final String MESSAGE_DUVIDA = "Em caso de dúvidas, nos contate através do e-mail <br> <strong style='color:white'> VemSer@dbccompany.com.br </strong>";
+        final String MESSAGE_DUVIDA = "Em caso de dúvidas, nos contate através do e-mail <br > <p style='color:white; text-decoration: unset;'> VemSer@dbccompany.com.br </p>";
 
         String base = tipoEmail.getDescricao();
         if (tipoEmail.equals(TipoEmail.RECOVER_PASSWORD)) {

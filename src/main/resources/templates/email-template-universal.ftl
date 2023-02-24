@@ -2,6 +2,14 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>VEMVEMSER</title>
+        <style>
+            p {
+                color: #fff;
+                font-weight: 700;
+                text-decoration: unset;
+                cursor:pointer;
+            }
+        </style>
 </head>
 
 <body>
