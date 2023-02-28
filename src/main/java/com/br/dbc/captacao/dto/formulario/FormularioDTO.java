@@ -1,8 +1,8 @@
 package com.br.dbc.captacao.dto.formulario;
 
 import com.br.dbc.captacao.dto.trilha.TrilhaDTO;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
-import com.br.dbc.captacao.repository.enums.TipoTurno;
+import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoTurno;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

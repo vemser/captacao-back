@@ -1,12 +1,11 @@
 package com.br.dbc.captacao.controller;
 
 import com.br.dbc.captacao.controller.documentationinterface.EntrevistaControllerInterface;
-import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.repository.enums.Legenda;
+import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.service.EntrevistaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

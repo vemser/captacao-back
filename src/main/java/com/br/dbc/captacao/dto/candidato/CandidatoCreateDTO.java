@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.dto.candidato;
 
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -60,8 +60,8 @@ public class CandidatoCreateDTO {
     @Schema(description = "Cidade em que habita o candidato", example = "Porto Alegre")
     private String cidade;
 
-    @Schema(example = "true", description = "TRUE or FALSE")
-    private boolean isPcdboolean;
+    @Schema(example = "Não possui", description = "Tipo de pcd")
+    private String pcd;
 
     @JsonIgnore
     @Schema(description = "Observaçoes a respeito do candidato", example = "Boa Logica")

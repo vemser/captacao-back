@@ -3,7 +3,7 @@ package com.br.dbc.captacao.service;
 import com.br.dbc.captacao.dto.SendEmailDTO;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
-import com.br.dbc.captacao.repository.enums.TipoEmail;
+import com.br.dbc.captacao.enums.TipoEmail;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;

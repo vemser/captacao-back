@@ -1,4 +1,4 @@
-package com.br.dbc.captacao.repository.enums;
+package com.br.dbc.captacao.enums;
 
 import lombok.Getter;
 

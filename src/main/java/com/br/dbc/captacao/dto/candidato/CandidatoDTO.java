@@ -3,7 +3,7 @@ package com.br.dbc.captacao.dto.candidato;
 import com.br.dbc.captacao.dto.edicao.EdicaoDTO;
 import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

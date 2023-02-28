@@ -10,7 +10,7 @@ import com.br.dbc.captacao.entity.TrilhaEntity;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.FormularioRepository;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

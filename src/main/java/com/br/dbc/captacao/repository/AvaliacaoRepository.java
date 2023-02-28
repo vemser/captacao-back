@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.repository;
 
 import com.br.dbc.captacao.entity.AvaliacaoEntity;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

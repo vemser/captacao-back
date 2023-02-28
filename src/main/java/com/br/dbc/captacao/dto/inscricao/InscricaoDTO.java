@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.dto.inscricao;
 
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import lombok.Data;
 
 import java.time.LocalDate;

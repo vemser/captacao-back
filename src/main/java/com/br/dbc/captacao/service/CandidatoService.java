@@ -10,7 +10,7 @@ import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CandidatoRepository;
 import com.br.dbc.captacao.repository.InscricaoRepository;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -71,7 +71,7 @@ public class CandidatoService {
         return candidatoDTO;
     }
 
-    private static void verificarEmailCandidato(CandidatoCreateDTO candidatoCreateDTO,
+    private void verificarEmailCandidato(CandidatoCreateDTO candidatoCreateDTO,
                                                 Optional<CandidatoEntity> candidatoEntityOptional,
                                                 CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
         if (candidatoEntityOptional.isPresent()) {
@@ -232,7 +232,7 @@ public class CandidatoService {
 
     public CandidatoEntity convertToEntity(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocio404Exception {
         CandidatoEntity candidatoEntity = objectMapper.convertValue(candidatoCreateDTO, CandidatoEntity.class);
-        candidatoEntity.setPcd(candidatoCreateDTO.isPcdboolean() ? TipoMarcacao.T : TipoMarcacao.F);
+        candidatoEntity.setPcd(candidatoCreateDTO.getPcd());
         candidatoEntity.setFormularioEntity(formularioService.convertToEntity(formularioService.findDtoById(candidatoCreateDTO.getFormulario())));
         return candidatoEntity;
     }

@@ -1,6 +1,6 @@
 package com.br.dbc.captacao.dto.formulario;
 
-import com.br.dbc.captacao.repository.enums.TipoTurno;
+import com.br.dbc.captacao.enums.TipoTurno;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
