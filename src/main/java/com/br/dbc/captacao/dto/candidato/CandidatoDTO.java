@@ -36,7 +36,7 @@ public class CandidatoDTO {
 
     private String cidade;
 
-    private boolean isPcdboolean;
+    private String pcd;
 
     private String observacoes;
 
