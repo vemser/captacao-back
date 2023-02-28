@@ -5,7 +5,7 @@ import com.br.dbc.captacao.dto.gestor.GestorDTO;
 import com.br.dbc.captacao.dto.gestor.GestorEmailNomeCargoDTO;
 import com.br.dbc.captacao.entity.CargoEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 
 import java.util.ArrayList;
 import java.util.HashSet;

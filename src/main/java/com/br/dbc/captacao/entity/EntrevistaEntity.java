@@ -1,7 +1,7 @@
 package com.br.dbc.captacao.entity;
 
-import com.br.dbc.captacao.repository.enums.Legenda;
-import com.br.dbc.captacao.repository.enums.TipoMarcacao;
+import com.br.dbc.captacao.enums.Legenda;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

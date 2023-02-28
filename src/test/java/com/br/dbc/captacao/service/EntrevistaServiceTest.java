@@ -1,7 +1,6 @@
 package com.br.dbc.captacao.service;
 
 import com.br.dbc.captacao.dto.candidato.CandidatoDTO;
-import com.br.dbc.captacao.dto.entrevista.EntrevistaAtualizacaoDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaCreateDTO;
 import com.br.dbc.captacao.dto.entrevista.EntrevistaDTO;
 import com.br.dbc.captacao.dto.gestor.GestorDTO;
@@ -10,7 +9,7 @@ import com.br.dbc.captacao.entity.CandidatoEntity;
 import com.br.dbc.captacao.entity.EntrevistaEntity;
 import com.br.dbc.captacao.entity.GestorEntity;
 import com.br.dbc.captacao.factory.EntrevistaFactory;
-import com.br.dbc.captacao.repository.enums.Legenda;
+import com.br.dbc.captacao.enums.Legenda;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.EntrevistaRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -27,9 +26,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
