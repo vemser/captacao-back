@@ -30,7 +30,7 @@ public class CandidatoFactory {
         candidatoEntity.setLinguagens(new HashSet<>(linguagemList));
         candidatoEntity.setEdicao(EdicaoFactory.getEdicaoEntity());
         candidatoEntity.setAtivo(TipoMarcacao.T);
-        candidatoEntity.setPcd(TipoMarcacao.T);
+        candidatoEntity.setPcd("não");
         candidatoEntity.setFormularioEntity(FormularioFactory.getFormularioEntity());
 
         return candidatoEntity;
@@ -49,7 +49,7 @@ public class CandidatoFactory {
         candidatoCreateDTO.setLinguagens(linguagemDTOList);
         candidatoCreateDTO.setEdicao(getEdicaoDTO());
         candidatoCreateDTO.setAtivo(TipoMarcacao.T);
-        candidatoCreateDTO.setPcdboolean(true);
+        candidatoCreateDTO.setPcd("não");
 
         return candidatoCreateDTO;
     }
