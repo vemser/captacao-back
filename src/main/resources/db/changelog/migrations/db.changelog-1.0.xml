@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="maicon">
+        <sql dbms="postgresql">
+            -- avaliação
+            ALTER TABLE avaliacao
+                ADD CONSTRAINT fk_avaliacao_inscricao FOREIGN KEY (id_inscricao) REFERENCES inscricao (id_inscricao);
+
+            ALTER TABLE avaliacao
+                ADD CONSTRAINT fk_avaliacao_gestor FOREIGN KEY (id_gestor) REFERENCES gestor (id_gestor);
+
+            -- inscricao
+            ALTER TABLE inscricao
+                ADD CONSTRAINT fk_inscricao_candidato FOREIGN KEY (id_candidato) REFERENCES candidato (id_candidato);
+
+            -- candidato
+            ALTER TABLE candidato
+                ADD CONSTRAINT fk_candidato_formulario FOREIGN KEY (id_formulario) REFERENCES formulario (id_formulario);
+
+            -- formulário
+            ALTER TABLE formulario
+                ADD CONSTRAINT fk_formulario_curriculo FOREIGN KEY (id_curriculo) REFERENCES curriculo (id_curriculo);
+
+            ALTER TABLE formulario
+                ADD CONSTRAINT fk_formulario_print_config_pc FOREIGN KEY (id_print_config_pc) REFERENCES print_config_pc (id_print_config_pc);
+        </sql>
+    </changeSet>
+</databaseChangeLog>
