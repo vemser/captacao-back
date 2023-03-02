@@ -1,5 +1,8 @@
 package com.br.dbc.captacao.repository;
 
+import com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorEdicaoDTO;
+import com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorEstadoDTO;
+import com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorPCDDTO;
 import com.br.dbc.captacao.entity.CandidatoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,4 +66,24 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " INNER JOIN f.trilhaEntitySet ts " +
             " WHERE (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)")
     List<CandidatoEntity> filtrarCandidatosEdicaoAtual(String edicao);
+
+    @Query("  select new com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorEdicaoDTO(e.nome, count(c))" +
+            "   from CANDIDATO c " +
+            "   join c.edicao e " +
+            "   group by e.idEdicao ")
+    List<RelatorioQuantidadePessoasInscritasPorEdicaoDTO> recuperarQuantidadeDePessoasInscritasPorEdicao();
+
+    @Query("  select new com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorEstadoDTO(c.estado, count(c))" +
+            "   from CANDIDATO c " +
+            "   where c.idEdicao = (select max(e.idEdicao) from EDICAO e) " + // recupera sempre os dados da ultima edição
+            "   group by c.estado ")
+    List<RelatorioQuantidadePessoasInscritasPorEstadoDTO> recuperarQuantidadeDePessoasInscritasPorEstado();
+
+    @Query("  select new com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorPCDDTO(c.pcd, count(c))" +
+            "   from CANDIDATO c " +
+            "   where c.idEdicao = (select max(e.idEdicao) from EDICAO e) " + // recupera sempre os dados da ultima edição
+            "   group by c.pcd ")
+    List<RelatorioQuantidadePessoasInscritasPorPCDDTO> recuperarQuantidadeDePessoasInscritasPorPCD();
+
+
 }
