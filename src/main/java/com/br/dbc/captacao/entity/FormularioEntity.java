@@ -81,7 +81,7 @@ public class FormularioEntity {
     private String neurodiversidade;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "ID_PRINT_CONFIG_PC", referencedColumnName = "ID_PRINT_CONFIG_PC")
     private PrintConfigPCEntity imagemConfigPc;
 
@@ -115,7 +115,7 @@ public class FormularioEntity {
     private Set<TrilhaEntity> trilhaEntitySet;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "ID_CURRICULO", referencedColumnName = "ID_CURRICULO")
     private CurriculoEntity curriculoEntity;
 }
