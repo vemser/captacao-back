@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RelatoriosService {
+
     private final CandidatoRepository candidatoRepository;
     private final FormularioRepository formularioRepository;
 
