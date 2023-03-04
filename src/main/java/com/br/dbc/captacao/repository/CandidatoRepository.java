@@ -58,15 +58,6 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " AND (c.media >= 60) " )
     Page<CandidatoEntity> filtrarCandidatosAprovados(Pageable pageable, String email, String edicao, String trilha);
 
-    @Query("SELECT DISTINCT c FROM CANDIDATO c " +
-            " INNER JOIN EDICAO e " +
-            " ON e.idEdicao = c.idEdicao " +
-            " INNER JOIN FORMULARIO f " +
-            " ON c.formularioEntity.idFormulario =  f.idFormulario" +
-            " INNER JOIN f.trilhaEntitySet ts " +
-            " WHERE (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)")
-    List<CandidatoEntity> filtrarCandidatosEdicaoAtual(String edicao);
-
     @Query("  select new com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorEdicaoDTO(e.nome, count(c))" +
             "   from CANDIDATO c " +
             "   join c.edicao e " +
@@ -85,5 +76,17 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             "   group by c.pcd ")
     List<RelatorioQuantidadePessoasInscritasPorPCDDTO> recuperarQuantidadeDePessoasInscritasPorPCD();
 
+
+    @Query("   SELECT DISTINCT candidato," +
+            "                  candidato.linguagens, " +
+            "                  inscricao, " +
+            "                  form, " +
+            "                  form.trilhaEntitySet " +
+            "             FROM CANDIDATO candidato " +
+            "             JOIN INSCRICAO inscricao on (candidato.idCandidato = inscricao.idCandidato)" +
+            "             JOIN candidato.edicao edicao " +
+            "             JOIN candidato.formularioEntity form " +
+            " where candidato.idEdicao = (select max(e.idEdicao) from EDICAO e) ")
+    List<Object> filtrarCandidatosEdicaoAtualExcel();
 
 }

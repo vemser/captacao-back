@@ -6,11 +6,12 @@ import com.br.dbc.captacao.dto.formulario.FormularioDTO;
 import com.br.dbc.captacao.dto.linguagem.LinguagemDTO;
 import com.br.dbc.captacao.dto.paginacao.PageDTO;
 import com.br.dbc.captacao.entity.*;
+import com.br.dbc.captacao.enums.TipoMarcacao;
 import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CandidatoRepository;
 import com.br.dbc.captacao.repository.InscricaoRepository;
-import com.br.dbc.captacao.enums.TipoMarcacao;
+import com.br.dbc.captacao.repository.VwCandidatosUltimaEdicaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -38,6 +40,8 @@ public class CandidatoService {
     private final TrilhaService trilhaService;
     private final EdicaoService edicaoService;
     private final InscricaoRepository inscricaoRepository;
+    private final ExcelExporterCandidatos excelExporterCandidatos;
+    private final VwCandidatosUltimaEdicaoRepository vwCandidatosUltimaEdicaoRepository;
 
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
@@ -72,8 +76,8 @@ public class CandidatoService {
     }
 
     private void verificarEmailCandidato(CandidatoCreateDTO candidatoCreateDTO,
-                                                Optional<CandidatoEntity> candidatoEntityOptional,
-                                                CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
+                                         Optional<CandidatoEntity> candidatoEntityOptional,
+                                         CandidatoEntity candidatoEntity) throws RegraDeNegocioException {
         if (candidatoEntityOptional.isPresent()) {
             if (candidatoEntityOptional.get().getEdicao().getNome().equals(candidatoCreateDTO.getEdicao().getNome())) {
                 throw new RegraDeNegocioException("Candidato com este e-mail já cadastrado para essa edição.");
@@ -249,17 +253,25 @@ public class CandidatoService {
     }
 
     public CandidatoDTO converterEmDTO(CandidatoEntity candidato) {
+        return this.converterEmDTO(candidato, true);
+    }
+
+    public CandidatoDTO converterEmDTO(CandidatoEntity candidato, boolean carregarCurriculoImagem) {
         CandidatoDTO candidatoDTO = objectMapper.convertValue(candidato, CandidatoDTO.class);
         FormularioDTO formularioDTO = objectMapper.convertValue(candidato.getFormularioEntity(), FormularioDTO.class);
         EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
 
         formularioDTO.setTrilhas(trilhaService.convertToDTO(candidato.getFormularioEntity().getTrilhaEntitySet()));
-        if (candidato.getImageEntity() != null) {
-            candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
+
+        if (carregarCurriculoImagem) {
+            if (candidato.getImageEntity() != null) {
+                candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
+            }
+            if (candidato.getFormularioEntity().getCurriculoEntity() != null) {
+                formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
+            }
         }
-        if (candidato.getFormularioEntity().getCurriculoEntity() != null) {
-            formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
-        }
+
         candidatoDTO.setFormulario(formularioDTO);
         candidatoDTO.setLinguagens(linguagemService.convertToDTO(candidato.getLinguagens()));
         candidatoDTO.setEdicao(edicaoDTO);
@@ -340,10 +352,8 @@ public class CandidatoService {
     }
 
     public void exportarCsvCanditatosEdicaoAtual(HttpServletResponse response) throws IOException {
-        String edicaoAtual = edicaoService.retornarEdicaoAtual();
-        List<CandidatoEntity> listCandidato = candidatoRepository.filtrarCandidatosEdicaoAtual(edicaoAtual);
-        List<CandidatoDTO> candidatoDTOS = listCandidato.stream()
-                .map(this::converterEmDTO).toList();
+        List<VwCandidatosUltimaEdicao> listaVwCandidatosUltimaEdicoes = vwCandidatosUltimaEdicaoRepository.findAll();
+        XSSFWorkbook planilhaCandidatos = excelExporterCandidatos.getPlanilhaCandidatos(listaVwCandidatosUltimaEdicoes);
 
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -353,121 +363,9 @@ public class CandidatoService {
         String headerValue = "attachment; filename=candidatos_edicao_atual" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
-        ExcelExporter excelExporter = new ExcelExporter(candidatoDTOS, new XSSFWorkbook());
-        excelExporter.exportCandidatos(response);
+        ServletOutputStream outputStream = response.getOutputStream();
+        planilhaCandidatos.write(outputStream);
+        planilhaCandidatos.close();
+        outputStream.close();
     }
-
-
-//        public PageDTO<RelatorioCandidatoCadastroDTO> listRelatorioCandidatoCadastroDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
-//        Sort ordenacao = Sort.by("notaProva");
-//        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-//        Page<RelatorioCandidatoPaginaPrincipalDTO> candidatoEntityPage =
-//                candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(
-//                        nomeCompleto,
-//                        nomeTrilha,
-//                        nomeEdicao,
-//                        pageRequest,
-//                        emailCandidato);
-//        if (candidatoEntityPage.isEmpty()) {
-//            throw new RegraDeNegocioException("Candidato com dados especificados não existe");
-//        }
-//        List<RelatorioCandidatoCadastroDTO> relatorioCandidatoCadastroDTOPage = candidatoEntityPage
-//                .stream()
-//                .map(relatorioCandidatoPaginaPrincipalDTO ->
-//                        objectMapper.convertValue(relatorioCandidatoPaginaPrincipalDTO, RelatorioCandidatoCadastroDTO.class))
-//                .toList();
-//        for (RelatorioCandidatoCadastroDTO candidato : relatorioCandidatoCadastroDTOPage) {
-//            CandidatoEntity candidatoEntity = findByEmailEntity(candidato.getEmail());
-//            List<String> linguagemList = candidatoEntity.getLinguagens()
-//                    .stream()
-//                    .map(LinguagemEntity::getNome)
-//                    .toList();
-//            candidato.setLinguagemList(linguagemList);
-//            candidato.setEdicao(candidatoEntity.getEdicao().getNome());
-//            candidato.setCidade(candidatoEntity.getCidade());
-//            candidato.setEstado(candidatoEntity.getEstado());
-//            candidato.setObservacoes(candidatoEntity.getObservacoes());
-//            if (candidatoEntity.getFormularioEntity().getCurriculoEntity() == null) {
-//                throw new RegraDeNegocioException("O candidato com o email " + candidatoEntity.getEmail() + " não possui currículo cadastrado!");
-//            }
-//            candidato.setDado(candidatoEntity.getFormularioEntity().getCurriculoEntity().getData());
-//        }
-//        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
-//                candidatoEntityPage.getTotalPages(),
-//                pagina,
-//                tamanho,
-//                relatorioCandidatoCadastroDTOPage);
-//    }
-//
-//    public PageDTO<RelatorioCandidatoPaginaPrincipalDTO> listRelatorioRelatorioCandidatoPaginaPrincipalDTO(String nomeCompleto, Integer pagina, Integer tamanho, String nomeTrilha, String nomeEdicao, String emailCandidato) throws RegraDeNegocioException {
-//        Sort ordenacao = Sort.by("notaProva");
-//        PageRequest pageRequest = PageRequest.of(pagina, tamanho, ordenacao);
-//        Page<RelatorioCandidatoPaginaPrincipalDTO> candidatoEntityPage = candidatoRepository.listRelatorioRelatorioCandidatoPaginaPrincipalDTO(nomeCompleto, nomeTrilha, nomeEdicao, pageRequest, emailCandidato);
-//        if (candidatoEntityPage.isEmpty()) {
-//            throw new RegraDeNegocioException("Candidato com dados especificados não existe");
-//        }
-//        return new PageDTO<>(candidatoEntityPage.getTotalElements(),
-//                candidatoEntityPage.getTotalPages(),
-//                pagina,
-//                tamanho,
-//                candidatoEntityPage.toList());
-//    }
-//
-//    public List<CandidatoDTO> listCandidatosByTrilha(String trilha) throws RegraDeNegocioException {
-//
-//        TrilhaEntity trilhaEntity = trilhaService.findByNome(trilha);
-//
-//        List<CandidatoDTO> candidatoDTOListByTrilha = candidatoRepository.findCandidatoEntitiesByFormularioEntity_TrilhaEntitySet(trilhaEntity).stream()
-//                .map(candidatoEntity -> {
-//                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
-//                    candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
-//
-//                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
-//                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
-//                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
-//                    }
-//                    candidatoDTO.getFormulario().setTrilhas(trilhaDTOList);
-//
-//                    candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
-//
-//                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
-//                    for (LinguagemEntity linguagem : candidatoEntity.getLinguagens()) {
-//                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
-//                    }
-//                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
-//                    return candidatoDTO;
-//                })
-//                .toList();
-//
-//        return candidatoDTOListByTrilha;
-//    }
-//
-//    public List<CandidatoDTO> listCandidatosByEdicao(String edicao) throws RegraDeNegocioException {
-//
-//        EdicaoEntity edicaoRetorno = edicaoService.findByNome(edicao);
-//
-//        List<CandidatoDTO> candidatoDTOListByEdicao = candidatoRepository.findCandidatoEntitiesByEdicao(edicaoRetorno).stream()
-//                .map(candidatoEntity -> {
-//                    CandidatoDTO candidatoDTO = objectMapper.convertValue(candidatoEntity, CandidatoDTO.class);
-//                    candidatoDTO.setFormulario(objectMapper.convertValue(candidatoEntity.getFormularioEntity(), FormularioDTO.class));
-//
-//                    Set<TrilhaDTO> trilhaDTOList = new HashSet<>();
-//                    for (TrilhaEntity trilhaTemp : candidatoEntity.getFormularioEntity().getTrilhaEntitySet()) {
-//                        trilhaDTOList.add(objectMapper.convertValue(trilhaTemp, TrilhaDTO.class));
-//                    }
-//                    candidatoDTO.getFormulario().setTrilhas(trilhaDTOList);
-//
-//                    candidatoDTO.setEdicao(objectMapper.convertValue(candidatoEntity.getEdicao(), EdicaoDTO.class));
-//
-//                    List<LinguagemDTO> linguagemDTOArrayList = new ArrayList<>();
-//                    for (LinguagemEntity linguagem : candidatoEntity.getLinguagens()) {
-//                        linguagemDTOArrayList.add(objectMapper.convertValue(linguagem, LinguagemDTO.class));
-//                    }
-//                    candidatoDTO.setLinguagens(linguagemDTOArrayList);
-//                    return candidatoDTO;
-//                })
-//                .toList();
-//
-//        return candidatoDTOListByEdicao;
-//    }
 }
