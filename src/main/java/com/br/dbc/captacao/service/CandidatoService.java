@@ -252,24 +252,19 @@ public class CandidatoService {
         return candidatoEntity;
     }
 
-    public CandidatoDTO converterEmDTO(CandidatoEntity candidato) {
-        return this.converterEmDTO(candidato, true);
-    }
 
-    public CandidatoDTO converterEmDTO(CandidatoEntity candidato, boolean carregarCurriculoImagem) {
+    public CandidatoDTO converterEmDTO(CandidatoEntity candidato) {
         CandidatoDTO candidatoDTO = objectMapper.convertValue(candidato, CandidatoDTO.class);
         FormularioDTO formularioDTO = objectMapper.convertValue(candidato.getFormularioEntity(), FormularioDTO.class);
         EdicaoDTO edicaoDTO = objectMapper.convertValue(candidato.getEdicao(), EdicaoDTO.class);
 
         formularioDTO.setTrilhas(trilhaService.convertToDTO(candidato.getFormularioEntity().getTrilhaEntitySet()));
 
-        if (carregarCurriculoImagem) {
-            if (candidato.getImageEntity() != null) {
-                candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
-            }
-            if (candidato.getFormularioEntity().getCurriculoEntity() != null) {
-                formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
-            }
+        if (candidato.getImageEntity() != null) {
+            candidatoDTO.setImagem(candidato.getImageEntity().getIdImagem());
+        }
+        if (candidato.getFormularioEntity().getCurriculoEntity() != null) {
+            formularioDTO.setCurriculo(candidato.getFormularioEntity().getCurriculoEntity().getIdCurriculo());
         }
 
         candidatoDTO.setFormulario(formularioDTO);
