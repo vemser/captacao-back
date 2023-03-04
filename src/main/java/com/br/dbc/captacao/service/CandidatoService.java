@@ -14,6 +14,7 @@ import com.br.dbc.captacao.repository.InscricaoRepository;
 import com.br.dbc.captacao.repository.VwCandidatosUltimaEdicaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CandidatoService {
 
     private static final int DESCENDING = 1;
@@ -347,11 +349,13 @@ public class CandidatoService {
     }
 
     public void exportarCsvCanditatosEdicaoAtual(HttpServletResponse response) throws IOException {
+        log.info("gerando relatorio de candidatos");
         List<VwCandidatosUltimaEdicao> listaVwCandidatosUltimaEdicoes = vwCandidatosUltimaEdicaoRepository.findAll();
+        log.info("quantidade de candidatos: {}", listaVwCandidatosUltimaEdicoes.size());
         XSSFWorkbook planilhaCandidatos = excelExporterCandidatos.getPlanilhaCandidatos(listaVwCandidatosUltimaEdicoes);
 
         response.setContentType("application/octet-stream");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss");
         String currentDateTime = dateFormatter.format(new Date());
 
         String headerKey = "Content-Disposition";
