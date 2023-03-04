@@ -17,7 +17,9 @@ import java.util.Optional;
 public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Integer> {
 
     Optional<CandidatoEntity> findCandidatoEntitiesByEmailAndEdicao_Nome(String email, String edicao);
+
     Optional<CandidatoEntity> findByEmail(String email);
+
     Optional<CandidatoEntity> findByCpf(String cpf);
 
     @Query(" SELECT obj " +
@@ -43,7 +45,7 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " WHERE (:email is null or UPPER(c.email) = UPPER(:email))" +
             " AND (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)" +
             " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " +
-            " AND (c.notaProva >= 60) " )
+            " AND (c.notaProva >= 60) ")
     Page<CandidatoEntity> filtrarCandidatosAptosEntrevista(Pageable pageable, String email, String edicao, String trilha);
 
     @Query("SELECT DISTINCT c FROM CANDIDATO c " +
@@ -55,17 +57,8 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             " WHERE (:email is null or UPPER(c.email) = UPPER(:email))" +
             " AND (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)" +
             " AND (:trilha is null or UPPER(ts.nome) = UPPER(:trilha)) " +
-            " AND (c.media >= 60) " )
+            " AND (c.media >= 60) ")
     Page<CandidatoEntity> filtrarCandidatosAprovados(Pageable pageable, String email, String edicao, String trilha);
-
-    @Query("SELECT DISTINCT c FROM CANDIDATO c " +
-            " INNER JOIN EDICAO e " +
-            " ON e.idEdicao = c.idEdicao " +
-            " INNER JOIN FORMULARIO f " +
-            " ON c.formularioEntity.idFormulario =  f.idFormulario" +
-            " INNER JOIN f.trilhaEntitySet ts " +
-            " WHERE (:edicao is null or UPPER(e.nome) = UPPER(:edicao) AND e.idEdicao = c.idEdicao)")
-    List<CandidatoEntity> filtrarCandidatosEdicaoAtual(String edicao);
 
     @Query("  select new com.br.dbc.captacao.dto.relatorios.RelatorioQuantidadePessoasInscritasPorEdicaoDTO(e.nome, count(c))" +
             "   from CANDIDATO c " +
@@ -84,6 +77,5 @@ public interface CandidatoRepository extends JpaRepository<CandidatoEntity, Inte
             "   where c.idEdicao = (select max(e.idEdicao) from EDICAO e) " + // recupera sempre os dados da ultima edição
             "   group by c.pcd ")
     List<RelatorioQuantidadePessoasInscritasPorPCDDTO> recuperarQuantidadeDePessoasInscritasPorPCD();
-
 
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2" author="maicon">
+        <sql dbms="postgresql">
+            create or replace
+            view vw_candidatos_ultima_edicao
+            as
+            select
+                c.id_formulario,
+                c.id_candidato,
+                i.data_inscricao,
+                c.nome,
+                c.email,
+                c.telefone,
+                c.rg,
+                c.estado,
+                f.matricula,
+                f.instituicao,
+                f.curso,
+                case
+                    when f.turno = '0' then 'Manhã'
+                    when f.turno = '1' then 'Tarde'
+                    when f.turno = '2' then 'Noite'
+                    end as turno,
+                f.resposta as motivos_area_tech,
+                f.prova,
+                string_agg(t.descricao, ', ' order by descricao) trilhas,
+                f.disponibilidade,
+                f.efetivacao,
+                f.importancia_ti as alguem_ensinou_importante,
+                f.ingles,
+                f.espanhol,
+                f.genero,
+                f.orientacao,
+                f.neurodiversidade,
+                c.pcd,
+                f.linkedin,
+                f.github
+            from
+                candidato c
+                    inner join inscricao i on
+                    (i.id_candidato = c.id_candidato)
+                    inner join edicao e on
+                    (c.id_edicao = e.id_edicao)
+                    inner join formulario f on
+                    (f.id_formulario = c.id_formulario)
+                    inner join trilha_form tf on
+                    (tf.id_formulario = f.id_formulario)
+                    inner join trilha t on
+                    (t.id_trilha = tf.id_trilha)
+            group by
+                c.id_formulario,
+                c.id_candidato,
+                i.data_inscricao,
+                c.nome,
+                c.email,
+                c.telefone,
+                c.rg,
+                c.estado,
+                f.matricula,
+                f.instituicao,
+                f.curso,
+                f.turno,
+                f.resposta,
+                f.prova,
+                f.disponibilidade,
+                f.efetivacao,
+                f.importancia_ti,
+                f.ingles,
+                f.espanhol,
+                f.genero,
+                f.orientacao,
+                f.neurodiversidade,
+                c.pcd,
+                f.linkedin,
+                f.github
+            having
+                    c.id_edicao = (
+                    select
+                        max(e2.id_edicao)
+                    from
+                        edicao e2)
+            order by
+                c.id_candidato
+        </sql>
+    </changeSet>
+</databaseChangeLog>
