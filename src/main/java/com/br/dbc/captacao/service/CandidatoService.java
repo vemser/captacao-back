@@ -353,6 +353,7 @@ public class CandidatoService {
         List<VwCandidatosUltimaEdicao> listaVwCandidatosUltimaEdicoes = vwCandidatosUltimaEdicaoRepository.findAll();
         log.info("quantidade de candidatos: {}", listaVwCandidatosUltimaEdicoes.size());
         XSSFWorkbook planilhaCandidatos = excelExporterCandidatos.getPlanilhaCandidatos(listaVwCandidatosUltimaEdicoes);
+        log.info("relatorio gerado");
 
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss");
@@ -366,5 +367,6 @@ public class CandidatoService {
         planilhaCandidatos.write(outputStream);
         planilhaCandidatos.close();
         outputStream.close();
+        log.info("relatorio enviado");
     }
 }
