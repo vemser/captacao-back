@@ -17,6 +17,7 @@ public class ExcelExporterCandidatos {
             writer.write(candidato.getIdFormulario().toString() + SEPARADOR);
             writer.write(candidato.getIdCandidato().toString() + SEPARADOR);
             writer.write(candidato.getDataInscricao().toString() + SEPARADOR);
+            writer.write(candidato.getNome().toString() + SEPARADOR);
             writer.write(candidato.getEmail().toString() + SEPARADOR);
             writer.write(candidato.getTelefone().toString() + SEPARADOR);
             writer.write(candidato.getRg().toString() + SEPARADOR);
@@ -49,6 +50,7 @@ public class ExcelExporterCandidatos {
                         "Cód.Formulário", // createCell(row, columnCount++, candidato.getIdFormulario(),
                         "Cód.Candidato",//        createCell(row, columnCount++, candidato.getIdCandidato(),
                         "Data",//        createCell(row, columnCount++, candidato.getDataInscricao().toString(),
+                        "Nome",//        createCell(row, columnCount++, candidato.getNome().toString(),
                         "E-mail",//        createCell(row, columnCount++, candidato.getEmail(),
                         "Telefone ",//        createCell(row, columnCount++, candidato.getTelefone(),
                         "RG",//        createCell(row, columnCount++, candidato.getRg(),

@@ -22,6 +22,9 @@ public class VwCandidatosUltimaEdicao {
     @Column(name = "data_inscricao")
     private LocalDate dataInscricao;
 
+    @Column(name = "nome")
+    private String nome;
+
     @Column(name = "email")
     private String email;
 
