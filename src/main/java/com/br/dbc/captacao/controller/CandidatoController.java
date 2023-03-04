@@ -32,14 +32,14 @@ public class CandidatoController implements CandidatoControllerInterface {
 
     @GetMapping
     public PageDTO<CandidatoDTO> list(@RequestParam(defaultValue = "0", required = false) Integer pagina,
-                                      @RequestParam(defaultValue = "20" ,required = false) Integer tamanho,
-                                      @RequestParam(defaultValue = "idCandidato" , required = false) String sort,
-                                      @RequestParam(defaultValue = "0",required = false ) Integer order) throws RegraDeNegocioException {
-        return candidatoService.listaAllPaginado(pagina,tamanho,sort,order);
+                                      @RequestParam(defaultValue = "20", required = false) Integer tamanho,
+                                      @RequestParam(defaultValue = "idCandidato", required = false) String sort,
+                                      @RequestParam(defaultValue = "0", required = false) Integer order) throws RegraDeNegocioException {
+        return candidatoService.listaAllPaginado(pagina, tamanho, sort, order);
     }
 
     @GetMapping("/findbyemails")
-    public CandidatoDTO findByEmail(@RequestParam ("email") String email) throws RegraDeNegocioException {
+    public CandidatoDTO findByEmail(@RequestParam("email") String email) throws RegraDeNegocioException {
         return candidatoService.findByEmail(email);
     }
 
@@ -86,6 +86,7 @@ public class CandidatoController implements CandidatoControllerInterface {
         CandidatoDTO candidatoDTO = candidatoService.updateNota(id, candidatoNotaDTO);
         return new ResponseEntity<>(candidatoDTO, HttpStatus.OK);
     }
+
     @PutMapping("/nota-comportamental/{idCandidato}")
     public ResponseEntity<CandidatoDTO> updateComportamental(@PathVariable("idCandidato") Integer id,
                                                              @Valid @RequestBody CandidatoNotaComportamentalDTO candidatoNotaComportamentalDTO) throws RegraDeNegocioException {
@@ -101,32 +102,32 @@ public class CandidatoController implements CandidatoControllerInterface {
     }
 
     @GetMapping("/find-by-nota")
-    public ResponseEntity<PageDTO<CandidatoDTO>> findByNota (Integer pagina, Integer tamanho) {
+    public ResponseEntity<PageDTO<CandidatoDTO>> findByNota(Integer pagina, Integer tamanho) {
 
         PageDTO<CandidatoDTO> candidatosDTO = candidatoService.findByNota(pagina, tamanho);
 
-        return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
+        return new ResponseEntity<>(candidatosDTO, HttpStatus.OK);
     }
 
 
     @GetMapping("/filtro-candidato-entrevista")
-    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAptosEntrevista (@RequestParam Integer pagina,
-                                                                    @RequestParam Integer tamanho,
-                                                                    @RequestParam (required = false) String email,
-                                                                    @RequestParam (required = false) String edicao,
-                                                                    @RequestParam (required = false) String trilha) {
+    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAptosEntrevista(@RequestParam Integer pagina,
+                                                                                  @RequestParam Integer tamanho,
+                                                                                  @RequestParam(required = false) String email,
+                                                                                  @RequestParam(required = false) String edicao,
+                                                                                  @RequestParam(required = false) String trilha) {
         PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatosAptosEntrevista(pagina, tamanho, email, edicao, trilha);
-        return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
+        return new ResponseEntity<>(candidatosDTO, HttpStatus.OK);
     }
 
     @GetMapping("/filtro-candidato-resultado")
-    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAprovados (@RequestParam Integer pagina,
-                                                                    @RequestParam Integer tamanho,
-                                                                    @RequestParam (required = false) String email,
-                                                                    @RequestParam (required = false) String edicao,
-                                                                    @RequestParam (required = false) String trilha) {
+    public ResponseEntity<PageDTO<CandidatoDTO>> filtrarCandidatosAprovados(@RequestParam Integer pagina,
+                                                                            @RequestParam Integer tamanho,
+                                                                            @RequestParam(required = false) String email,
+                                                                            @RequestParam(required = false) String edicao,
+                                                                            @RequestParam(required = false) String trilha) {
         PageDTO<CandidatoDTO> candidatosDTO = candidatoService.filtrarCandidatosAprovados(pagina, tamanho, email, edicao, trilha);
-        return new ResponseEntity<>(candidatosDTO,HttpStatus.OK);
+        return new ResponseEntity<>(candidatosDTO, HttpStatus.OK);
     }
 
     @GetMapping("/export-xlsx")
@@ -134,6 +135,7 @@ public class CandidatoController implements CandidatoControllerInterface {
         candidatoService.exportarCandidatosCsv(response);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/export-csv-ed")
     public ResponseEntity<Void> exportarCsvCandidatosEdicaoAtual(HttpServletResponse response) throws IOException {
         candidatoService.exportarCsvCanditatosEdicaoAtual(response);

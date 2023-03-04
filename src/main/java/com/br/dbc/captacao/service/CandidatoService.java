@@ -11,7 +11,6 @@ import com.br.dbc.captacao.exception.RegraDeNegocio404Exception;
 import com.br.dbc.captacao.exception.RegraDeNegocioException;
 import com.br.dbc.captacao.repository.CandidatoRepository;
 import com.br.dbc.captacao.repository.InscricaoRepository;
-import com.br.dbc.captacao.repository.VwCandidatosUltimaEdicaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -43,7 +41,7 @@ public class CandidatoService {
     private final EdicaoService edicaoService;
     private final InscricaoRepository inscricaoRepository;
     private final ExcelExporterCandidatos excelExporterCandidatos;
-    private final VwCandidatosUltimaEdicaoRepository vwCandidatosUltimaEdicaoRepository;
+    private final VwCandidatosUltimaEdicaoService vwCandidatosUltimaEdicaoService;
 
     public CandidatoDTO create(CandidatoCreateDTO candidatoCreateDTO) throws RegraDeNegocioException, RegraDeNegocio404Exception {
         List<LinguagemEntity> linguagemList = new ArrayList<>();
@@ -350,23 +348,17 @@ public class CandidatoService {
 
     public void exportarCsvCanditatosEdicaoAtual(HttpServletResponse response) throws IOException {
         log.info("gerando relatorio de candidatos");
-        List<VwCandidatosUltimaEdicao> listaVwCandidatosUltimaEdicoes = vwCandidatosUltimaEdicaoRepository.findAll();
+        List<VwCandidatosUltimaEdicao> listaVwCandidatosUltimaEdicoes = vwCandidatosUltimaEdicaoService.findAll();
         log.info("quantidade de candidatos: {}", listaVwCandidatosUltimaEdicoes.size());
-        XSSFWorkbook planilhaCandidatos = excelExporterCandidatos.getPlanilhaCandidatos(listaVwCandidatosUltimaEdicoes);
-        log.info("relatorio gerado");
 
-        response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss");
         String currentDateTime = dateFormatter.format(new Date());
 
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=candidatos_edicao_atual" + currentDateTime + ".xlsx";
+        String headerValue = "attachment; filename=candidatos_edicao_atual" + currentDateTime + ".csv";
+//        response.setContentType("text/csv");
         response.setHeader(headerKey, headerValue);
-
-        ServletOutputStream outputStream = response.getOutputStream();
-        planilhaCandidatos.write(outputStream);
-        planilhaCandidatos.close();
-        outputStream.close();
-        log.info("relatorio enviado");
+        excelExporterCandidatos.writeHeaderLineCandidato(listaVwCandidatosUltimaEdicoes, response.getWriter());
+        log.info("relatorio gerado");
     }
 }
